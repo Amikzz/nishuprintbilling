@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Billing System</title>
+    <link rel="icon" href="{{ asset('favicon.ico') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
@@ -13,7 +14,7 @@
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" aria-current="page" href="{{route('home')}}">
             <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="me-2" style="height: 100px;">
-            <span><h2>Nishu Creation (Pvt) Ltd</h2></span>
+            <span><h2>Nisu Creations (Pvt) Ltd</h2></span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -39,7 +40,9 @@
         @csrf
         <div class="mb-3">
             <label for="seller_name" class="form-label">Seller Name</label>
-            <input type="text" class="form-control" id="seller_name" name="seller_name" required>
+            <select class="form-select item-select" id="item_0" name="items[0][name]" required>
+                <option value="Sun Lanka" selected>Sun Lanka (Pvt) Ltd </option>
+            </select>
         </div>
         <div id="items">
             <div class="item-row mb-3">
