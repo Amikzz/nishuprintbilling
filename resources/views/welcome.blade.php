@@ -35,7 +35,7 @@
 
 <!-- Billing Form -->
 <div class="container mt-5">
-    <form method="POST">
+    <form method="POST" action="{{ route('purchase-order-databases.store') }}">
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="reference_number" class="form-label">Customer Name</label>
