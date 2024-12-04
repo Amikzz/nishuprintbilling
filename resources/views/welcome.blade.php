@@ -13,8 +13,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" aria-current="page" href="{{route('home')}}">
-            <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="me-2" style="height: 100px;">
-            <span><h2>Nisu Creations (Pvt) Ltd</h2></span>
+            <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="me-2" style="height: 80px;">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -37,13 +36,27 @@
 <!-- Billing Form -->
 <div class="container mt-5">
     <form method="POST">
-        @csrf
-        <div class="mb-3">
-            <label for="seller_name" class="form-label">Seller Name</label>
-            <select class="form-select item-select" id="item_0" name="items[0][name]" required>
-                <option value="Sun Lanka" selected>Sun Lanka (Pvt) Ltd </option>
-            </select>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="reference_number" class="form-label">Customer Name</label>
+                <select class="form-select item-select" id="item_0" name="items[0][name]" required>
+                    <option value="Star Garments (Pvt) Ltd" selected>Star Garments (Pvt) Ltd</option>
+                </select>
+            </div>
         </div>
+        @csrf
+        <!-- Reference and Purchase Order Numbers -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="reference_number" class="form-label">Reference Number</label>
+                <input type="text" class="form-control" id="reference_number" name="reference_number" required>
+            </div>
+            <div class="col-md-6">
+                <label for="purchase_order_number" class="form-label">Purchase Order Number</label>
+                <input type="text" class="form-control" id="purchase_order_number" name="purchase_order_number" required>
+            </div>
+        </div>
+
         <div id="items">
             <div class="item-row mb-3">
                 <div class="row">
@@ -51,7 +64,7 @@
                         <label class="form-label">#</label>
                         <p class="item-number mt-2">1</p>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <label for="item_0" class="form-label">Item</label>
                         <select class="form-select item-select" id="item_0" name="items[0][name]" required>
                             <option value="">Select Item</option>
@@ -60,11 +73,31 @@
                             <option value="Item C" data-price="150">Item C - $150</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-1">
+                        <label for="color_0" class="form-label">Color</label>
+                        <input type="text" class="form-control" id="color_0" name="items[0][color]">
+                    </div>
+                    <div class="col-md-1">
+                        <label for="color_number_0" class="form-label">Color #</label>
+                        <input type="text" class="form-control" id="color_number_0" name="items[0][color_number]">
+                    </div>
+                    <div class="col-md-1">
+                        <label for="size_0" class="form-label">Size</label>
+                        <input type="text" class="form-control" id="size_0" name="items[0][size]">
+                    </div>
+                    <div class="col-md-1">
+                        <label for="style_0" class="form-label">Style</label>
+                        <input type="text" class="form-control" id="style_0" name="items[0][style]">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="upc_0" class="form-label">UPC</label>
+                        <input type="text" class="form-control" id="upc_0" name="items[0][upc]">
+                    </div>
+                    <div class="col-md-1">
                         <label for="quantity_0" class="form-label">Quantity</label>
                         <input type="number" class="form-control quantity" id="quantity_0" name="items[0][quantity]" min="1" value="1" required>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-1">
                         <label for="price_0" class="form-label">Price</label>
                         <input type="text" class="form-control price" id="price_0" name="items[0][price]" readonly>
                     </div>
@@ -100,16 +133,6 @@
             });
         }
 
-        $(document).on('change', '.item-select, .quantity', function () {
-            const row = $(this).closest('.item-row');
-            const selectedOption = row.find('.item-select option:selected');
-            const pricePerUnit = parseFloat(selectedOption.data('price')) || 0;
-            const quantity = parseInt(row.find('.quantity').val()) || 1;
-            const totalPrice = pricePerUnit * quantity;
-            row.find('.price').val(totalPrice.toFixed(2));
-            updateTotalPrice();
-        });
-
         $('#add-item').click(function () {
             const index = $('.item-row').length;
             const newRow = `
@@ -119,7 +142,7 @@
                             <label class="form-label">#</label>
                             <p class="item-number mt-2">${index + 1}</p>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                             <label for="item_${index}" class="form-label">Item</label>
                             <select class="form-select item-select" id="item_${index}" name="items[${index}][name]" required>
                                 <option value="">Select Item</option>
@@ -128,11 +151,31 @@
                                 <option value="Item C" data-price="150">Item C - $150</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-1">
+                            <label for="color_${index}" class="form-label">Color</label>
+                            <input type="text" class="form-control" id="color_${index}" name="items[${index}][color]" required>
+                        </div>
+                        <div class="col-md-1">
+                            <label for="color_number_${index}" class="form-label">Color #</label>
+                            <input type="text" class="form-control" id="color_number_${index}" name="items[${index}][color_number]" required>
+                        </div>
+                        <div class="col-md-1">
+                            <label for="size_${index}" class="form-label">Size</label>
+                            <input type="text" class="form-control" id="size_${index}" name="items[${index}][size]" required>
+                        </div>
+                        <div class="col-md-1">
+                            <label for="style_${index}" class="form-label">Style</label>
+                            <input type="text" class="form-control" id="style_${index}" name="items[${index}][style]" required>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="upc_${index}" class="form-label">UPC</label>
+                            <input type="text" class="form-control" id="upc_${index}" name="items[${index}][upc]" required>
+                        </div>
+                        <div class="col-md-1">
                             <label for="quantity_${index}" class="form-label">Quantity</label>
                             <input type="number" class="form-control quantity" id="quantity_${index}" name="items[${index}][quantity]" min="1" value="1" required>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-1">
                             <label for="price_${index}" class="form-label">Price</label>
                             <input type="text" class="form-control price" id="price_${index}" name="items[${index}][price]" readonly>
                         </div>
@@ -142,11 +185,22 @@
                     </div>
                 </div>`;
             $('#items').append(newRow);
+            updateItemNumbers();
         });
 
         $(document).on('click', '.remove-item', function () {
             $(this).closest('.item-row').remove();
             updateItemNumbers();
+            updateTotalPrice();
+        });
+
+        $(document).on('change', '.item-select, .quantity', function () {
+            const row = $(this).closest('.item-row');
+            const selectedOption = row.find('.item-select option:selected');
+            const pricePerUnit = parseFloat(selectedOption.data('price')) || 0;
+            const quantity = parseInt(row.find('.quantity').val()) || 1;
+            const totalPrice = pricePerUnit * quantity;
+            row.find('.price').val(totalPrice.toFixed(2));
             updateTotalPrice();
         });
 
