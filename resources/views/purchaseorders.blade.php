@@ -27,6 +27,11 @@
                 <li class="nav-item">
                     <a class="navbar-brand d-flex align-items-center" aria-current="page" href="{{route('purchase-order-databases.index')}}">Purchase Orders</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        Invoice & Delivery
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
@@ -75,6 +80,7 @@
             <th>Quantity</th>
             <th>Price</th>
             <th>Status</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -93,10 +99,34 @@
                 <td>{{ $order->po_qty }}</td>
                 <td>{{ $order->price }}</td>
                 <td>{{ $order->status }}</td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <!-- View Button -->
+                        <a href="#" class="btn btn-info btn-sm">
+                            View
+                        </a>
+                        <!-- Edit Button -->
+                        <a href="#" class="btn btn-warning btn-sm">
+                            Edit
+                        </a>
+                        <!-- Delete Button -->
+                        <form action="#" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this record?');">
+                                Delete
+                            </button>
+                        </form>
+                        <!-- Download Button -->
+                        <a href=#" class="btn btn-success btn-sm">
+                            Download
+                        </a>
+                    </div>
+                </td>
             </tr>
         @empty
             <tr>
-                <td colspan="13" class="text-center">No purchase orders found.</td>
+                <td colspan="14" class="text-center">No purchase orders found.</td>
             </tr>
         @endforelse
         </tbody>
