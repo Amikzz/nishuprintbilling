@@ -72,7 +72,7 @@
                             <!-- Download Invoice Button -->
                             <a href="{{ route('invoice.create', ['invoice_number' => $invoice->invoice_no]) }}" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Download Invoice</a>
                             <!-- Download Delivery Note Button -->
-                            <a href="#" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Download Delivery Note</a>
+                            <a href="{{route('deliverynote.create', ['invoice_number' => $invoice->invoice_no])}}" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Download Delivery Note</a>
                             <!-- Order Dispatched Button -->
                             <a href="#" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">Order Dispatched</a>
                             <!-- Order Completed Button -->

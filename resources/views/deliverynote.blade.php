@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice - {{ $invoice->invoice_no }}</title>
+    <title>Delivery Note - {{ $delivery_note_no }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,7 +17,7 @@
             margin: 0 auto;
             padding: 5px;
         }
-        .header{
+        .header {
             margin-bottom: 90px;
         }
         img {
@@ -31,7 +31,7 @@
             font-size: 9px;
             line-height: 1.1;
         }
-        .image{
+        .image {
             width: 40%;
             float: left;
         }
@@ -72,10 +72,9 @@
         .items-table th {
             background-color: #f4f4f4;
         }
-        .total {
-            text-align: right;
-            margin-top: 5px;
+        .total-row {
             font-weight: bold;
+            background-color: #f9f9f9;
         }
     </style>
 </head>
@@ -95,14 +94,18 @@
         </div>
     </div>
 
-    <!-- Invoice Heading -->
+    <!-- Delivery Note Heading -->
     <div class="title">
-        Invoice
+        Delivery Note
     </div>
 
-    <!-- Invoice Details -->
+    <!-- Delivery Note Details -->
     <div class="invoice-details">
         <table>
+            <tr>
+                <th>Delivery Note Number</th>
+                <td>{{ $delivery_note_no }}</td>
+            </tr>
             <tr>
                 <th>Invoice Number</th>
                 <td>{{ $invoice->invoice_no }}</td>
@@ -116,11 +119,11 @@
                 <td>{{ $invoice->po_number }}</td>
             </tr>
             <tr>
-                <th>Customer</th>
+                <th>Deliver to Customer</th>
                 <td>{{ $customer->name }}</td>
             </tr>
             <tr>
-                <th>Customer Address</th>
+                <th>Deliver to Address</th>
                 <td>{{ $customer->address }}</td>
             </tr>
         </table>
@@ -136,29 +139,30 @@
                 <th>Color</th>
                 <th>Size</th>
                 <th>Qty</th>
-                <th>Unit Price</th>
-                <th>Total</th>
             </tr>
             </thead>
             <tbody>
+            @php
+                $totalQuantity = 0;
+            @endphp
             @foreach ($purchaseOrderItemsDetails as $item)
+                @php
+                    $totalQuantity += $item->po_qty;
+                @endphp
                 <tr>
                     <td>{{ $item->item_code }}</td>
                     <td>{{ $item->item_name }}</td>
                     <td>{{ $item->color ?? '-' }}</td>
                     <td>{{ $item->size ?? '-' }}</td>
                     <td>{{ $item->po_qty }}</td>
-                    <td>{{ $item->unit_price }}</td>
-                    <td>{{ $item->price }}</td>
                 </tr>
             @endforeach
+            <tr class="total-row">
+                <td colspan="4" style="text-align: right;">Total Quantity:</td>
+                <td>{{ $totalQuantity }}</td>
+            </tr>
             </tbody>
         </table>
-    </div>
-
-    <!-- Total -->
-    <div class="total">
-        <p>Total: ${{ number_format($purchaseOrderItemsDetails->sum('price'), 2) }}</p>
     </div>
 </div>
 

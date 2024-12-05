@@ -7,8 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\PurchaseOrderDatabase;
 use App\Http\Requests\StorePurchaseOrderDatabaseRequest;
 use App\Http\Requests\UpdatePurchaseOrderDatabaseRequest;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Nette\Utils\Random;
 
 class PurchaseOrderDatabaseController extends Controller
 {
@@ -85,7 +87,7 @@ class PurchaseOrderDatabaseController extends Controller
 
             // Create an invoice record for the purchase order
             // You can customize the invoice number generation logic here
-            $invoiceNo = 'INV-' . strtoupper(Str::random(8)); // Example invoice number logic
+            $invoiceNo = 'INV-' . Date::now()->format('Ymd') . '-' . $validated['reference_number']; // Example invoice number logic
 
             InvoiceDatabase::create([
                 'date' => now(),                                     // Current date
