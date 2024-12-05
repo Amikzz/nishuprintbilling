@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\InvoiceDatabase;
 use Illuminate\Http\Request;
 use App\Models\PurchaseOrderDatabase;
 use App\Http\Requests\StorePurchaseOrderDatabaseRequest;
 use App\Http\Requests\UpdatePurchaseOrderDatabaseRequest;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class PurchaseOrderDatabaseController extends Controller
 {
@@ -58,9 +61,13 @@ class PurchaseOrderDatabaseController extends Controller
                 'items.*.price' => 'required|numeric|min:0',
             ]);
 
+            // Begin a transaction
+            DB::beginTransaction();
+
             // Loop through each item and save it to the database
             foreach ($validated['items'] as $item) {
-                PurchaseOrderDatabase::create([
+                // Create the purchase order
+                $purchaseOrder = PurchaseOrderDatabase::create([
                     'date' => now(),                                 // Current date
                     'reference_no' => $validated['reference_number'], // Reference number
                     'po_no' => $validated['purchase_order_number'],   // Purchase order number
@@ -76,16 +83,37 @@ class PurchaseOrderDatabaseController extends Controller
                 ]);
             }
 
+            // Create an invoice record for the purchase order
+            // You can customize the invoice number generation logic here
+            $invoiceNo = 'INV-' . strtoupper(Str::random(8)); // Example invoice number logic
+
+            InvoiceDatabase::create([
+                'date' => now(),                                     // Current date
+                'invoice_no' => $invoiceNo,                          // Generated invoice number
+                'customer_id' => 1,                                  // Placeholder for customer ID
+                'po_number' => $validated['purchase_order_number'],  // PO Number (foreign key)
+                'reference_no' => $validated['reference_number'],    // Reference number (foreign key)
+                'no_of_items' => count($validated['items']),         // Number of items
+            ]);
+
+            // Commit the transaction if everything is successful
+            DB::commit();
+
             // Redirect back with a success message
-            return redirect()->back()->with('success', 'Purchase order created successfully.');
+            return redirect()->back()->with('success', 'Purchase order and invoice created successfully.');
+
         } catch (\Exception $e) {
+            // Rollback the transaction in case of an error
+            DB::rollBack();
+
             // Log the error for debugging
-            \Log::error('Error creating purchase order: ' . $e->getMessage());
+            \Log::error('Error creating purchase order and invoice: ' . $e->getMessage());
 
             // Redirect back with an error message
-            return redirect()->back()->with('error', 'An error occurred while creating the purchase order. Please try again.');
+            return redirect()->back()->with('error', 'An error occurred while creating the purchase order and invoice. Please try again.');
         }
     }
+
 
     /**
      * Display the specified resource.

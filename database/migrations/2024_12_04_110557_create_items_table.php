@@ -12,7 +12,7 @@ class CreateItemsTable extends Migration
     public function up(): void
     {
         Schema::create('items', function (Blueprint $table) {
-            $table->integer('reference_no')->primary();
+            $table->integer('item_code')->primary();
             $table->string('name');
             $table->integer('price');
             $table->text('description')->nullable();

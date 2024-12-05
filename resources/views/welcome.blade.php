@@ -30,7 +30,7 @@
                     <a class="nav-link" href="{{route('purchase-order-databases.index')}}">Purchase Orders</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="{{route('invoice-databases.index')}}">
                         Invoice & Delivery
                     </a>
                 </li>

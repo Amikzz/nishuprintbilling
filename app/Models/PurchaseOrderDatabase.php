@@ -28,4 +28,11 @@ class PurchaseOrderDatabase extends Model
         'po_qty',
         'price',
         'customer_id',
-    ];}
+    ];
+
+    public function items()
+    {
+        return $this->hasMany(Items::class, 'item_code', 'item_code'); // Adjust field names as necessary
+    }
+
+}

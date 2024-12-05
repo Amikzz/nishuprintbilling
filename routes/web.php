@@ -7,3 +7,5 @@ Route::get('/', function () {
 })->name('home');
 
 Route::resource('purchase-order-databases', 'App\Http\Controllers\PurchaseOrderDatabaseController');
+Route::resource('invoice-databases', 'App\Http\Controllers\InvoiceDatabaseController');
+Route::get('invoice/create/{invoice_number}', 'App\Http\Controllers\InvoiceCreateController@createInvoice')->name('invoice.create');
