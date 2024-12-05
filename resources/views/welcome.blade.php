@@ -27,7 +27,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Previous Bills</a>
+                    <a class="nav-link" href="{{route('purchase-order-databases.index')}}">Purchase Orders</a>
                 </li>
             </ul>
         </div>

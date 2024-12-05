@@ -12,10 +12,22 @@ class PurchaseOrderDatabaseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        // Retrieve search query
+        $search = $request->input('search');
+
+        // Filter the purchase orders if a search query is provided
+        $purchaseOrders = PurchaseOrderDatabase::when($search, function ($query, $search) {
+            $query->where('reference_no', 'like', "%{$search}%")
+                ->orWhere('po_no', 'like', "%{$search}%")
+                ->orWhere('item_code', 'like', "%{$search}%");
+        })->paginate(10);
+
+        // Return the view with the purchase orders and the search query
+        return view('purchaseorders', compact('purchaseOrders', 'search'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -78,7 +90,7 @@ class PurchaseOrderDatabaseController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(PurchaseOrderDatabase $purchaseOrderDatabase)
+    public function show()
     {
         //
     }
