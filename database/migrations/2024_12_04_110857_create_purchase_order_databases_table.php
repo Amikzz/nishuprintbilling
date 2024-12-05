@@ -31,7 +31,7 @@ Class CreatePurchaseOrderDatabasesTable extends Migration
 
             // Foreign key constraints
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
-            $table->foreign('item_code')->references('item_code')->on('items')->onDelete('cascade');
+            $table->foreign('item_code')->references('reference_no')->on('items')->onDelete('cascade');
         });
     }
 

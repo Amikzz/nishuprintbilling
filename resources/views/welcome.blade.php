@@ -7,6 +7,7 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
 <!-- Navbar -->
@@ -32,6 +33,25 @@
         </div>
     </div>
 </nav>
+
+<!-- Flash Messages -->
+<div class="container mt-4">
+    <!-- Success Message -->
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    <!-- Error Message -->
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+</div>
 
 <!-- Billing Form -->
 <div class="container mt-5">
@@ -153,23 +173,23 @@
                         </div>
                         <div class="col-md-1">
                             <label for="color_${index}" class="form-label">Color</label>
-                            <input type="text" class="form-control" id="color_${index}" name="items[${index}][color]" required>
+                            <input type="text" class="form-control" id="color_${index}" name="items[${index}][color]">
                         </div>
                         <div class="col-md-1">
                             <label for="color_number_${index}" class="form-label">Color #</label>
-                            <input type="text" class="form-control" id="color_number_${index}" name="items[${index}][color_number]" required>
+                            <input type="text" class="form-control" id="color_number_${index}" name="items[${index}][color_number]">
                         </div>
                         <div class="col-md-1">
                             <label for="size_${index}" class="form-label">Size</label>
-                            <input type="text" class="form-control" id="size_${index}" name="items[${index}][size]" required>
+                            <input type="text" class="form-control" id="size_${index}" name="items[${index}][size]">
                         </div>
                         <div class="col-md-1">
                             <label for="style_${index}" class="form-label">Style</label>
-                            <input type="text" class="form-control" id="style_${index}" name="items[${index}][style]" required>
+                            <input type="text" class="form-control" id="style_${index}" name="items[${index}][style]">
                         </div>
                         <div class="col-md-2">
                             <label for="upc_${index}" class="form-label">UPC</label>
-                            <input type="text" class="form-control" id="upc_${index}" name="items[${index}][upc]" required>
+                            <input type="text" class="form-control" id="upc_${index}" name="items[${index}][upc]">
                         </div>
                         <div class="col-md-1">
                             <label for="quantity_${index}" class="form-label">Quantity</label>
