@@ -20,12 +20,12 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="navbar-brand d-flex align-items-center" aria-current="page" href="{{route('home')}}">
+                    <a class="nav-link" href="{{route('home')}}">
                         Home
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{route('purchase-order-databases.index')}}">Purchase Orders</a>
+                    <a class="navbar-brand d-flex align-items-center" aria-current="page" href="{{route('purchase-order-databases.index')}}">Purchase Orders</a>
                 </li>
             </ul>
         </div>
