@@ -70,7 +70,7 @@ class InvoiceCreateController extends Controller
         $pdf = Pdf::loadView('invoice', compact('invoice', 'purchaseOrderItemsDetails', 'customer'));
 
         // Ensure the storage directory exists
-        $filePath = storage_path('app/public/invoices/' . $invoice->id . '.pdf');
+        $filePath = storage_path('app/public/invoices/' . $invoice->invoice_no . '.pdf');
         if (!file_exists(dirname($filePath))) {
             mkdir(dirname($filePath), 0777, true); // Create the directory if it doesn't exist
         }

@@ -9,33 +9,49 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            font-size: 10px;
             color: #333;
         }
         .container {
             width: 100%;
-            margin: 20px auto;
-            padding: 20px;
+            margin: 0 auto;
+            padding: 5px;
         }
-        .header {
+        .header{
+            margin-bottom: 90px;
+        }
+        img {
+            max-width: 80px;
+            margin-right: 10px;
+        }
+        .details {
+            width: 40%;
+            float: right;
+            text-align: right;
+            font-size: 9px;
+            line-height: 1.1;
+        }
+        .image{
+            width: 40%;
+            float: left;
+        }
+        .title {
             text-align: center;
-            margin-bottom: 30px;
-        }
-        .header img {
-            max-width: 200px;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 5px 0;
+            text-transform: uppercase;
         }
         .invoice-details {
-            margin-bottom: 20px;
+            margin-bottom: 5px;
         }
         .invoice-details table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 10px;
         }
         .invoice-details th, .invoice-details td {
-            padding: 8px;
+            padding: 3px;
             text-align: left;
             border: 1px solid #ddd;
         }
@@ -45,10 +61,11 @@
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            font-size: 9px;
+            margin-top: 5px;
         }
         .items-table th, .items-table td {
-            padding: 8px;
+            padding: 3px;
             text-align: left;
             border: 1px solid #ddd;
         }
@@ -57,7 +74,7 @@
         }
         .total {
             text-align: right;
-            margin-top: 30px;
+            margin-top: 5px;
             font-weight: bold;
         }
     </style>
@@ -65,12 +82,25 @@
 <body>
 
 <div class="container">
+    <!-- Header -->
     <div class="header">
-        <img src="{{ public_path('images/logo.jpg') }}" alt="Logo" class="me-2" style="height: 50px;">
-        <br>
-        <h1>Invoice</h1>
+        <div class="details">
+            <p><strong>Nisu Creations (Pvt) Ltd</strong></p>
+            <p>493/5A, Makola North, Makola</p>
+            <p>Tel: 0094 1 4063878 / 0094 1 292656</p>
+            <p>Email: nisucreations@gmail.com</p>
+        </div>
+        <div class="image">
+            <img src="{{ public_path('images/logo.jpg') }}" alt="Logo">
+        </div>
     </div>
 
+    <!-- Invoice Heading -->
+    <div class="title">
+        Invoice
+    </div>
+
+    <!-- Invoice Details -->
     <div class="invoice-details">
         <table>
             <tr>
@@ -96,6 +126,7 @@
         </table>
     </div>
 
+    <!-- Items Table -->
     <div class="items">
         <table class="items-table">
             <thead>
@@ -104,7 +135,7 @@
                 <th>Name</th>
                 <th>Color</th>
                 <th>Size</th>
-                <th>Quantity</th>
+                <th>Qty</th>
                 <th>Unit Price</th>
                 <th>Total</th>
             </tr>
@@ -115,23 +146,20 @@
                     <td>{{ $item->item_code }}</td>
                     <td>{{ $item->item_name }}</td>
                     <td>{{ $item->color ?? '-' }}</td>
-                    <td>{{ $item->size ?? '-'}}</td>
+                    <td>{{ $item->size ?? '-' }}</td>
                     <td>{{ $item->po_qty }}</td>
-                    <td>{{$item->unit_price}}</td>
-                    <td>{{$item->price}}</td>
+                    <td>{{ $item->unit_price }}</td>
+                    <td>{{ $item->price }}</td>
                 </tr>
             @endforeach
             </tbody>
         </table>
     </div>
 
+    <!-- Total -->
     <div class="total">
         <p>Total: ${{ number_format($purchaseOrderItemsDetails->sum('price'), 2) }}</p>
     </div>
-
-{{--    <div class="total">--}}
-{{--        <p>Total: ${{ number_format($purchaseOrderItems->sum(function($item) { return $item->price; }), 2) }}</p>--}}
-{{--    </div>--}}
 </div>
 
 </body>
