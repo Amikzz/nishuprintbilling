@@ -66,7 +66,8 @@
 
 <div class="container">
     <div class="header">
-        <img src="{{ asset('images/logo.jpg') }}" alt="Company Logo">
+        <img src="{{ public_path('images/logo.jpg') }}" alt="Logo" class="me-2" style="height: 50px;">
+        <br>
         <h1>Invoice</h1>
     </div>
 
@@ -116,8 +117,8 @@
                     <td>{{ $item->color ?? '-' }}</td>
                     <td>{{ $item->size ?? '-'}}</td>
                     <td>{{ $item->po_qty }}</td>
-                    <td></td>
-                    <td></td>
+                    <td>{{$item->unit_price}}</td>
+                    <td>{{$item->price}}</td>
                 </tr>
             @endforeach
             </tbody>
@@ -125,7 +126,7 @@
     </div>
 
     <div class="total">
-        <p>Total: ${{ number_format($purchaseOrderItemsDetails->sum('total'), 2) }}</p>
+        <p>Total: ${{ number_format($purchaseOrderItemsDetails->sum('price'), 2) }}</p>
     </div>
 
 {{--    <div class="total">--}}

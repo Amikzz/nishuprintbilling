@@ -57,6 +57,7 @@ class InvoiceCreateController extends Controller
                 'size' => $orderItem->size,
                 'po_qty' => $orderItem->po_qty,
                 'unit_price' => $item ? $item->price : 0, // Handle if item not found
+                'price' => $orderItem->price,
                 'total' => $orderItem->quantity * ($item ? $item->price : 0)
             ];
         });
