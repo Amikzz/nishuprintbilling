@@ -62,7 +62,7 @@
                 <th class="px-4 py-2 text-left">Reference No</th>
                 <th class="px-4 py-2 text-left">PO Number</th>
                 <th class="px-4 py-2 text-left">Date</th>
-                <th class="px-4 py-2 text-left">Actions</th> <!-- New column for actions -->
+                <th class="px-4 py-2 text-left">Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -76,7 +76,7 @@
                         <div class="flex flex-col space-y-2">
                             <!-- Form for passing exchange rate -->
                             <form action="{{ route('invoice.create', ['invoice_number' => $invoice->invoice_no]) }}" method="GET" class="flex items-center space-x-2">
-                                <input type="number" name="exchange_rate" step="0.01" required placeholder="Exchange Rate"
+                                <input type="number" name="exchange_rate" step="0.001" required placeholder="Exchange Rate"
                                        class="p-1 border border-gray-300 rounded-md w-1/2">
                                 <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
                                     Download Invoice

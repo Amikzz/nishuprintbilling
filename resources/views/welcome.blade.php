@@ -94,8 +94,8 @@
                         <select class="form-select item-select" id="item_0" name="items[0][name]" required>
                             <option value="" disabled selected>Select Item</option>
                             @foreach($items as $item)
-                                <option value="{{ $item->name }}" data-price="{{ $item->price }}">
-                                    {{ $item->name }} - ${{ $item->price }}
+                                <option value="{{ $item->item_code }}" data-price="{{ $item->price }}">
+                                    {{ $item->item_code }} - ${{ $item->price }}
                                 </option>
                             @endforeach
                         </select>
@@ -126,7 +126,7 @@
                     </div>
                     <div class="col-md-1">
                         <label for="price_0" class="form-label">Price</label>
-                        <input type="text" class="form-control price" id="price_0" name="items[0][price]" readonly>
+                        <input type="text" class="form-control price" id="price_0" name="items[0][price]" readonly value="0.0000">
                     </div>
                     <div class="col-md-1 d-flex align-items-end">
                         <button type="button" class="btn btn-danger remove-item">Remove</button>
@@ -146,12 +146,12 @@
 <script>
     $(document).ready(function () {
         function updateTotalPrice() {
-            let total = 0;
+            let total = 0.000;
             $('.item-row').each(function () {
                 const price = parseFloat($(this).find('.price').val()) || 0;
                 total += price;
             });
-            $('#total_price').val(total.toFixed(2));
+            $('#total_price').val(total.toFixed(3));
         }
 
         function updateItemNumbers() {
@@ -174,8 +174,8 @@
                         <select class="form-select item-select" id="item_${index}" name="items[${index}][name]" required>
                             <option value="" disabled selected>Select Item</option>
                             @foreach($items as $item)
-            <option value="{{ $item->name }}" data-price="{{ $item->price }}">
-                                    {{ $item->name }} - ${{ $item->price }}
+            <option value="{{ $item->item_code }}" data-price="{{ $item->price }}">
+                                    {{ $item->item_code }} - ${{ $item->price }}
             </option>
 @endforeach
             </select>
@@ -229,7 +229,7 @@
             const pricePerUnit = parseFloat(selectedOption.data('price')) || 0;
             const quantity = parseInt(row.find('.quantity').val()) || 1;
             const totalPrice = pricePerUnit * quantity;
-            row.find('.price').val(totalPrice.toFixed(2));
+            row.find('.price').val(totalPrice.toFixed(3));
             updateTotalPrice();
         });
 
