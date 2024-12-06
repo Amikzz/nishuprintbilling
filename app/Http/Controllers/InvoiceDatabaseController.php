@@ -28,12 +28,22 @@ class InvoiceDatabaseController extends Controller
             });
         }
 
+        // Check for date range in the request
+        if ($request->has('start_date') && $request->has('end_date') && $request->start_date != '' && $request->end_date != '') {
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
+
+            // Apply date filter (assuming the `date` column in your database stores the invoice date)
+            $query->whereBetween('date', [$startDate, $endDate]);
+        }
+
         // Paginate the results, 10 records per page
         $invoices = $query->paginate(10);
 
         // Return the results to the view
         return view('invoicedelivery', compact('invoices'));
     }
+
 
 
     /**

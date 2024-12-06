@@ -32,7 +32,7 @@ class DeliveryNCreateController extends Controller
         }
 
         // Fetch customer details based on customer_id from the purchase order
-        $customer = Customer::find($purchaseOrder->customer_id);  // Assuming the customer_id is a foreign key in purchase_order_database
+        $customer = Customer::find($purchaseOrder->customer_id);
 
         if (!$customer) {
             return response()->json(['error' => 'Customer not found'], 404);
@@ -45,25 +45,23 @@ class DeliveryNCreateController extends Controller
 
         // Fetch corresponding items from the Item table
         $purchaseOrderItemsDetails = $purchaseOrderItems->map(function ($orderItem) {
-            // Get item data from the Items table using item_code (assuming it's the foreign key)
             $item = Items::where('item_code', $orderItem->item_code)->first();
 
-            // Return a merged object of both item and order details
             return (object) [
-                'item_code' => $item ? $item->item_code : 'N/A', // Handle if item not found
-                'item_name' => $item ? $item->name : 'Unknown Item', // Handle if item not found
+                'item_code' => $item ? $item->item_code : 'N/A',
+                'item_name' => $item ? $item->name : 'Unknown Item',
                 'color_no' => $orderItem->color_no,
                 'color' => $orderItem->color_name,
                 'size' => $orderItem->size,
                 'po_qty' => $orderItem->po_qty,
-                'unit_price' => $item ? $item->price : 0, // Handle if item not found
+                'unit_price' => $item ? $item->price : 0,
                 'price' => $orderItem->price,
                 'total' => $orderItem->quantity * ($item ? $item->price : 0)
             ];
         });
 
-        //create delivery note number
-        $invoiceIdWithoutPrefix = str_replace('INV-', '', $invoiceId);
+        // Create delivery note number
+        $invoiceIdWithoutPrefix = str_replace('NC-24-25-', '', $invoiceId);
         $invoice->delivery_note_no = 'DN-' . $invoiceIdWithoutPrefix;
         $invoice->save();
 
@@ -73,8 +71,18 @@ class DeliveryNCreateController extends Controller
             return response()->json(['error' => 'No items found for this purchase order'], 404);
         }
 
-        // Generate the invoice PDF
-        $pdf = Pdf::loadView('deliverynote', compact('invoice', 'purchaseOrderItemsDetails', 'customer', 'delivery_note_no'));
+        // Split items into chunks of 30 for pagination (similar to the invoice creation process)
+        $itemsPerPage = 30;
+        $pages = $purchaseOrderItemsDetails->chunk($itemsPerPage);
+
+        // Generate the delivery note PDF with paginated items
+        $pdf = Pdf::loadView('deliverynote', [
+            'invoice' => $invoice,
+            'pages' => $pages,
+            'customer' => $customer,
+            'delivery_note_no' => $delivery_note_no,
+            'purchaseOrderItemsDetails' => $purchaseOrderItemsDetails,
+        ]);
 
         // Ensure the storage directory exists
         $filePath = storage_path('app/public/deliverynotes/' . $invoice->delivery_note_no . '.pdf');

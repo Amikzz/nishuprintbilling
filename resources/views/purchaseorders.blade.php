@@ -11,13 +11,13 @@
 <!-- Navbar -->
 <nav class="bg-gray-800 p-4">
     <div class="flex items-center justify-between container mx-auto">
-        <a href="{{route('home')}}" class="flex items-center text-white">
+        <a href="{{ route('home') }}" class="flex items-center text-white">
             <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="mr-3" style="height: 80px;">
         </a>
         <div class="flex space-x-6 text-white">
-            <a href="{{route('home')}}" class="hover:text-gray-400">Home</a>
-            <a href="{{route('purchase-order-databases.index')}}" class="hover:text-gray-400 text-pink-500">Purchase Orders</a>
-            <a href="{{route('invoice-databases.index')}}" class="hover:text-gray-400">Invoice & Delivery</a>
+            <a href="{{ route('home') }}" class="hover:text-gray-400">Home</a>
+            <a href="{{ route('purchase-order-databases.index') }}" class="hover:text-gray-400 text-pink-500">Purchase Orders</a>
+            <a href="{{ route('invoice-databases.index') }}" class="hover:text-gray-400">Invoice & Delivery</a>
         </div>
     </div>
 </nav>
@@ -30,6 +30,11 @@
     <form action="{{ route('purchase-order-databases.index') }}" method="GET" class="mb-4 flex items-center space-x-4">
         <input type="text" name="search" value="{{ request()->search }}" placeholder="Search by Reference No, PO No, or Item Code"
                class="p-2 border border-gray-300 rounded-md w-1/2">
+
+        <!-- Date Range Filters -->
+        <input type="date" name="start_date" value="{{ request()->start_date }}" class="p-2 border border-gray-300 rounded-md">
+        <input type="date" name="end_date" value="{{ request()->end_date }}" class="p-2 border border-gray-300 rounded-md">
+
         <button type="submit" class="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">Search</button>
     </form>
 

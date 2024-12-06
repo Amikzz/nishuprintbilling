@@ -32,6 +32,11 @@
     <form action="{{ route('invoice-databases.index') }}" method="GET" class="mb-4 flex items-center space-x-4">
         <input type="text" name="search" value="{{ request()->search }}" placeholder="Search by Invoice No, Reference No, or PO Number"
                class="p-2 border border-gray-300 rounded-md w-1/2">
+
+        <input type="date" name="start_date" value="{{ request()->start_date }}" class="p-2 border border-gray-300 rounded-md">
+
+        <input type="date" name="end_date" value="{{ request()->end_date }}" class="p-2 border border-gray-300 rounded-md">
+
         <button type="submit" class="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">Search</button>
     </form>
 
@@ -80,15 +85,15 @@
                             <!-- Download Delivery Note Button -->
                             <a href="{{ route('deliverynote.create', ['invoice_number' => $invoice->invoice_no]) }}"
                                class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 w-auto text-center">
-                                Delivery Note
+                                Download Delivery Note
                             </a>
                             <!-- Order Dispatched Button -->
                             <a href="#" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 w-auto text-center">
-                                Dispatched
+                                Order Dispatched
                             </a>
                             <!-- Order Completed Button -->
                             <a href="#" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 w-auto text-center">
-                                Completed
+                                Order Completed
                             </a>
                         </div>
                     </td>

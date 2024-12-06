@@ -19,19 +19,29 @@ class PurchaseOrderDatabaseController extends Controller
      */
     public function index(Request $request)
     {
-        // Retrieve search query
+        // Retrieve search query and date range filters
         $search = $request->input('search');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
 
-        // Filter the purchase orders if a search query is provided
+        // Build the query
         $purchaseOrders = PurchaseOrderDatabase::when($search, function ($query, $search) {
             $query->where('reference_no', 'like', "%{$search}%")
                 ->orWhere('po_no', 'like', "%{$search}%")
                 ->orWhere('item_code', 'like', "%{$search}%");
-        })->paginate(10);
+        })
+            ->when($startDate, function ($query, $startDate) {
+                $query->whereDate('date', '>=', $startDate); // Filter by start date
+            })
+            ->when($endDate, function ($query, $endDate) {
+                $query->whereDate('date', '<=', $endDate); // Filter by end date
+            })
+            ->paginate(10); // Paginate results
 
-        // Return the view with the purchase orders and the search query
-        return view('purchaseorders', compact('purchaseOrders', 'search'));
+        // Return the view with purchase orders and the search/query parameters
+        return view('purchaseorders', compact('purchaseOrders', 'search', 'startDate', 'endDate'));
     }
+
 
 
     /**
