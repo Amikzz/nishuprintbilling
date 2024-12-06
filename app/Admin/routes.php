@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Route;
+use OpenAdmin\Admin\Facades\Admin;
 
 Admin::routes();
 
@@ -12,5 +14,6 @@ Route::group([
 ], function (Router $router) {
 
     $router->get('/', 'HomeController@index')->name('home');
-
+    $router->get('/items', 'ItemsController@index')->name('items');
+    $router->post('/items', 'ItemsController@store')->name('items.store');
 });

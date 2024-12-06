@@ -26,7 +26,8 @@ class HomeController extends Controller
 
                 //a box to keep these two contents separate
                 $row->column(4, function (Column $column) {
-
+                    //default
+                    $column->append(Dashboard::extensions());
                 });
 
                 $row->column(4, function (Column $column) {
