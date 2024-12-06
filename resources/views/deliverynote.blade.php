@@ -194,9 +194,12 @@
                     </tr>
                 @endforeach
                 <tr class="total-row">
-                    <td colspan="4" style="text-align: right;">Total Quantity:</td>
+                    <td colspan="4" style="text-align: right;">Page Total Quantity:</td>
                     <td>{{ $totalQuantity }}</td>
                 </tr>
+                <tr class="total-row">
+                    <td colspan="4" style="text-align: right">Total Quantity </td>
+                    <td>{{ $purchaseOrderItemsDetails->sum('po_qty') }}</td>></tr>
                 </tbody>
             </table>
         </div>
