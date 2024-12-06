@@ -9,4 +9,6 @@ class Items extends Model
 {
     /** @use HasFactory<\Database\Factories\ItemsFactory> */
     use HasFactory;
+
+    protected $fillable = ['item_code', 'name', 'price', 'description'];
 }

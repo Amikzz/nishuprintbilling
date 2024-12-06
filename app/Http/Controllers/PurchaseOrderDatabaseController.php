@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\InvoiceDatabase;
+use App\Models\Items;
 use Illuminate\Http\Request;
 use App\Models\PurchaseOrderDatabase;
 use App\Http\Requests\StorePurchaseOrderDatabaseRequest;
@@ -49,7 +50,8 @@ class PurchaseOrderDatabaseController extends Controller
      */
     public function create()
     {
-        //
+        $items = Items::all(); // Fetch all items from the database
+        return view('welcome', compact('items'));
     }
 
     /**
@@ -123,7 +125,7 @@ class PurchaseOrderDatabaseController extends Controller
             \Log::error('Error creating purchase order and invoice: ' . $e->getMessage());
 
             // Redirect back with an error message
-            return redirect()->back()->with('error', 'An error occurred while creating the purchase order and invoice. Please try again.');
+            return redirect()->back()->with('error', 'An error occurred while creating the purchase order and invoice. Please try again.' .$e->getMessage());
         }
     }
 

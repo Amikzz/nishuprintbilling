@@ -2,9 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', 'App\Http\Controllers\PurchaseOrderDatabaseController@create')->name('home');
 
 Route::resource('purchase-order-databases', 'App\Http\Controllers\PurchaseOrderDatabaseController');
 Route::resource('invoice-databases', 'App\Http\Controllers\InvoiceDatabaseController');

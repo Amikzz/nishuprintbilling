@@ -92,10 +92,12 @@
                     <div class="col-md-2">
                         <label for="item_0" class="form-label">Item</label>
                         <select class="form-select item-select" id="item_0" name="items[0][name]" required>
-                            <option value="">Select Item</option>
-                            <option value="Item A" data-price="100">Item A - $100</option>
-                            <option value="Item B" data-price="200">Item B - $200</option>
-                            <option value="Item C" data-price="150">Item C - $150</option>
+                            <option value="" disabled selected>Select Item</option>
+                            @foreach($items as $item)
+                                <option value="{{ $item->name }}" data-price="{{ $item->price }}">
+                                    {{ $item->name }} - ${{ $item->price }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="col-md-1">
@@ -168,16 +170,18 @@
                             <p class="item-number mt-2">${index + 1}</p>
                         </div>
                         <div class="col-md-2">
-                            <label for="item_${index}" class="form-label">Item</label>
-                            <select class="form-select item-select" id="item_${index}" name="items[${index}][name]" required>
-                                <option value="">Select Item</option>
-                                <option value="Item A" data-price="100">Item A - $100</option>
-                                <option value="Item B" data-price="200">Item B - $200</option>
-                                <option value="Item C" data-price="150">Item C - $150</option>
-                            </select>
-                        </div>
-                        <div class="col-md-1">
-                            <label for="color_${index}" class="form-label">Color</label>
+                        <label for="item_${index}" class="form-label">Item</label>
+                        <select class="form-select item-select" id="item_${index}" name="items[${index}][name]" required>
+                            <option value="" disabled selected>Select Item</option>
+                            @foreach($items as $item)
+            <option value="{{ $item->name }}" data-price="{{ $item->price }}">
+                                    {{ $item->name }} - ${{ $item->price }}
+            </option>
+@endforeach
+            </select>
+        </div>
+            <div class="col-md-1">
+                <label for="color_${index}" class="form-label">Color</label>
                             <input type="text" class="form-control" id="color_${index}" name="items[${index}][color]">
                         </div>
                         <div class="col-md-1">
