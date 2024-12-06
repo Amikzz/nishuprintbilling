@@ -68,15 +68,28 @@
                     <td class="px-4 py-2">{{ $invoice->po_number }}</td>
                     <td class="px-4 py-2">{{ $invoice->date }}</td>
                     <td class="px-4 py-2">
-                        <div class="flex space-x-2">
-                            <!-- Download Invoice Button -->
-                            <a href="{{ route('invoice.create', ['invoice_number' => $invoice->invoice_no]) }}" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Download Invoice</a>
+                        <div class="flex flex-col space-y-2">
+                            <!-- Form for passing exchange rate -->
+                            <form action="{{ route('invoice.create', ['invoice_number' => $invoice->invoice_no]) }}" method="GET" class="flex items-center space-x-2">
+                                <input type="number" name="exchange_rate" step="0.01" required placeholder="Exchange Rate"
+                                       class="p-1 border border-gray-300 rounded-md w-1/2">
+                                <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                                    Download Invoice
+                                </button>
+                            </form>
                             <!-- Download Delivery Note Button -->
-                            <a href="{{route('deliverynote.create', ['invoice_number' => $invoice->invoice_no])}}" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Download Delivery Note</a>
+                            <a href="{{ route('deliverynote.create', ['invoice_number' => $invoice->invoice_no]) }}"
+                               class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 w-auto text-center">
+                                Delivery Note
+                            </a>
                             <!-- Order Dispatched Button -->
-                            <a href="#" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">Order Dispatched</a>
+                            <a href="#" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 w-auto text-center">
+                                Dispatched
+                            </a>
                             <!-- Order Completed Button -->
-                            <a href="#" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Order Completed</a>
+                            <a href="#" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 w-auto text-center">
+                                Completed
+                            </a>
                         </div>
                     </td>
                 </tr>

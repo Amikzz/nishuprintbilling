@@ -87,7 +87,8 @@ class PurchaseOrderDatabaseController extends Controller
 
             // Create an invoice record for the purchase order
             // You can customize the invoice number generation logic here
-            $invoiceNo = 'INV-' . Date::now()->format('Ymd') . '-' . $validated['reference_number']; // Example invoice number logic
+            $randomNumber = rand(1000, 9999);  // Generate a random 4-digit number
+            $invoiceNo = 'NC-' . '24-25' . '-' . $randomNumber . '-' . $validated['reference_number']; // Updated invoice number logic
 
             InvoiceDatabase::create([
                 'date' => now(),                                     // Current date
