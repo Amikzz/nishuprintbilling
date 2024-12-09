@@ -62,6 +62,7 @@
                 <th class="px-4 py-2 text-left">Reference No</th>
                 <th class="px-4 py-2 text-left">PO Number</th>
                 <th class="px-4 py-2 text-left">Date</th>
+                <th class="px-4 py-2 text-left">Status</th>
                 <th class="px-4 py-2 text-left">Actions</th>
             </tr>
             </thead>
@@ -72,6 +73,14 @@
                     <td class="px-4 py-2">{{ $invoice->reference_no }}</td>
                     <td class="px-4 py-2">{{ $invoice->po_number }}</td>
                     <td class="px-4 py-2">{{ $invoice->date }}</td>
+                    <td class="px-4 py-2
+                    {{
+                        $invoice->status === 'Order Dispatched' ? 'text-yellow-600' :
+                        ($invoice->status === 'Pending' ? 'text-blue-500' :
+                        ($invoice->status === 'Order Complete' ? 'text-green-500' : ''))
+                    }}">
+                        {{ $invoice->status }}
+                    </td>
                     <td class="px-4 py-2">
                         <div class="flex flex-col space-y-2">
                             <!-- Form for passing exchange rate -->
@@ -87,14 +96,24 @@
                                class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 w-auto text-center">
                                 Download Delivery Note
                             </a>
+                            @if($invoice->status == 'Pending')
                             <!-- Order Dispatched Button -->
-                            <a href="#" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 w-auto text-center">
-                                Order Dispatched
-                            </a>
-                            <!-- Order Completed Button -->
-                            <a href="#" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 w-auto text-center">
-                                Order Completed
-                            </a>
+                            <form action="{{ route('order.dispatch', $invoice->id) }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 w-full text-center">
+                                    Order Dispatched
+                                </button>
+                            </form>
+                            @elseif($invoice->status == 'Order Dispatched')
+                                <!-- Order Completed Button -->
+                                <form action="{{ route('order.complete', $invoice->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-yellow-600 w-full text-center">
+                                        Order Completed
+                                    </button>
+                                </form>
+                            @endif
+
                         </div>
                     </td>
                 </tr>

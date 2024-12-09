@@ -88,8 +88,9 @@
                     <td class="px-4 py-2">{{ $order->po_qty }}</td>
                     <td class="px-4 py-2">{{ $order->price }}</td>
                     <td class="px-4 py-2
+                        {{ $order->status === 'Pending' ? 'text-blue-500' : '' }}
                         {{ $order->status === 'Artwork_needed' ? 'text-red-500' : '' }}
-                        {{ $order->status === 'Artwork_sent' ? 'text-yellow-500' : '' }}
+                        {{ $order->status === 'Artwork_sent' ? 'text-yellow-600' : '' }}
                         {{ $order->status === 'Artwork_approved' ? 'text-green-500' : '' }}">
                         {{ $order->status }}
                     </td>

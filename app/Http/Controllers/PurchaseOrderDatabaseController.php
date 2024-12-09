@@ -109,6 +109,7 @@ class PurchaseOrderDatabaseController extends Controller
                 'po_number' => $validated['purchase_order_number'],  // PO Number (foreign key)
                 'reference_no' => $validated['reference_number'],    // Reference number (foreign key)
                 'no_of_items' => count($validated['items']),         // Number of items
+                'status' => 'Pending',                               // Initial status
             ]);
 
             // Commit the transaction if everything is successful

@@ -105,4 +105,52 @@ class InvoiceCreateController extends Controller
         // Redirect to the invoice index page with the success message
         return redirect()->route('invoice-databases.index');
     }
+
+    public function orderDispatch($id)
+    {
+        try {
+            // Find the invoice by ID
+            $invoice = InvoiceDatabase::findOrFail($id);
+
+            // Update the status to "Order Dispatched"
+            $invoice->status = 'Order Dispatched';
+            $invoice->save();
+
+            // Flash a success message
+            session()->flash('success', 'Invoice status updated to Order Dispatched.');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Flash an error message if the invoice is not found
+            session()->flash('error', 'Invoice not found.');
+        } catch (\Exception $e) {
+            // Flash a general error message for any other exceptions
+            session()->flash('error', 'An error occurred while updating the invoice status.');
+        }
+
+        // Redirect back to the previous page
+        return redirect()->back();
+    }
+
+    public function ordercomplete($id)
+    {
+        try {
+            // Find the invoice by ID
+            $invoice = InvoiceDatabase::findOrFail($id);
+
+            // Update the status to "Order Dispatched"
+            $invoice->status = 'Order Complete';
+            $invoice->save();
+
+            // Flash a success message
+            session()->flash('success', 'Invoice status updated to Order Complete.');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Flash an error message if the invoice is not found
+            session()->flash('error', 'Invoice not found.');
+        } catch (\Exception $e) {
+            // Flash a general error message for any other exceptions
+            session()->flash('error', 'An error occurred while updating the invoice status.');
+        }
+
+        // Redirect back to the previous page
+        return redirect()->back();
+    }
 }
