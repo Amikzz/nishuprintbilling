@@ -87,23 +87,51 @@
                     <td class="px-4 py-2">{{ $order->upc_no ?? '-' }}</td>
                     <td class="px-4 py-2">{{ $order->po_qty }}</td>
                     <td class="px-4 py-2">{{ $order->price }}</td>
-                    <td class="px-4 py-2">{{ $order->status }}</td>
+                    <td class="px-4 py-2
+                        {{ $order->status === 'Artwork_needed' ? 'text-red-500' : '' }}
+                        {{ $order->status === 'Artwork_sent' ? 'text-yellow-500' : '' }}
+                        {{ $order->status === 'Artwork_approved' ? 'text-green-500' : '' }}">
+                        {{ $order->status }}
+                    </td>
+
                     <td class="px-4 py-2">
                         <div class="flex space-x-2">
-                            <!-- View Button -->
-                            <a href="#" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">View</a>
-                            <!-- Edit Button -->
-                            <a href="#" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">Edit</a>
+
+                            @if($order->status === 'Pending')
+                                <form action="{{ route('purchaseorder.artwork', $order->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                                        <center>Artwork Need</center>
+                                    </button>
+                                </form>
+                            @endif
+
+                            @if($order->status === 'Artwork_needed')
+                                <form action="{{ route('purchaseorder.artwork', $order->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
+                                        <center>Artwork Sent</center>
+                                    </button>
+                                </form>
+                            @endif
+
+                            @if($order->status === 'Artwork_sent')
+                                <form action="{{ route('purchaseorder.artworkdone', $order->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+                                        <center>Artwork Approved</center>
+                                    </button>
+                                </form>
+                            @endif
+
                             <!-- Delete Button -->
-                            <form action="#" method="POST" class="inline">
+                            <form action="{{ route('purchase-order-databases.destroy', $order->id) }}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600" onclick="return confirm('Are you sure you want to delete this record?');">
-                                    Delete
+                                    <center>Delete Order</center>
                                 </button>
                             </form>
-                            <!-- Download Button -->
-                            <a href="#" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Download</a>
                         </div>
                     </td>
                 </tr>
