@@ -179,15 +179,15 @@
 <body>
 
 <div class="container">
-        <!-- Button to open modal -->
-    <button onclick="openModal()" class="home-button">Add Item</button>
+    <!-- Button to open modal for Add Item -->
+    <button onclick="openAddModal()" class="home-button">Add Item</button>
 
     <!-- Modal Form for Adding Item -->
-    <div id="itemModal" class="modal">
+    <div id="addItemModal" class="modal">
         <div class="modal-content">
-            <span onclick="closeModal()" class="close">&times;</span>
+            <span onclick="closeModal('addItemModal')" class="close">&times;</span>
             <h2>Add New Item</h2>
-            <form method="POST" action="{{route("admin.items.store")}}">
+            <form method="POST" action="{{route('admin.items.store')}}">
                 @csrf
                 <div>
                     <label for="item_code">Item Code (Reference)</label>
@@ -207,7 +207,39 @@
                 </div>
                 <div>
                     <button type="submit" class="btn btn-primary">Submit</button>
-                    <button type="button" onclick="closeModal()" class="btn btn-danger">Cancel</button>
+                    <button type="button" onclick="closeModal('addItemModal')" class="btn btn-danger">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Form for Editing Item -->
+    <div id="editItemModal" class="modal">
+        <div class="modal-content">
+            <span onclick="closeModal('editItemModal')" class="close">&times;</span>
+            <h2>Edit Item</h2>
+            <form method="POST" action="{{ route('admin.items.update', ':item_code') }}">
+                @csrf
+                @method('PUT')
+                <div>
+                    <label for="edit_item_code">Item Code (Reference)</label>
+                    <input type="text" name="item_code" id="edit_item_code" required class="form-control" readonly>
+                </div>
+                <div>
+                    <label for="edit_name">Item Name</label>
+                    <input type="text" name="name" id="edit_name" required class="form-control">
+                </div>
+                <div>
+                    <label for="edit_description">Description</label>
+                    <textarea name="description" id="edit_description" class="form-control"></textarea>
+                </div>
+                <div>
+                    <label for="edit_price">Price</label>
+                    <input type="number" name="price" id="edit_price" required class="form-control" step="0.0001">
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="button" onclick="closeModal('editItemModal')" class="btn btn-danger">Cancel</button>
                 </div>
             </form>
         </div>
@@ -217,7 +249,7 @@
     <table>
         <thead>
         <tr>
-            <th>ID</th>
+            <th>Item Code</th>
             <th>Name</th>
             <th>Description</th>
             <th>Price</th>
@@ -234,8 +266,8 @@
                 <td>{{ $item->price }}</td>
                 <td>{{ $item->created_at }}</td>
                 <td>
-                    <a href="#" class="btn btn-primary">Edit</a>
-                    <form action="#" method="POST" style="display:inline-block;">
+                    <button class="btn btn-primary" onclick="openEditModal('{{ $item->item_code }}', '{{ $item->name }}', '{{ $item->description }}', {{ $item->price }})">Edit</button>
+                    <form action="{{ route('admin.items.destroy', $item->item_code) }}" method="POST" style="display:inline-block;">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger">Delete</button>
@@ -251,27 +283,36 @@
 </div>
 
 <script>
-    // Get modal element
-    var modal = document.getElementById("itemModal");
+    // Get modal elements
+    var addItemModal = document.getElementById("addItemModal");
+    var editItemModal = document.getElementById("editItemModal");
 
-    // Function to open the modal
-    function openModal() {
-        // Ensure that only one modal is open
-        if (modal.style.display !== "flex") {
-            modal.style.display = "flex";
+    // Function to open the "Add Item" modal
+    function openAddModal() {
+        if (addItemModal.style.display !== "flex") {
+            addItemModal.style.display = "flex";
         }
     }
 
-    // Function to close the modal
-    function closeModal() {
-        modal.style.display = "none";
+    // Function to open the "Edit Item" modal and populate the fields
+    function openEditModal(item_code, name, description, price) {
+        var form = document.querySelector('#editItemModal form');
+        form.action = form.action.replace(':item_code', item_code);  // Update the form action
+
+        // Populate the form fields with the current item values
+        document.getElementById('edit_item_code').value = item_code;
+        document.getElementById('edit_name').value = name;
+        document.getElementById('edit_description').value = description;
+        document.getElementById('edit_price').value = price;
+
+        if (editItemModal.style.display !== "flex") {
+            editItemModal.style.display = "flex";
+        }
     }
 
-    // Close modal if clicked outside the modal
-    window.onclick = function(event) {
-        if (event.target === modal) {
-            closeModal();
-        }
+    // Function to close any modal
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = "none";
     }
 </script>
 

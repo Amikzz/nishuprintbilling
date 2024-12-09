@@ -56,4 +56,46 @@ class ItemsController extends Controller
         }
     }
 
+    public function update(Request $request, $item_code)
+    {
+        // Validate the request
+        $validatedData = $request->validate([
+            'item_code' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric',
+        ]);
+
+        // Find the item by item_code
+        $item = Items::where('item_code', $item_code)->first();
+
+        if (!$item) {
+            // Handle case where item is not found
+            return redirect()->route('admin.items');
+        }
+
+        // Manually update the fields
+        $item->name = $validatedData['name'];
+        $item->description = $validatedData['description'];
+        $item->price = $validatedData['price'];
+
+        // Save the updated item
+        $item->save();
+
+        // Redirect to the item list
+        return redirect()->route('admin.items');
+    }
+
+
+    public function destroy($item_code)
+    {
+        // Directly delete the item by item_code
+        $deleted = Items::where('item_code', $item_code)->delete();
+
+        if ($deleted) {
+            return redirect()->route('admin.items');
+        }
+
+        return redirect()->route('admin.items');
+    }
 }
