@@ -57,6 +57,8 @@ class InvoiceCreateController extends Controller
         $purchaseOrderItemsDetails = $purchaseOrderItems->map(function ($orderItem) {
             $item = Items::where('item_code', $orderItem->item_code)->first();
 
+            $unit_price = ($orderItem->price) / $orderItem->po_qty;
+
             return (object) [
                 'item_code' => $item ? $item->item_code : 'N/A',
                 'item_name' => $item ? $item->name : 'Unknown Item',
@@ -64,8 +66,8 @@ class InvoiceCreateController extends Controller
                 'color' => $orderItem->color_name,
                 'size' => $orderItem->size,
                 'po_qty' => $orderItem->po_qty,
-                'unit_price' => $item ? $item->price : 0,
-                'price' => $orderItem->price,
+                'unit_price' => $unit_price,
+                'price' => ($unit_price*$orderItem->po_qty),
             ];
         });
 

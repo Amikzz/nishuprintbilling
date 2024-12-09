@@ -8,33 +8,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
-<body>
+<body class="bg-gray-100">
+
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" aria-current="page" href="{{route('home')}}">
-            <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="me-2" style="height: 80px;">
+<nav class="bg-gray-800 p-3">
+    <div class="flex items-center justify-between container mx-auto">
+        <a href="{{ route('home') }}" class="flex items-center text-white">
+            <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="mr-3" style="height: 80px;">
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="navbar-brand d-flex align-items-center" aria-current="page" href="{{route('home')}}">
-                        Home
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{route('purchase-order-databases.index')}}">Purchase Orders</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{route('invoice-databases.index')}}">
-                        Invoice & Delivery
-                    </a>
-                </li>
-            </ul>
+        <div class="flex space-x-6 text-white">
+            <a href="{{ route('home') }}" class="hover:text-gray-400  text-pink-500">Home</a>
+            <a href="{{ route('purchase-order-databases.index') }}" class="hover:text-gray-400">Purchase Orders</a>
+            <a href="{{ route('invoice-databases.index') }}" class="hover:text-gray-400">Invoice & Delivery</a>
+            <a  href="{{ route('reports.page') }}" class="hover:text-gray-400">Reports</a>
         </div>
     </div>
 </nav>
