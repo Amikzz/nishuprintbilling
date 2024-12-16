@@ -27,6 +27,8 @@ Class CreatePurchaseOrderDatabasesTable extends Migration
             $table->string('upc_no')->nullable(); // UPC number
             $table->string('reference_no'); // Reference number
             $table->string('status')->default('Pending'); // Purchase order status
+            $table->string('more1')->nullable(); // Additional information
+            $table->string('more2')->nullable(); // Additional information
             $table->timestamps(); // Created_at and updated_at timestamps
 
             // Foreign key constraints
