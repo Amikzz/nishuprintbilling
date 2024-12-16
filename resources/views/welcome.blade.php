@@ -177,15 +177,32 @@
 
         // Update price when an item is selected
         $(document).on('change', '.item-select', function () {
-            const rowIndex = $(this).closest('tr').index(); // Get the row index
             const selectedOption = $(this).find('option:selected');
-            const price = parseFloat(selectedOption.data('price')) || 0;
+            const pricePerUnit = parseFloat(selectedOption.data('price')) || 0;
+            const row = $(this).closest('tr');
+            const quantity = parseInt(row.find('.quantity').val()) || 1;
 
-            // Update the price field for the selected row
-            $(this).closest('tr').find('.price').val(price.toFixed(4));
+            // Update price field based on selected item and quantity
+            const totalItemPrice = pricePerUnit * quantity;
+            row.find('.price').val(totalItemPrice.toFixed(4));
 
             updateTotalPrice(); // Recalculate total price
         });
+
+        // Update price when quantity is changed
+        $(document).on('input', '.quantity', function () {
+            const row = $(this).closest('tr');
+            const selectedOption = row.find('.item-select option:selected');
+            const pricePerUnit = parseFloat(selectedOption.data('price')) || 0;
+            const quantity = parseInt($(this).val()) || 1;
+
+            // Update price field based on new quantity
+            const totalItemPrice = pricePerUnit * quantity;
+            row.find('.price').val(totalItemPrice.toFixed(4));
+
+            updateTotalPrice(); // Recalculate total price
+        });
+
 
         $('#add-item').click(function () {
             const index = $('.item-row').length;
