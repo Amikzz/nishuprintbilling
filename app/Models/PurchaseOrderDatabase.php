@@ -28,6 +28,8 @@ class PurchaseOrderDatabase extends Model
         'po_qty',
         'price',
         'customer_id',
+        'more1',
+        'more2'
     ];
 
     public function items()

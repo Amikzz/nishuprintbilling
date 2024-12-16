@@ -97,13 +97,28 @@
                         <label for="color_number_0" class="form-label">Color #</label>
                         <input type="text" class="form-control" id="color_number_0" name="items[0][color_number]">
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-md-2">
                         <label for="size_0" class="form-label">Size</label>
-                        <input type="text" class="form-control" id="size_0" name="items[0][size]">
+                        <select class="form-select" id="size_0" name="items[0][size]">
+                            <option value="2x2.25">2" x 2.25" (57.15x50.8mm)</option>
+                            <option value="1x1.5">1" x 1.5" (38x25mm)</option>
+                            <option value="1.5x1.5">1.5" x 1.5" (38x38mm)</option>
+                            <option value="2x1.5">2" x 1.5" (50x40mm)</option>
+                            <option value="2x1.5_2">2" x 1.5" (50x38mm)</option>
+                            <option value="2x1.75">2" x 1.75" (50x45mm)</option>
+                            <option value="2x2">2" x 2" (50x50mm)</option>
+                            <option value="3x2">3" x 2" (75x50mm)</option>
+                            <option value="3.5x1.75">3.5" x 1.75" (90x45mm)</option>
+                        </select>
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-md-2">
                         <label for="style_0" class="form-label">Style</label>
                         <input type="text" class="form-control" id="style_0" name="items[0][style]">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-1">
+                        <!-- Just for a space -->
                     </div>
                     <div class="col-md-2">
                         <label for="upc_0" class="form-label">UPC</label>
@@ -116,6 +131,14 @@
                     <div class="col-md-1">
                         <label for="price_0" class="form-label">Price</label>
                         <input type="text" class="form-control price" id="price_0" name="items[0][price]" readonly value="0.0000">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="more1_0" class="form-label">More 1</label>
+                        <input type="text" class="form-control" id="more1_0" name="items[0][more1]">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="more2_0" class="form-label">More 2</label>
+                        <input type="text" class="form-control" id="more2_0" name="items[0][more2]">
                     </div>
                     <div class="col-md-1 d-flex align-items-end">
                         <button type="button" class="btn btn-danger remove-item">Remove</button>
@@ -151,60 +174,93 @@
 
         $('#add-item').click(function () {
             const index = $('.item-row').length;
+
+            // Get the last selected item's value and price
+            const lastRow = $('.item-row').last();
+            const lastSelectedItem = lastRow.find('.item-select option:selected');
+            const lastItemCode = lastSelectedItem.val() || ''; // Fallback to empty if none selected
+            const lastItemPrice = parseFloat(lastSelectedItem.data('price')) || 0;
+
             const newRow = `
-                <div class="item-row mb-3">
-                    <div class="row">
-                        <div class="col-md-1">
-                            <label class="form-label">#</label>
-                            <p class="item-number mt-2">${index + 1}</p>
-                        </div>
-                        <div class="col-md-2">
-                        <label for="item_${index}" class="form-label">Item</label>
-                        <select class="form-select item-select" id="item_${index}" name="items[${index}][name]" required>
-                            <option value="" disabled selected>Select Item</option>
-                            @foreach($items as $item)
-            <option value="{{ $item->item_code }}" data-price="{{ $item->price }}">
-                                    {{ $item->item_code }} - ${{ $item->price }}
+    <div class="item-row mb-3">
+        <div class="row">
+            <div class="col-md-1">
+                <label class="form-label">#</label>
+                <p class="item-number mt-2">${index + 1}</p>
+            </div>
+            <div class="col-md-2">
+                <label for="item_${index}" class="form-label">Item</label>
+                <select class="form-select item-select" id="item_${index}" name="items[${index}][name]" required>
+                    <option value="" disabled>Select Item</option>
+                    @foreach($items as $item)
+            <option value="{{ $item->item_code }}" data-price="{{ $item->price }}"
+                        ${'{{ $item->item_code }}' === lastItemCode ? 'selected' : ''}>
+                        {{ $item->item_code }} - ${{ $item->price }}
             </option>
 @endforeach
             </select>
         </div>
+        <div class="col-md-1">
+            <label for="color_${index}" class="form-label">Color</label>
+                <input type="text" class="form-control" id="color_${index}" name="items[${index}][color]">
+            </div>
             <div class="col-md-1">
-                <label for="color_${index}" class="form-label">Color</label>
-                            <input type="text" class="form-control" id="color_${index}" name="items[${index}][color]">
-                        </div>
-                        <div class="col-md-1">
-                            <label for="color_number_${index}" class="form-label">Color #</label>
-                            <input type="text" class="form-control" id="color_number_${index}" name="items[${index}][color_number]">
-                        </div>
-                        <div class="col-md-1">
-                            <label for="size_${index}" class="form-label">Size</label>
-                            <input type="text" class="form-control" id="size_${index}" name="items[${index}][size]">
-                        </div>
-                        <div class="col-md-1">
-                            <label for="style_${index}" class="form-label">Style</label>
-                            <input type="text" class="form-control" id="style_${index}" name="items[${index}][style]">
-                        </div>
-                        <div class="col-md-2">
-                            <label for="upc_${index}" class="form-label">UPC</label>
-                            <input type="text" class="form-control" id="upc_${index}" name="items[${index}][upc]">
-                        </div>
-                        <div class="col-md-1">
-                            <label for="quantity_${index}" class="form-label">Quantity</label>
-                            <input type="number" class="form-control quantity" id="quantity_${index}" name="items[${index}][quantity]" min="1" value="1" required>
-                        </div>
-                        <div class="col-md-1">
-                            <label for="price_${index}" class="form-label">Price</label>
-                            <input type="text" class="form-control price" id="price_${index}" name="items[${index}][price]" readonly>
-                        </div>
-                        <div class="col-md-1 d-flex align-items-end">
-                            <button type="button" class="btn btn-danger remove-item">Remove</button>
-                        </div>
-                    </div>
-                </div>`;
+                <label for="color_number_${index}" class="form-label">Color #</label>
+                <input type="text" class="form-control" id="color_number_${index}" name="items[${index}][color_number]">
+            </div>
+            <div class="col-md-2">
+                <label for="size_${index}" class="form-label">Size</label>
+                <select class="form-select" id="size_${index}" name="items[${index}][size]">
+                    <option value="2x2.25">2" x 2.25" (57.15x50.8mm)</option>
+                    <option value="1x1.5">1" x 1.5" (38x25mm)</option>
+                    <option value="1.5x1.5">1.5" x 1.5" (38x38mm)</option>
+                    <option value="2x1.5">2" x 1.5" (50x40mm)</option>
+                    <option value="2x1.5_2">2" x 1.5" (50x38mm)</option>
+                    <option value="2x1.75">2" x 1.75" (50x45mm)</option>
+                    <option value="2x2">2" x 2" (50x50mm)</option>
+                    <option value="3x2">3" x 2" (75x50mm)</option>
+                    <option value="3.5x1.75">3.5" x 1.75" (90x45mm)</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="style_${index}" class="form-label">Style</label>
+                <input type="text" class="form-control" id="style_${index}" name="items[${index}][style]">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-1">
+                <!-- Just for a space -->
+            </div>
+            <div class="col-md-2">
+                <label for="upc_${index}" class="form-label">UPC</label>
+                <input type="text" class="form-control" id="upc_${index}" name="items[${index}][upc]">
+            </div>
+            <div class="col-md-1">
+                <label for="quantity_${index}" class="form-label">Quantity</label>
+                <input type="number" class="form-control quantity" id="quantity_${index}" name="items[${index}][quantity]" min="1" value="1" required>
+            </div>
+            <div class="col-md-1">
+                <label for="price_${index}" class="form-label">Price</label>
+                <input type="text" class="form-control price" id="price_${index}" name="items[${index}][price]" readonly value="${lastItemPrice.toFixed(3)}">
+            </div>
+            <div class="col-md-2">
+                <label for="more1_${index}" class="form-label">More 1</label>
+                <input type="text" class="form-control" id="more1_${index}" name="items[${index}][more1]">
+            </div>
+            <div class="col-md-2">
+                <label for="more2_${index}" class="form-label">More 2</label>
+                <input type="text" class="form-control" id="more2_${index}" name="items[${index}][more2]">
+            </div>
+            <div class="col-md-1 d-flex align-items-end">
+                <button type="button" class="btn btn-danger remove-item">Remove</button>
+            </div>
+        </div>
+    </div>`;
             $('#items').append(newRow);
             updateItemNumbers();
+            updateTotalPrice(); // Update total price
         });
+
 
         $(document).on('click', '.remove-item', function () {
             $(this).closest('.item-row').remove();
@@ -212,7 +268,15 @@
             updateTotalPrice();
         });
 
-        $(document).on('change', '.item-select, .quantity', function () {
+        $(document).on('change', '.item-select', function () {
+            const row = $(this).closest('.item-row');
+            const selectedOption = row.find('.item-select option:selected');
+            const pricePerUnit = parseFloat(selectedOption.data('price')) || 0;
+            row.find('.price').val(pricePerUnit.toFixed(3));
+            updateTotalPrice();
+        });
+
+        $(document).on('change', '.quantity', function () {
             const row = $(this).closest('.item-row');
             const selectedOption = row.find('.item-select option:selected');
             const pricePerUnit = parseFloat(selectedOption.data('price')) || 0;

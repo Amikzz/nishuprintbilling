@@ -52,6 +52,14 @@
         </div>
     @endif
 
+    <form action="{{ route('purchase-order-databases.export') }}" method="GET" class="inline">
+        <button type="submit" class="bg-green-500 text-white px-3 py-2 rounded hover:bg-green-600">
+            Download Excel
+        </button>
+    </form>
+
+    <br>
+    <br>
     <!-- Purchase Orders Table -->
     <div class="overflow-x-auto bg-white p-4 shadow-md rounded-lg">
         <table class="w-full table-auto">
@@ -62,14 +70,16 @@
                 <th class="px-4 py-2 text-left">Reference No</th>
                 <th class="px-4 py-2 text-left">PO No</th>
                 <th class="px-4 py-2 text-left">Item Code</th>
-                <th class="px-4 py-2 text-left">Color Name</th>
                 <th class="px-4 py-2 text-left">Color No</th>
+                <th class="px-4 py-2 text-left">Color Name</th>
                 <th class="px-4 py-2 text-left">Size</th>
                 <th class="px-4 py-2 text-left">Style</th>
                 <th class="px-4 py-2 text-left">UPC No</th>
                 <th class="px-4 py-2 text-left">Quantity</th>
                 <th class="px-4 py-2 text-left">Price</th>
                 <th class="px-4 py-2 text-left">Status</th>
+                <th class="px-4 py-2 text-left">More 1</th>
+                <th class="px-4 py-2 text-left">More 2</th>
                 <th class="px-4 py-2 text-left">Actions</th>
             </tr>
             </thead>
@@ -81,8 +91,8 @@
                     <td class="px-4 py-2">{{ $order->reference_no }}</td>
                     <td class="px-4 py-2">{{ $order->po_no }}</td>
                     <td class="px-4 py-2">{{ $order->item_code }}</td>
-                    <td class="px-4 py-2">{{ $order->color_name ?? '-' }}</td>
                     <td class="px-4 py-2">{{ $order->color_no ?? '-' }}</td>
+                    <td class="px-4 py-2">{{ $order->color_name ?? '-' }}</td>
                     <td class="px-4 py-2">{{ $order->size ?? '-' }}</td>
                     <td class="px-4 py-2">{{ $order->style ?? '-' }}</td>
                     <td class="px-4 py-2">{{ $order->upc_no ?? '-' }}</td>
@@ -95,7 +105,8 @@
                         {{ $order->status === 'Artwork_approved' ? 'text-green-500' : '' }}">
                         {{ $order->status }}
                     </td>
-
+                    <td class="px-4 py-2">{{ $order->more1 }}</td>
+                    <td class="px-4 py-2">{{ $order->more2 }}</td>
                     <td class="px-4 py-2">
                         <div class="flex space-x-2">
 

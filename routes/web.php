@@ -13,3 +13,4 @@ Route::post('purchaseorderdone/{id}', 'App\Http\Controllers\PurchaseOrderDatabas
 Route::post('orderdispatch/{id}', 'App\Http\Controllers\InvoiceCreateController@orderDispatch')->name('order.dispatch');
 Route::post('ordercomplete/{id}', 'App\Http\Controllers\InvoiceCreateController@ordercomplete')->name('order.complete');
 Route::view('/reports', 'reportindex')->name('reports.page');
+Route::get('/export', 'App\Http\Controllers\PurchaseOrderDatabaseController@export')->name('purchase-order-databases.export');

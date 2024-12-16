@@ -73,6 +73,8 @@ class PurchaseOrderDatabaseController extends Controller
                 'items.*.upc' => 'nullable|string|max:255',
                 'items.*.quantity' => 'required|integer|min:1',
                 'items.*.price' => 'required|numeric|min:0',
+                'items.*.more1' => 'nullable|string|max:255',
+                'items.*.more2' => 'nullable|string|max:255',
             ]);
 
             // Begin a transaction
@@ -94,6 +96,8 @@ class PurchaseOrderDatabaseController extends Controller
                     'po_qty' => $item['quantity'],                   // Quantity
                     'price' => $item['price'],                       // Price
                     'customer_id' => 1,                              // Placeholder for customer ID
+                    'more1' => $item['more1'] ?? null,               // Additional field 1
+                    'more2' => $item['more2'] ?? null,               // Additional field 2
                 ]);
             }
 
@@ -238,6 +242,66 @@ class PurchaseOrderDatabaseController extends Controller
 
         // Redirect back to the previous page
         return redirect()->back();
+    }
+
+    public function export()
+    {
+        // Fetch data from the purchase orders table
+        $purchaseOrders = DB::table('purchase_orders')->get();
+
+        // Define the headers for the file download
+        $filename = "purchase_orders_" . now()->format('Ymd_His') . ".csv";
+
+        // Create an output buffer
+        $output = fopen('php://output', 'w');
+
+        // Set headers for the Excel file download
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+
+        // Define the CSV header row
+        fputcsv($output, [
+            'Date',
+            'Reference No',
+            'PO No',
+            'Item Code',
+            'Color No',
+            'Color Name',
+            'Size',
+            'Style',
+            'UPC No',
+            'Quantity',
+            'Price',
+            'Status',
+            'More 1',
+            'More 2',
+        ]);
+
+        // Write each purchase order record to the file
+        foreach ($purchaseOrders as $order) {
+            fputcsv($output, [
+                $order->date,
+                $order->reference_no,
+                $order->po_no,
+                $order->item_code,
+                $order->color_no ?? '-',
+                $order->color_name ?? '-',
+                $order->size ?? '-',
+                $order->style ?? '-',
+                $order->upc_no ?? '-',
+                $order->po_qty,
+                $order->price,
+                $order->status,
+                $order->more1 ?? '-',
+                $order->more2 ?? '-',
+            ]);
+        }
+
+        // Close the output buffer
+        fclose($output);
+        exit;
     }
 
 }
