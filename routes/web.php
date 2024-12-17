@@ -14,3 +14,6 @@ Route::post('orderdispatch/{id}', 'App\Http\Controllers\InvoiceCreateController@
 Route::post('ordercomplete/{id}', 'App\Http\Controllers\InvoiceCreateController@ordercomplete')->name('order.complete');
 Route::view('/reports', 'reportindex')->name('reports.page');
 Route::get('/export', 'App\Http\Controllers\PurchaseOrderDatabaseController@export')->name('purchase-order-databases.export');
+Route::get('/invoices/{invoice_id}/edit', 'App\Http\Controllers\PurchaseOrderDatabaseController@edit')->name('invoices.edit');
+Route::put('/invoices/{invoiceId}', 'App\Http\Controllers\PurchaseOrderDatabaseController@update')->name('invoices.update');
+

@@ -93,6 +93,7 @@
                 <th class="px-4 py-2 text-left">Color No</th>
                 <th class="px-4 py-2 text-left">Color Name</th>
                 <th class="px-4 py-2 text-left">Size</th>
+                <th class="px-4 py-2 text-left">Sticker Size</th>
                 <th class="px-4 py-2 text-left">Style</th>
                 <th class="px-4 py-2 text-left">UPC No</th>
                 <th class="px-4 py-2 text-left">Quantity</th>
@@ -114,6 +115,7 @@
                     <td class="px-4 py-2">{{ $order->color_no ?? '-' }}</td>
                     <td class="px-4 py-2">{{ $order->color_name ?? '-' }}</td>
                     <td class="px-4 py-2">{{ $order->size ?? '-' }}</td>
+                    <td class="px-4 py-2">{{ $order->items->first()->description ?? '-' }}</td>
                     <td class="px-4 py-2">{{ $order->style ?? '-' }}</td>
                     <td class="px-4 py-2">{{ $order->upc_no ?? '-' }}</td>
                     <td class="px-4 py-2">{{ $order->po_qty }}</td>

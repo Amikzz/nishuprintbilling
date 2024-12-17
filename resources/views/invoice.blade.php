@@ -179,7 +179,9 @@
                 <tr>
                     <th>Item Code</th>
                     <th>Item Name</th>
+                    <th>Sticker Size</th>
                     <th>Color</th>
+                    <th>Color No</th>
                     <th>Size</th>
                     <th>Qty</th>
                     <th>Unit Price</th>
@@ -191,7 +193,9 @@
                     <tr>
                         <td>{{ $item->item_code }}</td>
                         <td>{{ $item->item_name }}</td>
+                        <td>{{ $item->sticker_size  }}</td>
                         <td>{{ $item->color ?? '-' }}</td>
+                        <td>{{ $item->color_no ?? '-'  }}</td>
                         <td>{{ $item->size ?? '-' }}</td>
                         <td>{{ $item->po_qty }}</td>
                         <td>{{ number_format($item->unit_price, 3) }}</td>

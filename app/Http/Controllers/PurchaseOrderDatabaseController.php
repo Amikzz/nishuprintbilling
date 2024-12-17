@@ -26,7 +26,8 @@ class PurchaseOrderDatabaseController extends Controller
         $endDate = $request->input('end_date');
 
         // Build the query
-        $purchaseOrders = PurchaseOrderDatabase::when($search, function ($query, $search) {
+        $purchaseOrders = PurchaseOrderDatabase::with('items') // Assuming 'item' relationship exists
+        ->when($search, function ($query, $search) {
             $query->where('reference_no', 'like', "%{$search}%")
                 ->orWhere('po_no', 'like', "%{$search}%")
                 ->orWhere('item_code', 'like', "%{$search}%");
@@ -42,8 +43,6 @@ class PurchaseOrderDatabaseController extends Controller
         // Return the view with purchase orders and the search/query parameters
         return view('purchaseorders', compact('purchaseOrders', 'search', 'startDate', 'endDate'));
     }
-
-
 
     /**
      * Show the form for creating a new resource.
@@ -146,17 +145,99 @@ class PurchaseOrderDatabaseController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(PurchaseOrderDatabase $purchaseOrderDatabase)
+    public function edit($id)
     {
-        //
+        // Fetch the invoice data by its ID
+        $invoice = InvoiceDatabase::findOrFail($id);
+
+        // Fetch the associated purchase order details based on PO number and Reference No
+        $purchaseOrder = PurchaseOrderDatabase::where('po_no', $invoice->po_number)
+            ->where('reference_no', $invoice->reference_no)
+            ->get();
+
+        // Map through the purchase order items and gather additional information about the items
+        $purchaseOrderItemsDetails = $purchaseOrder->map(function ($orderItem) {
+            // Fetch item details using the item code
+            $item = Items::where('item_code', $orderItem->item_code)->first();
+
+            // Calculate the unit price for the item
+            $unit_price = ($orderItem->price) / $orderItem->po_qty;
+
+            return [
+                'id' => $orderItem->id,
+                'item_code' => $item ? $item->item_code : 'N/A',
+                'item_name' => $item ? $item->name : 'Unknown Item',
+                'color_no' => $orderItem->color_no,
+                'color' => $orderItem->color_name,
+                'size' => $orderItem->size,
+                'po_qty' => $orderItem->po_qty,
+                'unit_price' => $unit_price,
+                'price' => $orderItem->price,
+                'more1' => $orderItem->more1,
+                'more2' => $orderItem->more2,
+            ];
+        });
+
+        // Pass the data to the edit view
+        return view('invoiceedit', [
+            'invoice' => $invoice,
+            'items' => $purchaseOrderItemsDetails,
+        ]);
     }
+
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePurchaseOrderDatabaseRequest $request, PurchaseOrderDatabase $purchaseOrderDatabase)
+    public function update(Request $request, $invoiceId)
     {
-        //
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'invoice_no' => 'required|string|max:255',
+            'reference_no' => 'required|string|max:255',
+            'items' => 'required|array',
+            'items.*.id' => 'required|integer',
+            'items.*.item_code' => 'required|string|max:255',
+            'items.*.item_name' => 'required|string|max:255',
+            'items.*.color' => 'nullable|string|max:255',
+            'items.*.color_number' => 'nullable|string|max:255',
+            'items.*.size' => 'nullable|string|max:255',
+            'items.*.po_qty' => 'required|integer|min:0',
+            'items.*.unit_price' => 'required|numeric|min:0',
+        ]);
+
+        // Find the invoice by ID
+        $invoice = InvoiceDatabase::findOrFail($invoiceId);
+
+        // Update invoice information (invoice_no, reference_no, etc.)
+        $invoice->invoice_no = $validatedData['invoice_no'];
+        $invoice->reference_no = $validatedData['reference_no'];
+        $invoice->save();
+
+        // Loop through the items and update each one
+        foreach ($validatedData['items'] as $index => $itemData) {
+            // Find the corresponding PurchaseOrderItem using the po_number from the invoice
+            $item = PurchaseOrderDatabase::where('po_no', $invoice->po_number)
+                ->where('id', $itemData['id'])
+                ->first();
+
+            if ($item) {
+                // Update item details
+                $item->color_name = $itemData['color'];
+                $item->color_no = $itemData['color_number'];
+                $item->size = $itemData['size'];
+                $item->po_qty = $itemData['po_qty'];
+
+                // Recalculate price based on quantity and unit price
+                $item->price = $itemData['po_qty'] * $itemData['unit_price'];
+
+                // Save the updated item
+                $item->save();
+            }
+        }
+
+        // Redirect back with a success message
+        return redirect()->route('invoice-databases.index', $invoiceId)->with('success', 'Invoice updated successfully');
     }
 
     /**

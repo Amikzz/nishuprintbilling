@@ -124,17 +124,7 @@
                             <td><input type="text" class="form-control" id="color_0" name="items[0][color]"></td>
                             <td><input type="text" class="form-control" id="color_number_0" name="items[0][color_number]"></td>
                             <td>
-                                <select class="form-select" id="size_0" name="items[0][size]">
-                                    <option value="2x2.25">2" x 2.25" (57.15x50.8mm)</option>
-                                    <option value="1x1.5">1" x 1.5" (38x25mm)</option>
-                                    <option value="1.5x1.5">1.5" x 1.5" (38x38mm)</option>
-                                    <option value="2x1.5">2" x 1.5" (50x40mm)</option>
-                                    <option value="2x1.5_2">2" x 1.5" (50x38mm)</option>
-                                    <option value="2x1.75">2" x 1.75" (50x45mm)</option>
-                                    <option value="2x2">2" x 2" (50x50mm)</option>
-                                    <option value="3x2">3" x 2" (75x50mm)</option>
-                                    <option value="3.5x1.75">3.5" x 1.75" (90x45mm)</option>
-                                </select>
+                                <input type="text" class="form-control" id="size_0" name="items[0][size]">
                             </td>
                             <td><input type="text" class="form-control" id="style_0" name="items[0][style]"></td>
                             <td><input type="text" class="form-control" id="upc_0" name="items[0][upc]"></td>
@@ -203,7 +193,7 @@
             updateTotalPrice(); // Recalculate total price
         });
 
-
+        // Add new item row
         $('#add-item').click(function () {
             const index = $('.item-row').length;
 
@@ -214,42 +204,39 @@
             const lastItemPrice = parseFloat(lastSelectedItem.data('price')) || 0;
 
             const newRow = `
-                <tr class="item-row">
-                    <td class="item-number mt-2">${index + 1}</td>
-                    <td><select class="form-select item-select" id="item_${index}" name="items[${index}][name]" required>
-                            <option value="" disabled>Select Item</option>
-                            @foreach($items as $item)
+            <tr class="item-row">
+                <td class="item-number mt-2">${index + 1}</td>
+                <td><select class="form-select item-select" id="item_${index}" name="items[${index}][name]" required>
+                        <option value="" disabled>Select Item</option>
+                        @foreach($items as $item)
             <option value="{{ $item->item_code }}" data-price="{{ $item->price }}"
-                                    ${'{{ $item->item_code }}' === lastItemCode ? 'selected' : ''}>
-                                    {{ $item->item_code }} - ${{ $item->price }}
+                                ${'{{ $item->item_code }}' === lastItemCode ? 'selected' : ''}>
+                                {{ $item->item_code }} - ${{ $item->price }}
             </option>
 @endforeach
             </select></td>
         <td><input type="text" class="form-control" id="color_${index}" name="items[${index}][color]"></td>
-                    <td><input type="text" class="form-control" id="color_number_${index}" name="items[${index}][color_number]"></td>
-                    <td><select class="form-select" id="size_${index}" name="items[${index}][size]">
-                            <option value="2x2.25">2" x 2.25" (57.15x50.8mm)</option>
-                            <option value="1x1.5">1" x 1.5" (38x25mm)</option>
-                            <option value="1.5x1.5">1.5" x 1.5" (38x38mm)</option>
-                            <option value="2x1.5">2" x 1.5" (50x40mm)</option>
-                            <option value="2x1.5_2">2" x 1.5" (50x38mm)</option>
-                            <option value="2x1.75">2" x 1.75" (50x45mm)</option>
-                            <option value="2x2">2" x 2" (50x50mm)</option>
-                            <option value="3x2">3" x 2" (75x50mm)</option>
-                            <option value="3.5x1.75">3.5" x 1.75" (90x45mm)</option>
-                        </select></td>
-                    <td><input type="text" class="form-control" id="style_${index}" name="items[${index}][style]"></td>
-                    <td><input type="text" class="form-control" id="upc_${index}" name="items[${index}][upc]"></td>
-                    <td><input type="number" class="form-control quantity" id="quantity_${index}" name="items[${index}][quantity]" min="1" value="1" required></td>
-                    <td><input type="text" class="form-control price" id="price_${index}" name="items[${index}][price]" readonly value="${lastItemPrice.toFixed(4)}"></td>
-                    <td><input type="text" class="form-control" id="more1_${index}" name="items[${index}][more1]"></td>
-                    <td><input type="text" class="form-control" id="more2_${index}" name="items[${index}][more2]"></td>
-                    <td><button type="button" class="btn btn-danger remove-item">Remove</button></td>
-                </tr>`;
+                <td><input type="text" class="form-control" id="color_number_${index}" name="items[${index}][color_number]"></td>
+                <td> <input type="text" class="form-control" id="size_${index}" name="items[0][${index}]"> </td>
+                <td><input type="text" class="form-control" id="style_${index}" name="items[${index}][style]"></td>
+                <td><input type="text" class="form-control" id="upc_${index}" name="items[${index}][upc]"></td>
+                <td><input type="number" class="form-control quantity" id="quantity_${index}" name="items[${index}][quantity]" min="1" value="1" required></td>
+                <td><input type="text" class="form-control price" id="price_${index}" name="items[${index}][price]" readonly value="${lastItemPrice.toFixed(4)}"></td>
+                <td><input type="text" class="form-control" id="more1_${index}" name="items[${index}][more1]"></td>
+                <td><input type="text" class="form-control" id="more2_${index}" name="items[${index}][more2]"></td>
+                <td><button type="button" class="btn btn-danger remove-item">Remove</button></td>
+            </tr>`;
 
             $('#myTable tbody').append(newRow);
             updateItemNumbers();
             updateTotalPrice(); // Update total price
+        });
+
+        // Remove item row when "Remove" button is clicked
+        $(document).on('click', '.remove-item', function () {
+            $(this).closest('tr').remove();
+            updateItemNumbers();
+            updateTotalPrice(); // Recalculate total price
         });
 
         $(document).on('keydown', function (e) {

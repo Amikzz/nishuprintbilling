@@ -62,6 +62,7 @@ class InvoiceCreateController extends Controller
             return (object) [
                 'item_code' => $item ? $item->item_code : 'N/A',
                 'item_name' => $item ? $item->name : 'Unknown Item',
+                'sticker_size' => $item ? $item->description : 'N/A',
                 'color_no' => $orderItem->color_no,
                 'color' => $orderItem->color_name,
                 'size' => $orderItem->size,

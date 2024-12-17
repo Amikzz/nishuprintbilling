@@ -175,7 +175,9 @@
                 <tr>
                     <th>Item Code</th>
                     <th>Item Name</th>
+                    <th>Sticker Size</th>
                     <th>Color</th>
+                    <th>Color No</th>
                     <th>Size</th>
                     <th>Qty</th>
                 </tr>
@@ -188,17 +190,19 @@
                     <tr>
                         <td>{{ $item->item_code }}</td>
                         <td>{{ $item->item_name }}</td>
+                        <td>{{ $item->sticker_size  }}</td>
                         <td>{{ $item->color ?? '-' }}</td>
+                        <td>{{ $item->color_no ?? '-'  }}</td>
                         <td>{{ $item->size ?? '-' }}</td>
                         <td>{{ $item->po_qty }}</td>
                     </tr>
                 @endforeach
                 <tr class="total-row">
-                    <td colspan="4" style="text-align: right;">Page Total Quantity:</td>
+                    <td colspan="6" style="text-align: right;">Page Total Quantity:</td>
                     <td>{{ $totalQuantity }}</td>
                 </tr>
                 <tr class="total-row">
-                    <td colspan="4" style="text-align: right">Total Quantity </td>
+                    <td colspan="6" style="text-align: right">Total Quantity </td>
                     <td>{{ $purchaseOrderItemsDetails->sum('po_qty') }}</td>></tr>
                 </tbody>
             </table>
