@@ -16,4 +16,8 @@ Route::view('/reports', 'reportindex')->name('reports.page');
 Route::get('/export', 'App\Http\Controllers\PurchaseOrderDatabaseController@export')->name('purchase-order-databases.export');
 Route::get('/invoices/{invoice_id}/edit', 'App\Http\Controllers\PurchaseOrderDatabaseController@edit')->name('invoices.edit');
 Route::put('/invoices/{invoiceId}', 'App\Http\Controllers\PurchaseOrderDatabaseController@update')->name('invoices.update');
-
+Route::view('/return', 'returns')->name('return.page');
+Route::get('/search-returninvoice', 'App\Http\Controllers\ReturnController@searchInvoice')->name('search.returninvoice');
+Route::delete('/delete-returnitem/{id}','App\Http\Controllers\ReturnController@deleteItem')->name('delete.returnitem');
+Route::put('/update-returnitem/{id}', 'App\Http\Controllers\ReturnController@updateItem')->name('update.returnitem');
+Route::get('/view-updated', 'App\Http\Controllers\ReturnController@viewUpdated')->name('view.updated.records');
