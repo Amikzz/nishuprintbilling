@@ -15,7 +15,7 @@
             width: 100%;
             margin: 0;
             padding: 0;
-            background-color: #f7fafc; /* Tailwind's bg-gray-100 equivalent */
+            background-color: #f7fafc;
         }
         .container-fluid {
             padding-left: 30px;
@@ -25,7 +25,7 @@
             width: 100%;
         }
         .table {
-            width: 100%; /* Ensure the table uses full width */
+            width: 100%;
         }
     </style>
 
@@ -265,6 +265,26 @@
                     if (prevElement.length) {
                         prevElement.focus();
                     }
+                }
+                e.preventDefault();
+            }
+
+            if (e.key === 'ArrowRight') {
+                // Get the next column in the same row
+                let nextColumn = currentColumn + 1;
+                let nextElement = currentRow.find('td').eq(nextColumn).find('input, select').not(':disabled').first();
+                if (nextElement.length) {
+                    nextElement.focus();
+                }
+                e.preventDefault();
+            }
+
+            if (e.key === 'ArrowLeft') {
+                // Get the previous column in the same row
+                let prevColumn = currentColumn - 1;
+                let prevElement = currentRow.find('td').eq(prevColumn).find('input, select').not(':disabled').last();
+                if (prevElement.length) {
+                    prevElement.focus();
                 }
                 e.preventDefault();
             }
