@@ -11,7 +11,7 @@
             width: 100%;
             margin: 0;
             padding: 0;
-            background-color: #f7fafc; /* Tailwind's bg-gray-100 equivalent */
+            background-color: #f7fafc;
         }
         .container-fluid {
             padding-left: 30px;
@@ -21,11 +21,11 @@
             width: 100%;
         }
         .table {
-            width: 100%; /* Ensure the table uses full width */
+            width: 100%;
         }
     </style>
-
 </head>
+
 <body>
 
 <!-- Navbar -->
@@ -37,7 +37,7 @@
         <div class="flex space-x-6 text-white">
             <a href="{{ route('home') }}" class="hover:text-gray-400">Home</a>
             <a href="{{ route('purchase-order-databases.index') }}" class="hover:text-gray-400">Purchase Orders</a>
-            <a href="{{ route('invoice-databases.index') }}" class="hover:text-gray-400  text-pink-500">Invoice & Delivery</a>
+            <a href="{{ route('invoice-databases.index') }}" class="hover:text-gray-400 text-pink-500">Invoice & Delivery</a>
             <a href="{{ route('return.page') }}" class="hover:text-gray-400 ">Returns</a>
             <a href="{{ route('reports.page') }}" class="hover:text-gray-400">Reports</a>
         </div>
@@ -93,59 +93,158 @@
                     <td class="px-4 py-2">{{ $invoice->reference_no }}</td>
                     <td class="px-4 py-2">{{ $invoice->po_number }}</td>
                     <td class="px-4 py-2">{{ $invoice->date }}</td>
-                    <td class="px-4 py-2
-                    {{
-                        $invoice->status === 'Order Dispatched' ? 'text-yellow-600' :
+                    <td class="px-4 py-2 {{
+                        $invoice->status === 'Order Dispatched' ? 'text-green-600' :
                         ($invoice->status === 'Pending' ? 'text-blue-500' :
-                        ($invoice->status === 'Order Complete' ? 'text-green-500' : ''))
+                        ($invoice->status === 'Order Complete' ? 'text-orange-500' :
+                        ($invoice->status === 'Artwork_approved' ? 'text-gray-500' :
+                        ($invoice->status === 'Artwork_sent' ? 'text-yellow-500' : ''))))
                     }}">
                         {{ $invoice->status }}
                     </td>
-                    <td class="px-4 py-2">
-                        <div class="flex flex-col space-y-2">
-                            <!-- Form for passing exchange rate -->
-                            <form action="{{ route('invoice.create', ['invoice_number' => $invoice->invoice_no]) }}" method="GET" class="flex items-center space-x-2">
-                                <input type="number" name="exchange_rate" step="0.001" required placeholder="Exchange Rate"
-                                       class="p-1 border border-gray-300 rounded-md w-1/2">
-                                <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                    <td class="px-2 py-2 {{ $invoice->status == 'Cancelled' ? 'hidden' : '' }}">
+                        <div class="flex flex-col space-y-4">
+                            <!-- Download Actions -->
+                            <div class="flex space-x-2">
+                                <a href="{{ route('invoice.create', ['invoice_number' => $invoice->invoice_no]) }}"
+                                   class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-center">
                                     Download Invoice
-                                </button>
-                            </form>
-                            <!-- Download Delivery Note Button -->
-                            <a href="{{ route('deliverynote.create', ['invoice_number' => $invoice->invoice_no]) }}"
-                               class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 w-auto text-center">
-                                Download Delivery Note
-                            </a>
+                                </a>
+                                <a href="{{ route('deliverynote.create', ['invoice_number' => $invoice->invoice_no]) }}"
+                                   class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-center">
+                                    Download Delivery Note
+                                </a>
+                            </div>
+
+                            <!-- Artwork Actions -->
                             @if($invoice->status == 'Pending')
-                                <!-- Order Dispatched Button -->
-                                <form action="{{ route('order.dispatch', $invoice->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    <button type="submit" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 w-full text-center">
-                                        Order Dispatched
+                                <div class="flex space-x-2 items-center">
+                                    <button onclick="openModal('artwork-sent-{{ $invoice->id }}')"
+                                            class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-center">
+                                        Artwork Sent
                                     </button>
-                                </form>
-                            @elseif($invoice->status == 'Order Dispatched')
-                                <!-- Order Completed Button -->
-                                <form action="{{ route('order.complete', $invoice->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-yellow-600 w-full text-center">
-                                        Order Completed
-                                    </button>
-                                </form>
-                            @endif
-                            @if($invoice->status == 'Pending')
-                                <div>
-                                    <a href="{{ route('invoices.edit', ['invoice_id' => $invoice->id]) }}"
-                                       class="bg-purple-500 text-white px-2 py-1 rounded hover:bg-purple-600 w-full text-center block">
-                                        Edit Details
-                                    </a>
+                                    <form action="{{route('cancel.invoice', $invoice->id)}}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit"
+                                                class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-center">
+                                            Cancel Order
+                                        </button>
+                                    </form>
+                                </div>
+                                <div id="artwork-sent-{{ $invoice->id }}" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+                                    <div class="bg-white p-6 rounded shadow-lg w-1/3">
+                                        <h2 class="text-xl font-bold mb-4">Artwork Sent</h2>
+                                        <form action="{{ route('purchaseorder.artwork', $invoice->id) }}" method="POST">
+                                            @csrf
+                                            <label for="artwork_sent_by_{{ $invoice->id }}" class="block text-sm font-medium text-gray-700">Name</label>
+                                            <input type="text" id="artwork_sent_by_{{ $invoice->id }}" name="artwork_sent_by" placeholder="Enter your name" required
+                                                   class="p-2 border border-gray-300 rounded-md w-full mb-4">
+                                            <div class="flex justify-end space-x-2">
+                                                <button type="button" onclick="closeModal('artwork-sent-{{ $invoice->id }}')"
+                                                        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                                                    Cancel
+                                                </button>
+                                                <button type="submit"
+                                                        class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
+                                                    Submit
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
                             @endif
+
+                            @if($invoice->status == 'Artwork_sent')
+                                <div class="flex space-x-2 items-center">
+                                    <button onclick="openModal('artwork-approved-{{ $invoice->id }}')"
+                                            class="bg-purple-500 text-white px-3 py-1 rounded hover:bg-purple-600 text-center">
+                                        Artwork Approved
+                                    </button>
+                                    <form action="{{route('cancel.invoice', $invoice->id)}}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit"
+                                                class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-center">
+                                            Cancel Order
+                                        </button>
+                                    </form>
+                                </div>
+                                <div id="artwork-approved-{{ $invoice->id }}" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+                                    <div class="bg-white p-6 rounded shadow-lg w-1/3">
+                                        <h2 class="text-xl font-bold mb-4">Artwork Approved</h2>
+                                        <form action="{{ route('purchaseorder.artworkdone', $invoice->id) }}" method="POST">
+                                            @csrf
+                                            <label for="artwork_approved_by_{{ $invoice->id }}" class="block text-sm font-medium text-gray-700">Name</label>
+                                            <input type="text" id="artwork_approved_by_{{ $invoice->id }}" name="artwork_approved_by" placeholder="Enter your name" required
+                                                   class="p-2 border border-gray-300 rounded-md w-full mb-4">
+                                            <div class="flex justify-end space-x-2">
+                                                <button type="button" onclick="closeModal('artwork-approved-{{ $invoice->id }}')"
+                                                        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                                                    Cancel
+                                                </button>
+                                                <button type="submit"
+                                                        class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">
+                                                    Submit
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <div class="flex space-x-4 items-center">
+
+                            <!-- Additional Button -->
+                            @if(in_array($invoice->status, ['Pending', 'Artwork_sent', 'Artwork_approved']))
+                                    <a href="{{ route('invoices.edit', ['invoice_id' => $invoice->id]) }}"
+                                       class="bg-teal-500 text-white px-2 py-1 rounded hover:bg-teal-600 text-center block">
+                                        Edit Details
+                                    </a>
+                                    @endif
+                                @if(in_array($invoice->status, ['Pending', 'Artwork_sent']))
+                                        <a href="{{route('invoice.details', ['id' => $invoice->id])}}" class="bg-gray-800 text-white px-2 py-1 rounded hover:bg-black text-center block">
+                                        Download Details
+                                    </a>
+                                @endif
+
+                                </div>
+
+                                <!-- Order Actions -->
+                            <div class="flex space-x-2 items-center">
+                                @if($invoice->status == 'Artwork_approved')
+                                    <form action="{{ route('order.dispatch', $invoice->id) }}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit"
+                                                class="bg-pink-500 text-white px-3 py-1 rounded hover:bg-pink-600 text-center">
+                                            Order Dispatched
+                                        </button>
+                                    </form>
+                                @elseif($invoice->status == 'Order Dispatched')
+                                    <form action="{{ route('order.complete', $invoice->id) }}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit"
+                                                class="bg-orange-600 text-white px-3 py-1 rounded hover:bg-orange-700 text-center">
+                                            Order Completed
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
                         </div>
+
+                        <!-- JavaScript for Modals -->
+                        <script>
+                            function openModal(id) {
+                                document.getElementById(id).classList.remove('hidden');
+                            }
+
+                            function closeModal(id) {
+                                document.getElementById(id).classList.add('hidden');
+                            }
+                        </script>
                     </td>
                 </tr>
             @endforeach
             </tbody>
+
         </table>
     </div>
 

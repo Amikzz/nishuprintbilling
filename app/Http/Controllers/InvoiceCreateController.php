@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ExchangeRate;
 use App\Models\InvoiceDatabase;
 use App\Models\Items;
 use Illuminate\Http\Request;
@@ -11,15 +12,13 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class InvoiceCreateController extends Controller
 {
-    public function createInvoice(Request $request, $invoice_number)
+    public function createInvoice($invoice_number)
     {
-        // Validate the exchange rate input
-        $request->validate([
-            'exchange_rate' => 'required|numeric|min:0',
-        ]);
+        //Get the exchnage rate from the exchange_rates table
+        $exchangeRate = ExchangeRate::where('currency_from', 'USD')->where('currency_to', 'LKR')->first();
 
         // Fetch the exchange rate from the request
-        $exchangeRate = $request->input('exchange_rate');
+        $exchangeRate = $exchangeRate ? $exchangeRate->rate : 0;
 
         // Fetch the invoice details based on the invoice number
         $invoice = InvoiceDatabase::where('invoice_no', $invoice_number)->first();
@@ -115,12 +114,31 @@ class InvoiceCreateController extends Controller
             // Find the invoice by ID
             $invoice = InvoiceDatabase::findOrFail($id);
 
-            // Update the status to "Order Dispatched"
+            // Update the status of the invoice to 'Order Dispatched'
             $invoice->status = 'Order Dispatched';
             $invoice->save();
 
+            // Get the PO number associated with the invoice
+            $poNumber = $invoice->po_number;
+
+            // Fetch all related purchase orders based on the PO number
+            $purchaseOrders = PurchaseOrderDatabase::where('po_no', $poNumber)->get();
+
+            // Check if related purchase orders exist
+            if ($purchaseOrders->isEmpty()) {
+                session()->flash('error', 'No related purchase orders found for this invoice.');
+                return redirect()->back();
+            }
+
+            // Update the status of each related purchase order to 'Order Dispatched'
+            foreach ($purchaseOrders as $purchaseOrder) {
+                $purchaseOrder->status = 'Order Dispatched';  // Modify the status if needed
+                $purchaseOrder->save();
+            }
+
             // Flash a success message
-            session()->flash('success', 'Invoice status updated to Order Dispatched.');
+            session()->flash('success', 'Invoice and related purchase orders status updated to Order Dispatched.');
+
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             // Flash an error message if the invoice is not found
             session()->flash('error', 'Invoice not found.');
@@ -139,12 +157,31 @@ class InvoiceCreateController extends Controller
             // Find the invoice by ID
             $invoice = InvoiceDatabase::findOrFail($id);
 
-            // Update the status to "Order Dispatched"
+            // Update the status of the invoice to 'Order Complete'
             $invoice->status = 'Order Complete';
             $invoice->save();
 
+            // Get the PO number associated with the invoice
+            $poNumber = $invoice->po_number;
+
+            // Fetch all related purchase orders based on the PO number
+            $purchaseOrders = PurchaseOrderDatabase::where('po_no', $poNumber)->get();
+
+            // Check if related purchase orders exist
+            if ($purchaseOrders->isEmpty()) {
+                session()->flash('error', 'No related purchase orders found for this invoice.');
+                return redirect()->back();
+            }
+
+            // Update the status of each related purchase order to 'Order Complete'
+            foreach ($purchaseOrders as $purchaseOrder) {
+                $purchaseOrder->status = 'Order Complete';  // Modify the status if needed
+                $purchaseOrder->save();
+            }
+
             // Flash a success message
-            session()->flash('success', 'Invoice status updated to Order Complete.');
+            session()->flash('success', 'Invoice and related purchase orders status updated to Order Complete.');
+
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             // Flash an error message if the invoice is not found
             session()->flash('error', 'Invoice not found.');

@@ -13,7 +13,7 @@
 <body class="bg-gray-100">
 
 <!-- Navbar -->
-<nav class="bg-gray-800 p-3">
+<nav class="bg-black p-3">
     <div class="flex items-center justify-between container mx-auto">
         <a href="{{ route('home') }}" class="flex items-center text-white">
             <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="mr-3" style="height: 80px;">

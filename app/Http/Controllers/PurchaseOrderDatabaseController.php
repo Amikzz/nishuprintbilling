@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Edits;
 use App\Models\InvoiceDatabase;
 use App\Models\Items;
 use Illuminate\Http\Request;
@@ -38,7 +39,7 @@ class PurchaseOrderDatabaseController extends Controller
             ->when($endDate, function ($query, $endDate) {
                 $query->whereDate('date', '<=', $endDate); // Filter by end date
             })
-            ->paginate(10); // Paginate results
+            ->paginate(20); // Paginate results
 
         // Return the view with purchase orders and the search/query parameters
         return view('purchaseorders', compact('purchaseOrders', 'search', 'startDate', 'endDate'));
@@ -61,8 +62,10 @@ class PurchaseOrderDatabaseController extends Controller
         try {
             // Validate incoming request data
             $validated = $request->validate([
+                'date' => 'required|date',
                 'reference_number' => 'required|string|max:255',
                 'purchase_order_number' => 'required|string|max:255',
+                'invoice_number' => 'required|integer|min:0',
                 'items' => 'required|array|min:1',
                 'items.*.name' => 'required|string|max:255',
                 'items.*.color' => 'nullable|string|max:255',
@@ -83,7 +86,7 @@ class PurchaseOrderDatabaseController extends Controller
             foreach ($validated['items'] as $item) {
                 // Create the purchase order
                 $purchaseOrder = PurchaseOrderDatabase::create([
-                    'date' => now(),                                 // Current date
+                    'date' => $validated['date'],                                 // Current date
                     'reference_no' => $validated['reference_number'], // Reference number
                     'po_no' => $validated['purchase_order_number'],   // Purchase order number
                     'item_code' => $item['name'],                    // Item name/code
@@ -102,11 +105,10 @@ class PurchaseOrderDatabaseController extends Controller
 
             // Create an invoice record for the purchase order
             // You can customize the invoice number generation logic here
-            $randomNumber = rand(1000, 9999);  // Generate a random 4-digit number
-            $invoiceNo = 'NC-' . '24-25' . '-' . $randomNumber . '-' . $validated['reference_number']; // Updated invoice number logic
+            $invoiceNo = 'NC-' . '24-25' . '-' . $validated['invoice_number']; // Updated invoice number logic
 
             InvoiceDatabase::create([
-                'date' => now(),                                     // Current date
+                'date' => $validated['date'],                                     // Current date
                 'invoice_no' => $invoiceNo,                          // Generated invoice number
                 'customer_id' => 1,                                  // Placeholder for customer ID
                 'po_number' => $validated['purchase_order_number'],  // PO Number (foreign key)
@@ -170,6 +172,8 @@ class PurchaseOrderDatabaseController extends Controller
                 'color_no' => $orderItem->color_no,
                 'color' => $orderItem->color_name,
                 'size' => $orderItem->size,
+                'style' => $orderItem->style,
+                'upc' => $orderItem->upc_no,
                 'po_qty' => $orderItem->po_qty,
                 'unit_price' => $unit_price,
                 'price' => $orderItem->price,
@@ -202,9 +206,18 @@ class PurchaseOrderDatabaseController extends Controller
             'items.*.color' => 'nullable|string|max:255',
             'items.*.color_number' => 'nullable|string|max:255',
             'items.*.size' => 'nullable|string|max:255',
+            'items.*.style' => 'nullable|string|max:255',
+            'items.*.upc' => 'nullable|string|max:255',
+            'items.*.more1' => 'nullable|string|max:255',
             'items.*.po_qty' => 'required|integer|min:0',
             'items.*.unit_price' => 'required|numeric|min:0',
         ]);
+
+        //Update the edits table
+        $edit = new Edits();
+        $edit->date = Date::now();
+        $edit->invoice_no = $validatedData['invoice_no'];
+        $edit->reference_no = $validatedData['reference_no'];
 
         // Find the invoice by ID
         $invoice = InvoiceDatabase::findOrFail($invoiceId);
@@ -222,10 +235,18 @@ class PurchaseOrderDatabaseController extends Controller
                 ->first();
 
             if ($item) {
+                $descriptionUpdate = "Updated item: {$itemData['item_name']} - Color: {$itemData['color']} - Color_No: {$itemData['color_number']} - Size: {$itemData['size']} - Quantity: {$itemData['po_qty']}";
+
+                // Update the edits table
+                $edit->description = $descriptionUpdate;
+
                 // Update item details
                 $item->color_name = $itemData['color'];
                 $item->color_no = $itemData['color_number'];
                 $item->size = $itemData['size'];
+                $item->style = $itemData['style'];
+                $item->upc_no = $itemData['upc'];
+                $item->more1 = $itemData['more1'];
                 $item->po_qty = $itemData['po_qty'];
 
                 // Recalculate price based on quantity and unit price
@@ -234,6 +255,7 @@ class PurchaseOrderDatabaseController extends Controller
                 // Save the updated item
                 $item->save();
             }
+            $edit->save();
         }
 
         // Redirect back with a success message
@@ -245,84 +267,7 @@ class PurchaseOrderDatabaseController extends Controller
      */
     public function destroy(PurchaseOrderDatabase $purchaseOrderDatabase)
     {
-        try {
-            // Delete the purchase order
-            $purchaseOrderDatabase->delete();
-
-            // Flash a success message
-            session()->flash('success', 'Purchase order deleted successfully.');
-        } catch (\Exception $e) {
-            // Flash an error message if something goes wrong
-            session()->flash('error', 'An error occurred while trying to delete the purchase order.');
-        }
-
-        // Redirect back to the previous page
-        return redirect()->back();
-    }
-
-    /**
-     * Update status of the purchase order for artwork need
-     */
-    public function artworkNeed($id)
-    {
-        try {
-            // Find the purchase order by ID
-            $purchaseOrder = PurchaseOrderDatabase::findOrFail($id);
-
-            // Check if the current status is 'pending'
-            if ($purchaseOrder->status === 'Pending') {
-                // Update the status to 'artwork_needed'
-                $purchaseOrder->status = 'Artwork_needed';
-                $purchaseOrder->save();
-
-                // Flash a success message
-                session()->flash('success', 'Purchase order status updated to artwork needed.');
-                return redirect()->back();
-            }elseif ($purchaseOrder->status === 'Artwork_needed') {
-                $purchaseOrder->status = 'Artwork_sent';
-                $purchaseOrder->save();
-                session()->flash('success', 'Purchase order status updated to artwork sent.');
-            }
-            return redirect()->back();
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            // Flash an error message if the purchase order is not found
-            session()->flash('error', 'Purchase order not found.');
-            return redirect()->back();
-        } catch (\Exception $e) {
-            // Flash a general error message for any other exceptions
-            session()->flash('error', 'An error occurred while updating the purchase order status.');
-            return redirect()->back();
-        }
-    }
-
-    public function artworkProduction($id)
-    {
-        try {
-            // Find the purchase order by ID
-            $purchaseOrder = PurchaseOrderDatabase::findOrFail($id);
-
-            // Check if the current status is 'Artwork_sent'
-            if ($purchaseOrder->status === 'Artwork_sent') {
-                // Update the status to 'Artwork_approved'
-                $purchaseOrder->status = 'Artwork_approved';
-                $purchaseOrder->save();
-
-                // Flash a success message
-                session()->flash('success', 'Purchase order status updated to Artwork Approved.');
-            } else {
-                // Flash an error message if the status is not 'Artwork_sent'
-                session()->flash('error', 'Purchase order status is not Artwork Sent and cannot be updated.');
-            }
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            // Flash an error message if the purchase order is not found
-            session()->flash('error', 'Purchase order not found.');
-        } catch (\Exception $e) {
-            // Flash a general error message for any other exceptions
-            session()->flash('error', 'An error occurred while updating the purchase order status.');
-        }
-
-        // Redirect back to the previous page
-        return redirect()->back();
+        //
     }
 
     public function export()

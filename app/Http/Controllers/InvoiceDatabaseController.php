@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PurchaseOrderDatabase;
 use Illuminate\Http\Request;
 use App\Models\InvoiceDatabase;
 use App\Http\Requests\StoreInvoiceDatabaseRequest;
 use App\Http\Requests\UpdateInvoiceDatabaseRequest;
+use Illuminate\Support\Facades\DB;
 
 class InvoiceDatabaseController extends Controller
 {
@@ -17,11 +19,14 @@ class InvoiceDatabaseController extends Controller
         // Initialize query builder
         $query = InvoiceDatabase::query();
 
+        // Exclude invoices with 'Cancelled' status
+        $query->where('status', '!=', 'Cancelled');
+
         // Check for search terms in the request and apply filters
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
 
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('invoice_no', 'like', '%' . $search . '%')
                     ->orWhere('reference_no', 'like', '%' . $search . '%')
                     ->orWhere('po_number', 'like', '%' . $search . '%');
@@ -43,8 +48,6 @@ class InvoiceDatabaseController extends Controller
         // Return the results to the view
         return view('invoicedelivery', compact('invoices'));
     }
-
-
 
     /**
      * Show the form for creating a new resource.
@@ -92,5 +95,214 @@ class InvoiceDatabaseController extends Controller
     public function destroy(InvoiceDatabase $invoiceDatabase)
     {
         //
+    }
+
+    public function artworkNeed(Request $request, $id)
+    {
+        try {
+            // Validate the input
+            $validated = $request->validate([
+                'artwork_sent_by' => ['required', 'string', 'max:255'],
+            ]);
+
+            // Find the invoice by ID
+            $invoice = InvoiceDatabase::findOrFail($id);
+
+            // Check if the current status is 'Pending'
+            if ($invoice->status === 'Pending') {
+                // Update the status of the invoice to 'Artwork_sent'
+                $invoice->status = 'Artwork_sent';
+                $invoice->artwork_sent_by = $validated['artwork_sent_by'];
+                $invoice->save();
+
+                // Get the PO number associated with the invoice
+                $poNumber = $invoice->po_number;
+
+                // Fetch all related purchase orders based on the PO number
+                $purchaseOrders = PurchaseOrderDatabase::where('po_no', $poNumber)->get();
+
+                // Check if related purchase orders exist
+                if ($purchaseOrders->isEmpty()) {
+                    session()->flash('error', 'No related purchase orders found for this invoice.');
+                    return redirect()->back();
+                }
+
+                // Update the status of each related purchase order to 'Artwork_sent'
+                foreach ($purchaseOrders as $purchaseOrder) {
+                    $purchaseOrder->status = 'Artwork_sent';  // Modify the status if needed
+                    $purchaseOrder->save();
+                }
+
+                // Flash a success message
+                session()->flash('success', 'Purchase order and related items updated to Artwork Sent.');
+                return redirect()->back();
+            } else {
+                // Flash an error message if the invoice status is not 'Pending'
+                session()->flash('error', 'Purchase order status is not Pending and cannot be updated.');
+                return redirect()->back();
+            }
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Flash an error message if the purchase order is not found
+            session()->flash('error', 'Purchase order not found.');
+            return redirect()->back();
+        } catch (\Exception $e) {
+            // Flash a general error message for any other exceptions
+            session()->flash('error', 'An error occurred while updating the purchase order status.');
+            return redirect()->back();
+        }
+
+    }
+
+    public function artworkProduction(Request $request, $id)
+    {
+        try {
+            // Validate the input
+            $validated = $request->validate([
+                'artwork_approved_by' => ['required', 'string', 'max:255'],
+            ]);
+
+            // Find the invoice by ID
+            $invoice = InvoiceDatabase::findOrFail($id);
+
+            // Check if the current status is 'Artwork_sent'
+            if ($invoice->status === 'Artwork_sent') {
+                // Update the status of the invoice to 'Artwork_approved'
+                $invoice->status = 'Artwork_approved';
+                $invoice->artwork_approved_by = $validated['artwork_approved_by'];
+                $invoice->save();
+
+                // Get the PO number associated with the invoice
+                $poNumber = $invoice->po_number;
+
+                // Fetch all related purchase orders based on the PO number
+                $purchaseOrders = PurchaseOrderDatabase::where('po_no', $poNumber)->get();
+
+                // Check if related purchase orders exist
+                if ($purchaseOrders->isEmpty()) {
+                    session()->flash('error', 'No related purchase orders found for this invoice.');
+                    return redirect()->back();
+                }
+
+                // Update the status of each related purchase order to 'Artwork_approved'
+                foreach ($purchaseOrders as $purchaseOrder) {
+                    $purchaseOrder->status = 'Artwork_approved';  // Modify the status if needed
+                    $purchaseOrder->save();
+                }
+
+                // Flash a success message
+                session()->flash('success', 'Purchase order and related items updated to Artwork Approved.');
+            } else {
+                // Flash an error message if the invoice status is not 'Artwork_sent'
+                session()->flash('error', 'Purchase order status is not Artwork Sent and cannot be updated.');
+            }
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Flash an error message if the purchase order is not found
+            session()->flash('error', 'Purchase order not found.');
+        } catch (\Exception $e) {
+            // Flash a general error message for any other exceptions
+            session()->flash('error', 'An error occurred while updating the purchase order status.');
+        }
+
+// Redirect back to the previous page
+        return redirect()->back();
+
+    }
+
+    public function cancelInvoice($id)
+    {
+        try {
+            // Find the invoice by its ID
+            $invoice = InvoiceDatabase::findOrFail($id);
+
+            // Get the PO number associated with the invoice
+            $poNumber = $invoice->po_number;
+
+            // Update the status of all related purchase order items based on the PO number
+            $purchaseOrders = PurchaseOrderDatabase::where('po_no', $poNumber)->get();
+
+            // Check if there are any related purchase orders
+            if ($purchaseOrders->isEmpty()) {
+                session()->flash('error', 'No related purchase orders found for this invoice.');
+                return redirect()->back();
+            }
+
+            // Update the status of each related purchase order item to 'Cancelled'
+            foreach ($purchaseOrders as $purchaseOrder) {
+                $purchaseOrder->status = 'Cancelled';  // You can modify the status as per your requirement
+                $purchaseOrder->save();
+            }
+
+            // Now update the status of the invoice itself to 'Cancelled'
+            $invoice->status = 'Cancelled';
+            $invoice->save();
+
+            // Flash a success message
+            session()->flash('success', 'Purchase order and related items cancelled successfully.');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Flash an error message if the invoice is not found
+            session()->flash('error', 'Purchase order not found.');
+        } catch (\Exception $e) {
+            // Flash a general error message for any other exceptions
+            session()->flash('error', 'An error occurred while cancelling the purchase order and related items.');
+        }
+
+        // Redirect back to the previous page
+        return redirect()->back();
+    }
+
+    public function export($id)
+    {
+        $invoice = InvoiceDatabase::findOrFail($id);
+
+        // Fetch the all purchase order items using the po_number and reference_no from the invoice
+        $purchaseOrders = PurchaseOrderDatabase::where('po_no', $invoice->po_number)
+            ->where('reference_no', $invoice->reference_no)
+            ->get();
+
+        $poNumber = PurchaseOrderDatabase::where('po_no', $invoice->po_number)
+            ->where('reference_no', $invoice->reference_no)
+            ->first();
+
+        // Define the headers for the file download
+        $filename = "po_" . $poNumber->po_no . ".csv";
+
+        // Create an output buffer
+        $output = fopen('php://output', 'w');
+
+        // Set headers for the Excel file download
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+
+        // Define the CSV header row
+        fputcsv($output, [
+            'Item Code',
+            'Color No',
+            'Color Name',
+            'Size',
+            'Style',
+            'UPC No',
+            'More 1',
+            'More 2',
+        ]);
+
+        // Write each purchase order record to the file
+        foreach ($purchaseOrders as $order) {
+            fputcsv($output, [
+                $order->item_code,
+                $order->color_no ?? '-',
+                $order->color_name ?? '-',
+                $order->size ?? '-',
+                $order->style ?? '-',
+                $order->upc_no ?? '-',
+                $order->more1 ?? '-',
+                $order->more2 ?? '-',
+            ]);
+        }
+
+        // Close the output buffer
+        fclose($output);
+        exit;
     }
 }

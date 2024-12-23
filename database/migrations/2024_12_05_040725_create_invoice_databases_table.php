@@ -20,6 +20,9 @@ return new class extends Migration
             $table->string('reference_no');
             $table->string('delivery_note_no')->nullable();
             $table->integer('no_of_items');
+            $table->string('status')->default('Pending');
+            $table->string('artwork_sent_by')->nullable();
+            $table->string('artwork_approved_by')->nullable();
             $table->timestamps();
 
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');

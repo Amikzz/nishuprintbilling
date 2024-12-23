@@ -19,9 +19,6 @@
         .navbar {
             width: 100%;
         }
-        .table {
-            width: 100%; /* Ensure the table uses full width */
-        }
     </style>
 
 </head>
@@ -35,7 +32,7 @@
         </a>
         <div class="flex space-x-6 text-white">
             <a href="{{ route('home') }}" class="hover:text-gray-400">Home</a>
-            <a href="{{ route('purchase-order-databases.index') }}" class="hover:text-gray-400 text-pink-500">Purchase Orders</a>
+            <a href="{{ route('purchase-order-databases.index') }}" class="hover:text-gray-400 text-pink-500">All Orders</a>
             <a href="{{ route('invoice-databases.index') }}" class="hover:text-gray-400">Invoice & Delivery</a>
             <a href="{{ route('return.page') }}" class="hover:text-gray-400 ">Returns</a>
             <a href="{{ route('reports.page') }}" class="hover:text-gray-400">Reports</a>
@@ -45,7 +42,7 @@
 
 <div class="container-fluid mx-auto mt-8">
 
-    <h1 class="text-2xl font-semibold mb-4">Purchase Orders</h1>
+    <h1 class="text-2xl font-semibold mb-4">All Orders</h1>
 
     <!-- Search Form -->
     <form action="{{ route('purchase-order-databases.index') }}" method="GET" class="mb-4 flex items-center space-x-4">
@@ -99,10 +96,9 @@
                 <th class="px-4 py-2 text-left">UPC No</th>
                 <th class="px-4 py-2 text-left">Quantity</th>
                 <th class="px-4 py-2 text-left">Price</th>
-                <th class="px-4 py-2 text-left">Status</th>
                 <th class="px-4 py-2 text-left">More 1</th>
                 <th class="px-4 py-2 text-left">More 2</th>
-                <th class="px-4 py-2 text-left">Actions</th>
+                <th class="px-4 py-2 text-left">Status</th>
             </tr>
             </thead>
             <tbody>
@@ -121,54 +117,17 @@
                     <td class="px-4 py-2">{{ $order->upc_no ?? '-' }}</td>
                     <td class="px-4 py-2">{{ $order->po_qty }}</td>
                     <td class="px-4 py-2">{{ $order->price }}</td>
-                    <td class="px-4 py-2
-                        {{ $order->status === 'Pending' ? 'text-blue-500' : '' }}
-                        {{ $order->status === 'Artwork_needed' ? 'text-red-500' : '' }}
-                        {{ $order->status === 'Artwork_sent' ? 'text-yellow-600' : '' }}
-                        {{ $order->status === 'Artwork_approved' ? 'text-green-500' : '' }}">
-                        {{ $order->status }}
-                    </td>
                     <td class="px-4 py-2">{{ $order->more1 }}</td>
                     <td class="px-4 py-2">{{ $order->more2 }}</td>
-                    <td class="px-4 py-2">
-                        <div class="flex space-x-2">
-
-                            @if($order->status === 'Pending')
-                                <form action="{{ route('purchaseorder.artwork', $order->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
-                                        <center>Artwork Need</center>
-                                    </button>
-                                </form>
-                            @endif
-
-                            @if($order->status === 'Artwork_needed')
-                                <form action="{{ route('purchaseorder.artwork', $order->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    <button type="submit" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
-                                        <center>Artwork Sent</center>
-                                    </button>
-                                </form>
-                            @endif
-
-                            @if($order->status === 'Artwork_sent')
-                                <form action="{{ route('purchaseorder.artworkdone', $order->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
-                                        <center>Artwork Approved</center>
-                                    </button>
-                                </form>
-                            @endif
-
-                            <!-- Delete Button -->
-                            <form action="{{ route('purchase-order-databases.destroy', $order->id) }}" method="POST" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600" onclick="return confirm('Are you sure you want to delete this record?');">
-                                    <center>Delete Order</center>
-                                </button>
-                            </form>
-                        </div>
+                    <td class="px-4 py-2
+                        {{ $order->status === 'Pending' ? 'text-blue-500' : '' }}
+                        {{ $order->status === 'Artwork_sent' ? 'text-yellow-500' : '' }}
+                        {{ $order->status === 'Artwork_approved' ? 'text-gray-500' : '' }}
+                        {{ $order->status === 'Order Dispatched' ? 'text-green-500' : '' }}
+                        {{ $order->status === 'Order Complete' ? 'text-orange-500' : '' }}
+                        {{ $order->status === 'Cancelled' ? 'text-red-500' : '' }}
+                        ">
+                        {{ $order->status }}
                     </td>
                 </tr>
             @empty

@@ -18,4 +18,7 @@ Route::group([
     $router->post('/items', 'ItemsController@store')->name('items.store');
     $router->put('/items/{id}', 'ItemsController@update')->name('items.update');
     $router->delete('/items/{item_code}', 'ItemsController@destroy')->name('items.destroy');
+
+    $router->get('/exchange', 'ExchangeRateController@index')->name('exchange');
+    $router->put('/exchange/{id}', 'ExchangeRateController@update')->name('exchange.update');
 });

@@ -66,6 +66,21 @@
                     </div>
 
                     <div class="w-1/12">
+                        <label for="style_{{ $index }}" class="block text-sm font-medium text-gray-700">Style</label>
+                        <input type="text" id="style_{{ $index }}" name="items[{{ $index }}][style]" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value="{{ $item['style'] }}">
+                    </div>
+
+                    <div class="w-1/12">
+                        <label for="upc_{{ $index }}" class="block text-sm font-medium text-gray-700">UPC</label>
+                        <input type="text" id="upc_{{ $index }}" name="items[{{ $index }}][upc]" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value="{{ $item['upc'] }}">
+                    </div>
+
+                    <div class="w-1/12">
+                        <label for="more1_{{ $index }}" class="block text-sm font-medium text-gray-700">More 1</label>
+                        <input type="text" id="more1_{{ $index }}" name="items[{{ $index }}][more1]" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value="{{ $item['more1'] }}">
+                    </div>
+
+                    <div class="w-1/12">
                         <label for="quantity_{{ $index }}" class="block text-sm font-medium text-gray-700">Quantity</label>
                         <input type="number" id="quantity_{{ $index }}" name="items[{{ $index }}][po_qty]" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value="{{ $item['po_qty'] }}" oninput="updateTotalPrice({{ $index }})">
                     </div>

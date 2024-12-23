@@ -33,14 +33,14 @@
 <body>
 
 <!-- Navbar -->
-<nav class="bg-gray-800 p-3">
+<nav class="bg-gray-800 p-3.5">
     <div class="flex items-center justify-between container-fluid">
         <a href="{{ route('home') }}" class="flex items-center text-white">
             <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="mr-3" style="height: 80px;">
         </a>
         <div class="flex space-x-6 text-white">
             <a href="{{ route('home') }}" class="hover:text-gray-400 text-pink-500">Home</a>
-            <a href="{{ route('purchase-order-databases.index') }}" class="hover:text-gray-400">Purchase Orders</a>
+            <a href="{{ route('purchase-order-databases.index') }}" class="hover:text-gray-400">All Orders</a>
             <a href="{{ route('invoice-databases.index') }}" class="hover:text-gray-400">Invoice & Delivery</a>
             <a href="{{ route('return.page') }}" class="hover:text-gray-400 ">Returns</a>
             <a href="{{ route('reports.page') }}" class="hover:text-gray-400">Reports</a>
@@ -49,7 +49,10 @@
 </nav>
 
 <!-- Flash Messages -->
-<div class="container-fluid mt-4">
+<div class="container-fluid mx-auto mt-8">
+
+    <h1 class="text-2xl font-semibold mb-4">Purchase Order Entering</h1>
+
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
@@ -68,7 +71,12 @@
 <!-- Billing Form -->
 <div class="container-fluid mt-5">
     <form method="POST" action="{{ route('purchase-order-databases.store') }}">
+        @csrf
         <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" class="form-control" id="date" name="date" required>
+            </div>
             <div class="col-md-6">
                 <label for="reference_number" class="form-label">Customer Name</label>
                 <select class="form-select item-select" id="item_0" name="items[0][name]" required>
@@ -76,16 +84,19 @@
                 </select>
             </div>
         </div>
-        @csrf
         <!-- Reference and Purchase Order Numbers -->
         <div class="row mb-3">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label for="reference_number" class="form-label">Reference Number</label>
                 <input type="text" class="form-control" id="reference_number" name="reference_number" required>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label for="purchase_order_number" class="form-label">Purchase Order Number</label>
                 <input type="text" class="form-control" id="purchase_order_number" name="purchase_order_number" required>
+            </div>
+            <div class="col-md-4">
+                <label for="invoice_number" class="form-label">Invoice Number (NC-24-25-XXXX)</label>
+                <input type="text" class="form-control" id="invoice_number" name="invoice_number" required placeholder="xxxx">
             </div>
         </div>
 

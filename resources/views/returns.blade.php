@@ -18,8 +18,8 @@
             background-color: #f7fafc;
         }
         .container-fluid {
-            padding-left: 30px;
-            padding-right: 30px;
+            padding-left: 190px;
+            padding-right: 190px;
         }
         .navbar {
             width: 100%;
@@ -33,7 +33,7 @@
 <body>
 
 <!-- Navbar -->
-<nav class="bg-gray-800 p-3">
+<nav class="bg-black p-3">
     <div class="flex items-center justify-between container-fluid">
         <a href="{{ route('home') }}" class="flex items-center text-white">
             <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="mr-3" style="height: 80px;">
@@ -71,15 +71,20 @@
                 <label for="invoice_number">Invoice Number</label>
                 <input type="text" id="invoice_number" name="invoice_number" class="form-control" value="{{ old('invoice_number') }}" required>
             </div>
-            <button type="submit" class="btn btn-primary">Update Return Invoice Number</button>
+
+            <!-- Buttons aligned side by side -->
+            <div class="d-flex justify-content-start gap-2">
+                <button type="submit" class="btn btn-primary">Update Return Invoice Number</button>
+
+                <!-- View Updated Records Button -->
+                <form id="viewRecordsForm" action="{{ route('view.updated.records') }}" method="GET">
+                    @csrf
+                    <input type="hidden" id="view_invoice_number" name="invoice_number" value="">
+                    <button type="submit" class="btn btn-secondary">View Updated Records</button>
+                </form>
+            </div>
         </form>
 
-        <!-- View Updated Records Button -->
-        <form id="viewRecordsForm" action="{{ route('view.updated.records') }}" method="GET">
-            @csrf
-            <input type="hidden" id="view_invoice_number" name="invoice_number" value="">
-            <button type="submit" class="btn btn-secondary mt-3">View Updated Records</button>
-        </form>
 
         <!-- Invoice Details and Items -->
         @if (isset($returnItems))
