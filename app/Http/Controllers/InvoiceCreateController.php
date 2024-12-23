@@ -92,20 +92,7 @@ class InvoiceCreateController extends Controller
             'purchaseOrderItemsDetails' => $purchaseOrderItemsDetails,
         ]);
 
-        // Ensure the storage directory exists
-        $filePath = storage_path('app/public/invoices/' . $invoice->invoice_no . '.pdf');
-        if (!file_exists(dirname($filePath))) {
-            mkdir(dirname($filePath), 0777, true);
-        }
-
-        // Save the PDF file
-        file_put_contents($filePath, $pdf->output());
-
-        // Flash a success message to the session
-        session()->flash('success', 'Invoice created successfully!');
-
-        // Redirect to the invoice index page with the success message
-        return redirect()->route('invoice-databases.index');
+        return $pdf->download($invoice->invoice_no . '.pdf');
     }
 
     public function orderDispatch($id)
