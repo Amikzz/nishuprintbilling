@@ -82,6 +82,12 @@
             <button type="button" class="btn btn-info mt-3" data-bs-toggle="modal" data-bs-target="#deliveryNoteModal">
                 Create Delivery Note
             </button>
+
+            <form action="{{ route('return.page') }}" method="GET" style="display: inline;">
+                @csrf
+                <button type="submit" class="btn btn-secondary mt-3">Cancel</button>
+            </form>
+
         </div>
     @endif
 </div>

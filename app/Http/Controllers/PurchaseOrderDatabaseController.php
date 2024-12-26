@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Edits;
 use App\Models\InvoiceDatabase;
 use App\Models\Items;
+use App\Models\MasterSheet;
 use Illuminate\Http\Request;
 use App\Models\PurchaseOrderDatabase;
 use App\Http\Requests\StorePurchaseOrderDatabaseRequest;
@@ -63,8 +64,8 @@ class PurchaseOrderDatabaseController extends Controller
             // Validate incoming request data
             $validated = $request->validate([
                 'date' => 'required|date',
-                'reference_number' => 'required|string|max:255',
-                'purchase_order_number' => 'required|string|max:255',
+                'reference_number' => 'required|string|max:255|exists:master_sheet,our_ref',
+                'purchase_order_number' => 'required|string|max:255|exists:master_sheet,cust_ref',
                 'invoice_number' => 'required|integer|min:0',
                 'items' => 'required|array|min:1',
                 'items.*.name' => 'required|string|max:255',
@@ -106,6 +107,13 @@ class PurchaseOrderDatabaseController extends Controller
             // Create an invoice record for the purchase order
             // You can customize the invoice number generation logic here
             $invoiceNo = 'NC-' . '24-25' . '-' . $validated['invoice_number']; // Updated invoice number logic
+
+            $masterSheet = MasterSheet::where('our_ref', $validated['reference_number'])->first();
+            $masterSheet->invoice_no = $invoiceNo;
+            $masterSheet->invoice_date = $validated['date'];
+            $masterSheet->pcs = count($validated['items']);
+            $masterSheet->invoice_value = array_sum(array_column($validated['items'], 'price'));
+            $masterSheet->save();
 
             InvoiceDatabase::create([
                 'date' => $validated['date'],                                     // Current date

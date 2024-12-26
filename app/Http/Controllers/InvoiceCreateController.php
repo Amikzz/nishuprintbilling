@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ExchangeRate;
 use App\Models\InvoiceDatabase;
 use App\Models\Items;
+use App\Models\MasterSheet;
 use Illuminate\Http\Request;
 use App\Models\PurchaseOrderDatabase;
 use App\Models\Customer;
@@ -104,6 +105,10 @@ class InvoiceCreateController extends Controller
             // Update the status of the invoice to 'Order Dispatched'
             $invoice->status = 'Order Dispatched';
             $invoice->save();
+
+            $mastersheet = MasterSheet::where('invoice_no', $invoice->invoice_no)->first();
+            $mastersheet->status = 'delivered';
+            $mastersheet->save();
 
             // Get the PO number associated with the invoice
             $poNumber = $invoice->po_number;

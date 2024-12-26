@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\InvoiceDatabase;
 use App\Models\Items;
+use App\Models\MasterSheet;
 use App\Models\PurchaseOrderDatabase;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -16,6 +17,8 @@ class DeliveryNCreateController extends Controller
     {
         // Fetch the invoice details based on the invoice number from the URL
         $invoice = InvoiceDatabase::where('invoice_no', $invoiceId)->first();
+
+        $invoiceno = $invoice->invoice_no;
 
         // If the invoice is not found, return an error response
         if (!$invoice) {
@@ -66,8 +69,13 @@ class DeliveryNCreateController extends Controller
 
         // Create delivery note number
         $invoiceIdWithoutPrefix = str_replace('NC-24-25-', '', $invoiceId);
-        $invoice->delivery_note_no = 'DN-' . $invoiceIdWithoutPrefix;
+        $invoice->delivery_note_no = $invoiceIdWithoutPrefix;
         $invoice->save();
+
+        $mastersheet = MasterSheet::where('invoice_no', $invoiceno)->first();
+        $mastersheet->dn = $invoiceIdWithoutPrefix;
+        $mastersheet->dn_date = now();
+        $mastersheet->save();
 
         $delivery_note_no = $invoice->delivery_note_no;
 

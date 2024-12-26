@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MasterSheet;
 use App\Models\PurchaseOrderDatabase;
 use Illuminate\Http\Request;
 use App\Models\InvoiceDatabase;
@@ -113,7 +114,12 @@ class InvoiceDatabaseController extends Controller
                 // Update the status of the invoice to 'Artwork_sent'
                 $invoice->status = 'Artwork_sent';
                 $invoice->artwork_sent_by = $validated['artwork_sent_by'];
+                $invoice->artwork_sent_date = now();
                 $invoice->save();
+
+                $mastersheet = MasterSheet::where('invoice_no', $invoice->invoice_no)->first();
+                $mastersheet->art_sent_date = now();
+                $mastersheet->save();
 
                 // Get the PO number associated with the invoice
                 $poNumber = $invoice->po_number;
@@ -169,7 +175,13 @@ class InvoiceDatabaseController extends Controller
                 // Update the status of the invoice to 'Artwork_approved'
                 $invoice->status = 'Artwork_approved';
                 $invoice->artwork_approved_by = $validated['artwork_approved_by'];
+                $invoice->artwork_approved_date = now();
                 $invoice->save();
+
+                $mastersheet = MasterSheet::where('invoice_no', $invoice->invoice_no)->first();
+                $mastersheet->art_approved_date = now();
+                $mastersheet->status = 'approved';
+                $mastersheet->save();
 
                 // Get the PO number associated with the invoice
                 $poNumber = $invoice->po_number;
@@ -203,7 +215,7 @@ class InvoiceDatabaseController extends Controller
             session()->flash('error', 'An error occurred while updating the purchase order status.');
         }
 
-// Redirect back to the previous page
+        // Redirect back to the previous page
         return redirect()->back();
 
     }
@@ -236,6 +248,10 @@ class InvoiceDatabaseController extends Controller
             $invoice->status = 'Cancelled';
             $invoice->save();
 
+            $mastersheet = MasterSheet::where('invoice_no', $invoice->invoice_no)->first();
+            $mastersheet->status = 'cancelled';
+            $mastersheet->save();
+
             // Flash a success message
             session()->flash('success', 'Purchase order and related items cancelled successfully.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -248,6 +264,58 @@ class InvoiceDatabaseController extends Controller
 
         // Redirect back to the previous page
         return redirect()->back();
+    }
+
+    //items printed function
+    public function itemsPrinted($invoice_id)
+    {
+        try {
+            // Find the invoice by ID
+            $invoice = InvoiceDatabase::findOrFail($invoice_id);
+
+            // Check if the current status is 'Artwork_approved'
+            if ($invoice->status === 'Artwork_approved') {
+                // Update the status of the invoice to 'Items_printed'
+                $invoice->status = 'Items_printed';
+                $invoice->save();
+
+                $mastersheet = MasterSheet::where('invoice_no', $invoice->invoice_no)->first();
+                $mastersheet->print_date = now();
+                $mastersheet->status = 'printed';
+                $mastersheet->save();
+
+                // Get the PO number associated with the invoice
+                $poNumber = $invoice->po_number;
+
+                // Fetch all related purchase orders based on the PO number
+                $purchaseOrders = PurchaseOrderDatabase::where('po_no', $poNumber)->get();
+
+                // Check if related purchase orders exist
+                if ($purchaseOrders->isEmpty()) {
+                    session()->flash('error', 'No related purchase orders found for this invoice.');
+                    return redirect()->back();
+                }
+
+                // Update the status of each related purchase order to 'Items_printed'
+                foreach ($purchaseOrders as $purchaseOrder) {
+                    $purchaseOrder->status = 'Items_printed';  // Modify the status if needed
+                    $purchaseOrder->save();
+                }
+
+                // Flash a success message with return back
+                session()->flash('success', 'Purchase order and related items updated to Items Printed.');
+                return redirect()->back();
+            } else {
+                // Flash an error message if the invoice status is not 'Artwork_approved'
+                session()->flash('error', 'Purchase order status is not Artwork Approved and cannot be updated.');
+            }
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Flash an error message if the purchase order is not found
+            session()->flash('error', 'Purchase order not found.');
+        } catch (\Exception $e) {
+            // Flash a general error message for any other exceptions
+            session()->flash('error', 'An error occurred while updating the purchase order status.');
+        }
     }
 
     public function export($id)

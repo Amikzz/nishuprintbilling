@@ -38,7 +38,7 @@
         </a>
         <div class="flex space-x-6 text-white">
             <a href="{{ route('home') }}" class="hover:text-gray-400">Home</a>
-            <a href="{{ route('purchase-order-databases.index') }}" class="hover:text-gray-400">Purchase Orders</a>
+            <a href="{{ route('purchase-order-databases.index') }}" class="hover:text-gray-400">All Orders</a>
             <a href="{{ route('invoice-databases.index') }}" class="hover:text-gray-400">Invoice & Delivery</a>
             <a href="{{ route('return.page') }}" class="hover:text-gray-400 text-pink-500">Returns</a>
             <a href="{{ route('reports.page') }}" class="hover:text-gray-400">Reports</a>

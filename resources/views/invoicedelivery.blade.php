@@ -36,7 +36,7 @@
         </a>
         <div class="flex space-x-6 text-white">
             <a href="{{ route('home') }}" class="hover:text-gray-400">Home</a>
-            <a href="{{ route('purchase-order-databases.index') }}" class="hover:text-gray-400">Purchase Orders</a>
+            <a href="{{ route('purchase-order-databases.index') }}" class="hover:text-gray-400">All Orders</a>
             <a href="{{ route('invoice-databases.index') }}" class="hover:text-gray-400 text-pink-500">Invoice & Delivery</a>
             <a href="{{ route('return.page') }}" class="hover:text-gray-400 ">Returns</a>
             <a href="{{ route('reports.page') }}" class="hover:text-gray-400">Reports</a>
@@ -193,6 +193,14 @@
                                 </div>
                             @endif
 
+                            @if($invoice->status == 'Artwork_approved')
+                                <a href="{{ route('purchaseorder.printed', ['invoice_id' => $invoice->id]) }}"
+                                   class="bg-purple-400 text-white px-2 py-1 rounded hover:bg-purple-600 text-center w-1/2">
+                                    Printed
+                                </a>
+                            @endif
+
+
                             <div class="flex space-x-4 items-center">
 
                             <!-- Additional Button -->
@@ -212,7 +220,7 @@
 
                                 <!-- Order Actions -->
                             <div class="flex space-x-2 items-center">
-                                @if($invoice->status == 'Artwork_approved')
+                                @if($invoice->status == 'Items_printed')
                                     <form action="{{ route('order.dispatch', $invoice->id) }}" method="POST" class="inline">
                                         @csrf
                                         <button type="submit"

@@ -24,3 +24,6 @@ Route::get('/view-updated', 'App\Http\Controllers\ReturnController@viewUpdated')
 Route::post('/cancel/{id}', 'App\Http\Controllers\InvoiceDatabaseController@cancelInvoice')->name('cancel.invoice');
 Route::get('/invoicedetails/{id}', 'App\Http\Controllers\InvoiceDatabaseController@export')->name('invoice.details');
 Route::post('/deliverynote/return/{d_note_no}', 'App\Http\Controllers\ReturnController@createDeliveryNote')->name('deliverynote.return');
+Route::get('/mastersheet', 'App\Http\Controllers\MasterSheetController@getMasterSheet')->name('mastersheet');
+Route::post('/mastersheet/create', 'App\Http\Controllers\MasterSheetController@createMasterSheet')->name('mastersheet.create');
+Route::get('/purchaseorder/printed/{invoice_id}', 'App\Http\Controllers\InvoiceDatabaseController@itemsPrinted')->name('purchaseorder.printed');
