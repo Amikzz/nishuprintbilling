@@ -14,6 +14,8 @@ class ReturnDatabase extends Model
 
     protected $fillable = [
         'invoice_number',
+        'delivery_note_no',
+        'new_dnote_no',
         'po_no',
         'item_code',
         'color_name',

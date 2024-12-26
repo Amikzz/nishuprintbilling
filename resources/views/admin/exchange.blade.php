@@ -9,7 +9,6 @@
 <body class="bg-gray-100">
 
 <div class="container mx-auto mt-8">
-    <h1 class="text-3xl font-semibold mb-4">Exchange Rate</h1>
 
     <!-- Display success message -->
     @if(session('success'))
@@ -33,7 +32,7 @@
     <table class="min-w-full bg-white border border-gray-200 shadow-sm rounded">
         <thead>
         <tr>
-            <th class="px-4 py-2 border">Exchange Rate</th>
+            <th class="px-4 py-2 border">USD to LKR</th>
         </tr>
         </thead>
         <tbody>

@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create('return_databases', function (Blueprint $table) {
             $table->id();
             $table->string('invoice_number');
+            $table->string('delivery_note_no');
+            $table->string('new_dnote_no')->nullable();
             $table->string('po_no');
             $table->string('item_code');
             $table->string('color_name');

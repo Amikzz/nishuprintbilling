@@ -79,6 +79,7 @@
             <thead class="bg-gray-200">
             <tr>
                 <th class="px-4 py-2 text-left">Invoice No</th>
+                <th class="px-4 py-2 text-left">Delivery Note No</th>
                 <th class="px-4 py-2 text-left">Reference No</th>
                 <th class="px-4 py-2 text-left">PO Number</th>
                 <th class="px-4 py-2 text-left">Date</th>
@@ -90,6 +91,7 @@
             @foreach($invoices as $invoice)
                 <tr class="border-b hover:bg-gray-100">
                     <td class="px-4 py-2">{{ $invoice->invoice_no }}</td>
+                    <td class="px-4 py-2">{{ $invoice->delivery_note_no ?? 'Delivery Note not created'}}</td>
                     <td class="px-4 py-2">{{ $invoice->reference_no }}</td>
                     <td class="px-4 py-2">{{ $invoice->po_number }}</td>
                     <td class="px-4 py-2">{{ $invoice->date }}</td>
