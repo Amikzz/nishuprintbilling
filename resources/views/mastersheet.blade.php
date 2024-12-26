@@ -10,12 +10,48 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #f7fafc;
+        }
+        .container-fluid {
+            padding-left: 30px;
+            padding-right: 30px;
+        }
+        .navbar {
+            width: 100%;
+        }
+        .table {
+            width: 100%;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
 
-<div class="w-full px-8 py-6">
+<body>
+
+<!-- Navbar -->
+<nav class="bg-gray-800 p-3">
+    <div class="flex items-center justify-between container-fluid">
+        <a href="{{ route('home') }}" class="flex items-center text-white">
+            <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="mr-3" style="height: 80px;">
+        </a>
+        <div class="flex space-x-6 text-white">
+            <a href="{{ route('home') }}" class="hover:text-gray-400">Home</a>
+            <a href="{{ route('purchase-order-databases.index') }}" class="hover:text-gray-400">All Orders</a>
+            <a href="{{ route('invoice-databases.index') }}" class="hover:text-gray-400 ">Invoice & Delivery</a>
+            <a href="{{route('mastersheet')}}" class="hover:text-gray-400 text-pink-500">Master Sheet</a>
+            <a href="{{ route('return.page') }}" class="hover:text-gray-400 ">Returns</a>
+            <a href="{{ route('reports.page') }}" class="hover:text-gray-400">Reports</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid mx-auto mt-8">
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-4xl font-bold text-gray-800">Master Sheet</h1>
+        <h1 class="text-2xl font-bold text-gray-800">Master Sheet</h1>
         <!-- Modal Trigger -->
         <button class="px-4 py-2 bg-blue-500 text-white rounded shadow" data-bs-toggle="modal" data-bs-target="#addInvoiceModal">
             Add New Invoice
