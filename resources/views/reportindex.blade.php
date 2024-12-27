@@ -123,6 +123,18 @@
         } else if (reportType === 'Pending List') {
             var url = "{{ route('report.pendinglist') }}";
             window.location.href = `${url}?from_date=${startDate}&to_date=${endDate}`;
+        } else if (reportType === 'Master Sheet Report') {
+            var url = "{{ route('report.mastersheet') }}";
+            window.location.href = `${url}?from_date=${startDate}&to_date=${endDate}`;
+        } else if (reportType === 'Completed Orders Report') {
+            var url = "{{ route('report.completeorders') }}";
+            window.location.href = `${url}?from_date=${startDate}&to_date=${endDate}`;
+        } else if (reportType === 'All Orders Report') {
+            var url = "{{ route('report.allorders') }}";
+            window.location.href = `${url}?from_date=${startDate}&to_date=${endDate}`;
+        } else if (reportType === 'Sales Report') {
+            var url = "{{ route('report.sales') }}";
+            window.location.href = `${url}?from_date=${startDate}&to_date=${endDate}`;
         }
         else {
             alert('Report type not implemented yet.');
@@ -131,7 +143,5 @@
         $('#dateRangeModal').modal('hide');
     });
 </script>
-
-
 </body>
 </html>

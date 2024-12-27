@@ -31,3 +31,7 @@ Route::get('/purchaseorder/printed/{invoice_id}', 'App\Http\Controllers\InvoiceD
 //Report Routes
 Route::get('/reports/invoices', 'App\Http\Controllers\ReportGenerateController@invoiceReport')->name('report.invoices');
 Route::get('/reports/pending', 'App\Http\Controllers\ReportGenerateController@pendingListReport')->name('report.pendinglist');
+Route::get('/reports/mastersheet', 'App\Http\Controllers\ReportGenerateController@masterSheetReport')->name('report.mastersheet');
+Route::get('/reports/complete', 'App\Http\Controllers\ReportGenerateController@completeOrderReport')->name('report.completeorders');
+Route::get('/reports/allorders', 'App\Http\Controllers\ReportGenerateController@purchaseOrderReport')->name('report.allorders');
+Route::get('/reports/sales', 'App\Http\Controllers\ReportGenerateController@salesReport')->name('report.sales');
