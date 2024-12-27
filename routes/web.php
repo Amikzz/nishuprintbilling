@@ -27,3 +27,7 @@ Route::post('/deliverynote/return/{d_note_no}', 'App\Http\Controllers\ReturnCont
 Route::get('/mastersheet', 'App\Http\Controllers\MasterSheetController@getMasterSheet')->name('mastersheet');
 Route::post('/mastersheet/create', 'App\Http\Controllers\MasterSheetController@createMasterSheet')->name('mastersheet.create');
 Route::get('/purchaseorder/printed/{invoice_id}', 'App\Http\Controllers\InvoiceDatabaseController@itemsPrinted')->name('purchaseorder.printed');
+
+//Report Routes
+Route::get('/reports/invoices', 'App\Http\Controllers\ReportGenerateController@invoiceReport')->name('report.invoices');
+Route::get('/reports/pending', 'App\Http\Controllers\ReportGenerateController@pendingListReport')->name('report.pendinglist');
