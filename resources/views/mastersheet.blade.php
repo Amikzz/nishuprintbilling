@@ -112,21 +112,21 @@
                            @elseif($invoice->status === 'delivered') bg-green-200
                            @elseif($invoice->status === 'urgent') bg-pink-200
                            @else bg-gray-100 @endif">
-                    <td class="border px-4 py-2">{{ $invoice->our_ref }}</td>
-                    <td class="border px-4 py-2">{{ $invoice->mail_date }}</td>
-                    <td class="border px-4 py-2">{{ $invoice->required_date }}</td>
-                    <td class="border px-4 py-2">{{ $invoice->created_by }}</td>
-                    <td class="border px-4 py-2">{{ $invoice->art_sent_date }}</td>
-                    <td class="border px-4 py-2">{{ $invoice->art_approved_date }}</td>
-                    <td class="border px-4 py-2">{{ $invoice->print_date }}</td>
-                    <td class="border px-4 py-2">{{ $invoice->invoice_date }}</td>
-                    <td class="border px-4 py-2">{{ $invoice->invoice_no }}</td>
-                    <td class="border px-4 py-2">{{ $invoice->cust_ref }}</td>
-                    <td class="border px-4 py-2">{{ $invoice->description }}</td>
-                    <td class="border px-4 py-2">{{ $invoice->dn }}</td>
-                    <td class="border px-4 py-2">{{ $invoice->dn_date }}</td>
-                    <td class="border px-4 py-2">{{ $invoice->pcs }}</td>
-                    <td class="border px-4 py-2">{{ $invoice->invoice_value }}</td>
+                    <td class="border px-4 py-2">{{ $invoice->our_ref ?? '-' }}</td>
+                    <td class="border px-4 py-2">{{ $invoice->mail_date ?? '-'}}</td>
+                    <td class="border px-4 py-2">{{ $invoice->required_date ?? '-'}}</td>
+                    <td class="border px-4 py-2">{{ $invoice->created_by ?? '-'}}</td>
+                    <td class="border px-4 py-2">{{ $invoice->art_sent_date ?? '-'}}</td>
+                    <td class="border px-4 py-2">{{ $invoice->art_approved_date ?? '-'}}</td>
+                    <td class="border px-4 py-2">{{ $invoice->print_date ?? '-'}}</td>
+                    <td class="border px-4 py-2">{{ $invoice->invoice_date ?? '-'}}</td>
+                    <td class="border px-4 py-2">{{ $invoice->invoice_no ?? '-'}}</td>
+                    <td class="border px-4 py-2">{{ $invoice->cust_ref ?? '-'}}</td>
+                    <td class="border px-4 py-2">{{ $invoice->description ?? '-'}}</td>
+                    <td class="border px-4 py-2">{{ $invoice->dn ?? '-'}}</td>
+                    <td class="border px-4 py-2">{{ $invoice->dn_date ?? '-'}}</td>
+                    <td class="border px-4 py-2">{{ $invoice->pcs ?? '-'}}</td>
+                    <td class="border px-4 py-2">{{ $invoice->invoice_value ?? '-'}}</td>
                 </tr>
             @endforeach
             </tbody>
