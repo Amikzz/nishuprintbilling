@@ -194,7 +194,7 @@
                     <tr>
                         <td>{{ $item->item_code }}</td>
                         <td>{{ $item->item_name }}</td>
-                        <td>{{ $item->size ?? '-' }}</td>
+                        <td>{{ $item->sticker_size ?? '-' }}</td>
                         <td>{{ $item->po_qty }}</td>
                         <td>{{ number_format($item->unit_price, 3) }}</td>
                         <td>{{ number_format($item->price, 3) }}</td>
