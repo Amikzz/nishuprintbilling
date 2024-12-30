@@ -46,6 +46,9 @@ class DeliveryNCreateController extends Controller
             ->where('reference_no', $invoice->reference_no)
             ->get();
 
+        //get the number of items
+        $item_count = count($purchaseOrderItems);
+
         // Fetch corresponding items from the Item table
         $purchaseOrderItemsDetails = $purchaseOrderItems->map(function ($orderItem) {
             $item = Items::where('item_code', $orderItem->item_code)->first();
@@ -94,6 +97,8 @@ class DeliveryNCreateController extends Controller
             'customer' => $customer,
             'delivery_note_no' => $delivery_note_no,
             'purchaseOrderItemsDetails' => $purchaseOrderItemsDetails,
+            'item_count' => $item_count,
+
         ]);
 
         return $pdf->download($delivery_note_no. '.pdf');

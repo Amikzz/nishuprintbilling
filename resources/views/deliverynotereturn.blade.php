@@ -124,7 +124,7 @@
         <div class="header">
             <div class="details">
                 <p><strong>Nisu Creations (Pvt) Ltd</strong></p>
-                <p>493/5A, Makola North, Makola</p>
+                <p>493/5, Makola North, Makola</p>
                 <p>Tel: 0094 1 4063878 / 0094 1 292656</p>
                 <p>Email: nisucreations@gmail.com</p>
             </div>

@@ -124,7 +124,7 @@
         <div class="header">
             <div class="details">
                 <p><strong>Nisu Creations (Pvt) Ltd</strong></p>
-                <p>493/5A, Makola North, Makola</p>
+                <p>493/5, Makola North, Makola</p>
                 <p>Tel: 0094 1 4063878 / 0094 1 292656</p>
                 <p>Email: nisucreations@gmail.com</p>
             </div>
@@ -195,6 +195,10 @@
                         <td>{{ $item->po_qty }}</td>
                     </tr>
                 @endforeach
+                <tr class="total-row">
+                    <td colspan="7" style="text-align: right;">Total Number of Items:</td>
+                    <td>{{ $item_count }}</td>
+                </tr>
                 <tr class="total-row">
                     <td colspan="7" style="text-align: right;">Page Total Quantity:</td>
                     <td>{{ $totalQuantity }}</td>
