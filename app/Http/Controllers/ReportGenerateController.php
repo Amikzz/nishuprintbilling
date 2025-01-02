@@ -185,7 +185,7 @@ class ReportGenerateController extends Controller
         // Write data rows
         foreach ($masterSheet as $master) {
             fputcsv($output, [
-                $master->our_ref ?? '-',
+                $master->id ?? '-',
                 $master->mail_date ?? '-',
                 $master->required_date ?? '-',
                 $master->created_by ?? '-',

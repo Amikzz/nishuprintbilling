@@ -87,15 +87,11 @@
         </div>
         <!-- Reference and Purchase Order Numbers -->
         <div class="row mb-3">
-            <div class="col-md-4">
-                <label for="reference_number" class="form-label">Reference Number</label>
-                <input type="text" class="form-control" id="reference_number" name="reference_number" required>
-            </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <label for="purchase_order_number" class="form-label">Purchase Order Number</label>
                 <input type="text" class="form-control" id="purchase_order_number" name="purchase_order_number" required>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <label for="invoice_number" class="form-label">Invoice Number (NC-24-25-XXXX)</label>
                 <input type="text" class="form-control" id="invoice_number" name="invoice_number" required placeholder="xxxx">
             </div>

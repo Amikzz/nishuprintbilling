@@ -96,7 +96,7 @@
                 <th class="px-4 py-2">Print Date</th>
                 <th class="px-4 py-2">Invoice Date</th>
                 <th class="px-4 py-2">Invoice No</th>
-                <th class="px-4 py-2">Cust: Ref#</th>
+                <th class="px-4 py-2">PO Number</th>
                 <th class="px-4 py-2">Description</th>
                 <th class="px-4 py-2">DN</th>
                 <th class="px-4 py-2">DN Date</th>
@@ -112,7 +112,7 @@
                            @elseif($invoice->status === 'delivered') bg-green-200
                            @elseif($invoice->status === 'urgent') bg-pink-200
                            @else bg-gray-100 @endif">
-                    <td class="border px-4 py-2">{{ $invoice->our_ref ?? '-' }}</td>
+                    <td class="border px-4 py-2">{{ $invoice->id ?? '-' }}</td>
                     <td class="border px-4 py-2">{{ $invoice->mail_date ?? '-'}}</td>
                     <td class="border px-4 py-2">{{ $invoice->required_date ?? '-'}}</td>
                     <td class="border px-4 py-2">{{ $invoice->created_by ?? '-'}}</td>
@@ -146,10 +146,6 @@
                 </div>
                 <div class="modal-body grid grid-cols-2 gap-4">
                     <div>
-                        <label for="our_ref" class="block mb-1">Our Ref#</label>
-                        <input type="text" id="our_ref" name="our_ref" class="w-full px-3 py-2 border rounded" required>
-                    </div>
-                    <div>
                         <label for="mail_date" class="block mb-1">Mail Date</label>
                         <input type="date" id="mail_date" name="mail_date" class="w-full px-3 py-2 border rounded" required>
                     </div>
@@ -170,7 +166,7 @@
                         <input type="date" id="invoice_date" name="invoice_date" class="w-full px-3 py-2 border rounded">
                     </div>
                     <div>
-                        <label for="cust_ref" class="block mb-1">Cust: Ref#</label>
+                        <label for="cust_ref" class="block mb-1">Purchase Order No</label>
                         <input type="text" id="cust_ref" name="cust_ref" class="w-full px-3 py-2 border rounded" required>
                     </div>
                     <div>

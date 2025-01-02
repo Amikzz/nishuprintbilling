@@ -64,7 +64,6 @@ class PurchaseOrderDatabaseController extends Controller
             // Validate incoming request data
             $validated = $request->validate([
                 'date' => 'required|date',
-                'reference_number' => 'required|string|max:255|exists:master_sheet,our_ref',
                 'purchase_order_number' => 'required|string|max:255|exists:master_sheet,cust_ref',
                 'invoice_number' => 'required|integer|min:0',
                 'items' => 'required|array|min:1',
@@ -83,13 +82,15 @@ class PurchaseOrderDatabaseController extends Controller
             // Begin a transaction
             DB::beginTransaction();
 
+            $id = MasterSheet::where('cust_ref', $validated['purchase_order_number'])->first()->id;
+
             // Loop through each item and save it to the database
             foreach ($validated['items'] as $item) {
                 // Create the purchase order
                 $purchaseOrder = PurchaseOrderDatabase::create([
-                    'date' => $validated['date'],                                 // Current date
-                    'reference_no' => $validated['reference_number'], // Reference number
-                    'po_no' => $validated['purchase_order_number'],   // Purchase order number
+                    'date' => $validated['date'],                    // Current date
+                    'reference_no' => $id,                           // Reference number
+                    'po_no' => $validated['purchase_order_number'],  // Purchase order number
                     'item_code' => $item['name'],                    // Item name/code
                     'color_name' => $item['color'] ?? null,          // Color name
                     'color_no' => $item['color_number'] ?? null,     // Color number
@@ -108,7 +109,7 @@ class PurchaseOrderDatabaseController extends Controller
             // You can customize the invoice number generation logic here
             $invoiceNo = 'NC-' . '24-25' . '-' . $validated['invoice_number']; // Updated invoice number logic
 
-            $masterSheet = MasterSheet::where('our_ref', $validated['reference_number'])->first();
+            $masterSheet = MasterSheet::where('cust_ref', $validated['purchase_order_number'])->first();
             $masterSheet->invoice_no = $invoiceNo;
             $masterSheet->invoice_date = $validated['date'];
             $masterSheet->pcs = count($validated['items']);
@@ -120,7 +121,7 @@ class PurchaseOrderDatabaseController extends Controller
                 'invoice_no' => $invoiceNo,                          // Generated invoice number
                 'customer_id' => 1,                                  // Placeholder for customer ID
                 'po_number' => $validated['purchase_order_number'],  // PO Number (foreign key)
-                'reference_no' => $validated['reference_number'],    // Reference number (foreign key)
+                'reference_no' => $id,                               // Reference number (foreign key)
                 'no_of_items' => count($validated['items']),         // Number of items
                 'status' => 'Pending',                               // Initial status
             ]);

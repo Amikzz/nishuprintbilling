@@ -19,7 +19,6 @@ class MasterSheetController extends Controller
     {
         // Validate incoming request data
         $validated = $request->validate([
-            'our_ref' => 'required|string|max:255',
             'mail_date' => 'required|date',
             'required_date' => 'required|date|after_or_equal:mail_date', // Ensure required date is after or equal to mail date
             'created_by' => 'required|string|max:255',
@@ -32,7 +31,6 @@ class MasterSheetController extends Controller
         // Create the new MasterSheet record
         try {
             MasterSheet::create([
-                'our_ref' => $validated['our_ref'],
                 'mail_date' => $validated['mail_date'],
                 'required_date' => $validated['required_date'],
                 'created_by' => $validated['created_by'],
