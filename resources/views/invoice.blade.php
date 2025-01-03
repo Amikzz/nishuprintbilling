@@ -171,7 +171,7 @@
                 </tr>
                 <tr>
                     <th>Exchange Rate</th>
-                    <td>{{ number_format($exchangeRate, 3) }}</td>
+                    <td>{{ number_format($exchangeRate) }}</td>
                 </tr>
             </table>
         </div>
@@ -206,10 +206,10 @@
 
         <!-- Totals -->
         <div class="totals">
-            <p>Page Total: ${{ number_format($pageTotal, 4) }}</p>
-            <p>Grand Total: ${{ number_format($grandTotal, 4) }}</p>
-            <p>Exchange rate: Rs.{{number_format($exchangeRate, 4)}}</p>
-            <p><b>Converted Grand Total: Rs. {{ number_format($convertedTotal, 5) }}</b></p>
+            <p>Page Total: ${{ number_format($pageTotal, 2) }}</p>
+            <p>Grand Total: ${{ number_format($grandTotal, 2) }}</p>
+            <p>Exchange rate: Rs.{{number_format($exchangeRate)}}</p>
+            <p><b>Converted Grand Total: Rs. {{ number_format($convertedTotal, 2) }}</b></p>
         </div>
 
         <!-- Footer Section -->

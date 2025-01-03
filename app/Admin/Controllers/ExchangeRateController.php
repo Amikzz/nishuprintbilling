@@ -40,7 +40,7 @@ class ExchangeRateController extends Controller
     {
         // Validate the incoming request data
         $validator = Validator::make($request->all(), [
-            'rate' => 'required|numeric|min:0.00000001', // Ensure a positive decimal number
+            'rate' => 'required|numeric|min:1', // Ensure a positive decimal number
         ]);
 
         // If validation fails, redirect back to the form with errors

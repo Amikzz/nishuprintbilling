@@ -44,7 +44,7 @@
                         @csrf
                         @method('PUT')
 
-                        <input type="number" step="0.00000001" name="rate" value="{{ $exchangeRate->rate }}"
+                        <input type="number" name="rate" value="{{ $exchangeRate->rate }}"
                                class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 py-1 px-1 text-lg"
                                required>
 

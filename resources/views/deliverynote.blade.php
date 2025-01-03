@@ -226,7 +226,7 @@
         </div>
     </div>
 
-    @if (($page+1) < $totalPages)
+    @if (($page) < $totalPages)
         <div class="page-break"></div>
     @endif
 @endfor
