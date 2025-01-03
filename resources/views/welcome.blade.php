@@ -133,7 +133,7 @@
                             <td><input type="text" class="form-control" id="upc_0" name="items[0][upc]"></td>
                             <td><input type="text" class="form-control" id="more1_0" name="items[0][more1]"></td>
                             <td><input type="text" class="form-control" id="more2_0" name="items[0][more2]"></td>
-                            <td><input type="text" class="form-control price" id="price_0" name="items[0][price]" readonly value="0.0000"></td>
+                            <td><input type="text" class="form-control price" id="price_0" name="items[0][price]" readonly value="0.000"></td>
                             <td><button type="button" class="btn btn-danger remove-item">Remove</button></td>
                         </tr>
                         </tbody>
@@ -158,7 +158,7 @@
                 const price = parseFloat($(this).find('.price').val()) || 0;
                 total += price;
             });
-            $('#total_price').val(total.toFixed(3));
+            $('#total_price').val(total.toFixed(2));
         }
 
         function updateItemNumbers() {
@@ -176,7 +176,7 @@
 
             // Update price field based on selected item and quantity
             const totalItemPrice = pricePerUnit * quantity;
-            row.find('.price').val(totalItemPrice.toFixed(4));
+            row.find('.price').val(totalItemPrice.toFixed(3));
 
             updateTotalPrice(); // Recalculate total price
         });
@@ -190,7 +190,7 @@
 
             // Update price field based on new quantity
             const totalItemPrice = pricePerUnit * quantity;
-            row.find('.price').val(totalItemPrice.toFixed(4));
+            row.find('.price').val(totalItemPrice.toFixed(3));
 
             updateTotalPrice(); // Recalculate total price
         });
@@ -220,12 +220,12 @@
                 <td><input type="number" class="form-control quantity" id="quantity_${index}" name="items[${index}][quantity]" min="1" value="1" required></td>
                 <td><input type="text" class="form-control" id="color_number_${index}" name="items[${index}][color_number]"></td>
                 <td><input type="text" class="form-control" id="color_${index}" name="items[${index}][color]"></td>
-                <td> <input type="text" class="form-control" id="size_${index}" name="items[0][${index}]"> </td>
+                <td> <input type="text" class="form-control" id="size_${index}" name="items[${index}][size]"> </td>
                 <td><input type="text" class="form-control" id="style_${index}" name="items[${index}][style]"></td>
                 <td><input type="text" class="form-control" id="upc_${index}" name="items[${index}][upc]"></td>
                 <td><input type="text" class="form-control" id="more1_${index}" name="items[${index}][more1]"></td>
                 <td><input type="text" class="form-control" id="more2_${index}" name="items[${index}][more2]"></td>
-                <td><input type="text" class="form-control price" id="price_${index}" name="items[${index}][price]" readonly value="${lastItemPrice.toFixed(4)}"></td>
+                <td><input type="text" class="form-control price" id="price_${index}" name="items[${index}][price]" readonly value="${lastItemPrice.toFixed(3)}"></td>
                 <td><button type="button" class="btn btn-danger remove-item">Remove</button></td>
             </tr>`;
 
