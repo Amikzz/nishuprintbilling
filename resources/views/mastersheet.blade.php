@@ -158,20 +158,19 @@
                         <input type="text" id="created_by" name="created_by" class="w-full px-3 py-2 border rounded" required>
                     </div>
                     <div>
-                        <label for="print_date" class="block mb-1">Print Date</label>
-                        <input type="date" id="print_date" name="print_date" class="w-full px-3 py-2 border rounded">
-                    </div>
-                    <div>
-                        <label for="invoice_date" class="block mb-1">Invoice Date</label>
-                        <input type="date" id="invoice_date" name="invoice_date" class="w-full px-3 py-2 border rounded">
-                    </div>
-                    <div>
                         <label for="cust_ref" class="block mb-1">Purchase Order No</label>
                         <input type="text" id="cust_ref" name="cust_ref" class="w-full px-3 py-2 border rounded" required>
                     </div>
                     <div>
-                        <label for="description" class="block mb-1">Description</label>
-                        <input type="text" id="description" name="description" class="w-full px-3 py-2 border rounded">
+                        <label for="description" class="block mb-1">Item</label>
+                        <select class="form-select item-select" id="description" name="description">
+                            <option value="" disabled selected>Select Item</option>
+                            @foreach($items as $item)
+                                <option value="{{ $item->item_code }}, {{$item->description}}">
+                                    {{ $item->item_code }} - {{ $item->description }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
