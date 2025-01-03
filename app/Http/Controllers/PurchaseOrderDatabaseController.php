@@ -65,7 +65,6 @@ class PurchaseOrderDatabaseController extends Controller
             $validated = $request->validate([
                 'date' => 'required|date',
                 'purchase_order_number' => 'required|string|max:255|exists:master_sheet,cust_ref',
-                'invoice_number' => 'required|integer|min:0',
                 'items' => 'required|array|min:1',
                 'items.*.name' => 'required|string|max:255',
                 'items.*.color' => 'nullable|string|max:255',
@@ -105,20 +104,19 @@ class PurchaseOrderDatabaseController extends Controller
                 ]);
             }
 
-            // Create an invoice record for the purchase order
-            // You can customize the invoice number generation logic here
-            $invoiceNo = 'NC-' . '24-25' . '-' . $validated['invoice_number']; // Updated invoice number logic
-
+//            // Create an invoice record for the purchase order
+//            // You can customize the invoice number generation logic here
+//            $invoiceNo = 'NC-' . '24-25' . '-' . $validated['invoice_number']; // Updated invoice number logic
+//
             $masterSheet = MasterSheet::where('cust_ref', $validated['purchase_order_number'])->first();
-            $masterSheet->invoice_no = $invoiceNo;
-            $masterSheet->invoice_date = $validated['date'];
-            $masterSheet->pcs = count($validated['items']);
+//            $masterSheet->invoice_no = $invoiceNo;
+//            $masterSheet->invoice_date = $validated['date'];
+            $masterSheet->pcs = array_sum(array_column($validated['items'], 'quantity'));
             $masterSheet->invoice_value = array_sum(array_column($validated['items'], 'price'));
             $masterSheet->save();
 
             InvoiceDatabase::create([
                 'date' => $validated['date'],                                     // Current date
-                'invoice_no' => $invoiceNo,                          // Generated invoice number
                 'customer_id' => 1,                                  // Placeholder for customer ID
                 'po_number' => $validated['purchase_order_number'],  // PO Number (foreign key)
                 'reference_no' => $id,                               // Reference number (foreign key)

@@ -73,27 +73,20 @@
 <div class="container-fluid mt-5">
     <form method="POST" action="{{ route('purchase-order-databases.store') }}">
         @csrf
-        <div class="row mb-3">
-            <div class="col-md-6">
+        <div class="row mb-4">
+            <div class="col-md-4">
                 <label for="date" class="form-label">Date</label>
                 <input type="date" class="form-control" id="date" name="date" required>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
+                <label for="purchase_order_number" class="form-label">Purchase Order Number</label>
+                <input type="text" class="form-control" id="purchase_order_number" name="purchase_order_number" required>
+            </div>
+            <div class="col-md-4">
                 <label for="reference_number" class="form-label">Customer Name</label>
                 <select class="form-select item-select" id="item_0" name="items[0][name]" required>
                     <option value="Star Garments (Pvt) Ltd" selected>Star Garments (Pvt) Ltd</option>
                 </select>
-            </div>
-        </div>
-        <!-- Reference and Purchase Order Numbers -->
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label for="purchase_order_number" class="form-label">Purchase Order Number</label>
-                <input type="text" class="form-control" id="purchase_order_number" name="purchase_order_number" required>
-            </div>
-            <div class="col-md-6">
-                <label for="invoice_number" class="form-label">Invoice Number (NC-24-25-XXXX)</label>
-                <input type="text" class="form-control" id="invoice_number" name="invoice_number" required placeholder="xxxx">
             </div>
         </div>
 

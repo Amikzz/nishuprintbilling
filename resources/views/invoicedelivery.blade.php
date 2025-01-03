@@ -91,7 +91,7 @@
             <tbody>
             @foreach($invoices as $invoice)
                 <tr class="border-b hover:bg-gray-100">
-                    <td class="px-4 py-2">{{ $invoice->invoice_no }}</td>
+                    <td class="px-4 py-2">{{ $invoice->invoice_no ?? 'Invoice Not Created'}}</td>
                     <td class="px-4 py-2">{{ $invoice->delivery_note_no ?? 'Delivery Note not created'}}</td>
                     <td class="px-4 py-2">{{ $invoice->reference_no }}</td>
                     <td class="px-4 py-2">{{ $invoice->po_number }}</td>
@@ -109,14 +109,12 @@
                         <div class="flex flex-col space-y-4">
                             <!-- Download Actions -->
                             <div class="flex space-x-2">
-                                <a href="{{ route('invoice.create', ['invoice_number' => $invoice->invoice_no]) }}"
-                                   class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-center">
+                                <button onclick="openModal('invoice-{{ $invoice->po_number }}')" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
                                     Download Invoice
-                                </a>
-                                <a href="{{ route('deliverynote.create', ['invoice_number' => $invoice->invoice_no]) }}"
-                                   class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 text-center">
+                                </button>
+                                <button onclick="openModal('deliverynote-{{ $invoice->po_number }}')" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
                                     Download Delivery Note
-                                </a>
+                                </button>
                             </div>
 
                             <!-- Artwork Actions -->
@@ -219,6 +217,48 @@
 
                                 </div>
 
+                            <!-- Invoice Modal -->
+                            <div id="invoice-{{ $invoice->po_number }}" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+                                <div class="bg-white p-6 rounded shadow-lg w-1/3">
+                                    <h2 class="text-xl font-bold mb-4">Add Invoice Number</h2>
+                                    <form action="{{ route('invoice.create', $invoice->po_number) }}" method="GET">
+                                        @csrf
+                                        <label for="invoice_number_{{ $invoice->po_number }}" class="block text-sm font-medium text-gray-700">Invoice Number</label>
+                                        <input type="text" id="invoice_number_{{ $invoice->po_number }}" name="invoice_number" placeholder="Enter Invoice Number" required
+                                               class="p-2 border border-gray-300 rounded-md w-full mb-4">
+                                        <div class="flex justify-end space-x-2">
+                                            <button type="button" onclick="closeModal('invoice-{{ $invoice->po_number }}')" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                                                Cancel
+                                            </button>
+                                            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Delivery Note Modal -->
+                            <div id="deliverynote-{{ $invoice->po_number }}" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+                                <div class="bg-white p-6 rounded shadow-lg w-1/3">
+                                    <h2 class="text-xl font-bold mb-4">Add Delivery Note Number</h2>
+                                    <form action="{{ route('deliverynote.create', $invoice->po_number) }}" method="GET">
+                                        @csrf
+                                        <label for="delivery_note_number_{{ $invoice->po_number }}" class="block text-sm font-medium text-gray-700">Delivery Note Number</label>
+                                        <input type="text" id="delivery_note_number_{{ $invoice->po_number }}" name="delivery_note_number" placeholder="Enter Delivery Note Number" required
+                                               class="p-2 border border-gray-300 rounded-md w-full mb-4">
+                                        <div class="flex justify-end space-x-2">
+                                            <button type="button" onclick="closeModal('deliverynote-{{ $invoice->po_number }}')" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                                                Cancel
+                                            </button>
+                                            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
                                 <!-- Order Actions -->
                             <div class="flex space-x-2 items-center">
                                 @if($invoice->status == 'Items_printed')
@@ -250,6 +290,25 @@
                             function closeModal(id) {
                                 document.getElementById(id).classList.add('hidden');
                             }
+
+                            document.addEventListener('DOMContentLoaded', () => {
+                                const forms = document.querySelectorAll('form'); // Select all forms within modals
+
+                                forms.forEach(form => {
+                                    form.addEventListener('submit', (event) => {
+                                        const modal = form.closest('.fixed'); // Find the closest modal container
+                                        if (modal) {
+                                            modal.classList.add('hidden'); // Hide the modal
+                                        }
+
+                                        // Optional: Refresh the page after submission
+                                        setTimeout(() => {
+                                            window.location.reload();
+                                        }, 500); // Add a delay to ensure backend processing
+                                    });
+                                });
+                            });
+
                         </script>
                     </td>
                 </tr>

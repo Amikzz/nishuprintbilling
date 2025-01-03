@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\InvoiceDatabase;
 use App\Models\MasterSheet;
 use Illuminate\Http\Request;
 
@@ -11,6 +12,7 @@ class MasterSheetController extends Controller
     public function getMasterSheet(Request $request)
     {
         $invoices = MasterSheet::all();
+
         return view('mastersheet', compact('invoices'));
     }
 

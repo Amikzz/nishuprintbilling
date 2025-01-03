@@ -100,7 +100,7 @@
                 <th class="px-4 py-2">Description</th>
                 <th class="px-4 py-2">DN</th>
                 <th class="px-4 py-2">DN Date</th>
-                <th class="px-4 py-2">PCS</th>
+                <th class="px-4 py-2">Total PCS</th>
                 <th class="px-4 py-2">Invoice Value</th>
             </tr>
             </thead>

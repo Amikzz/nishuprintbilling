@@ -13,8 +13,12 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class InvoiceCreateController extends Controller
 {
-    public function createInvoice($invoice_number)
+    public function createInvoice(Request $request, $po_number)
     {
+        $validated = $request->validate([
+            'invoice_number' => 'required|string|max:255',
+        ]);
+
         //Get the exchnage rate from the exchange_rates table
         $exchangeRate = ExchangeRate::where('currency_from', 'USD')->where('currency_to', 'LKR')->first();
 
@@ -22,11 +26,21 @@ class InvoiceCreateController extends Controller
         $exchangeRate = $exchangeRate ? $exchangeRate->rate : 0;
 
         // Fetch the invoice details based on the invoice number
-        $invoice = InvoiceDatabase::where('invoice_no', $invoice_number)->first();
+        $invoice = InvoiceDatabase::where('po_number', $po_number)->first();
+
 
         if (!$invoice) {
             return response()->json(['error' => 'Invoice not found'], 404);
         }
+
+        $invoiceNo = 'NC-' . '24-25' . '-' . $validated['invoice_number']; // Updated invoice number logic
+        $invoice->invoice_no = $invoiceNo;
+        $invoice->save();
+
+        $masterSheet = MasterSheet::where('cust_ref', $po_number)->first();
+        $masterSheet->invoice_no = $invoiceNo;
+        $masterSheet->invoice_date = now();
+        $masterSheet->save();
 
         // Fetch the related purchase order using the po_number and reference_no
         $purchaseOrder = PurchaseOrderDatabase::where('po_no', $invoice->po_number)

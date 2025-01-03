@@ -13,10 +13,14 @@ use Nette\Utils\Random;
 
 class DeliveryNCreateController extends Controller
 {
-    public function createDeliveryNote(Request $request, $invoiceId)
+    public function createDeliveryNote(Request $request, $po_number)
     {
+        $validated = $request->validate([
+            'delivery_note_number' => 'required|string|max:255',
+        ]);
+
         // Fetch the invoice details based on the invoice number from the URL
-        $invoice = InvoiceDatabase::where('invoice_no', $invoiceId)->first();
+        $invoice = InvoiceDatabase::where('po_number', $po_number)->first();
 
         $invoiceno = $invoice->invoice_no;
 
@@ -71,12 +75,11 @@ class DeliveryNCreateController extends Controller
         });
 
         // Create delivery note number
-        $invoiceIdWithoutPrefix = str_replace('NC-24-25-', '', $invoiceId);
-        $invoice->delivery_note_no = $invoiceIdWithoutPrefix;
+        $invoice->delivery_note_no = $validated['delivery_note_number'];
         $invoice->save();
 
         $mastersheet = MasterSheet::where('invoice_no', $invoiceno)->first();
-        $mastersheet->dn = $invoiceIdWithoutPrefix;
+        $mastersheet->dn = $validated['delivery_note_number'];
         $mastersheet->dn_date = now();
         $mastersheet->save();
 
