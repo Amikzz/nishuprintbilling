@@ -43,6 +43,9 @@ class InvoiceDatabaseController extends Controller
             $query->whereBetween('date', [$startDate, $endDate]);
         }
 
+        // Order by creation date (newest items first)
+        $query->orderBy('created_at', 'desc');
+
         // Paginate the results, 10 records per page
         $invoices = $query->paginate(10);
 

@@ -40,6 +40,8 @@ class PurchaseOrderDatabaseController extends Controller
             ->when($endDate, function ($query, $endDate) {
                 $query->whereDate('date', '<=', $endDate); // Filter by end date
             })
+            // Order by the creation date, most recent first
+            ->orderBy('created_at', 'desc')
             ->paginate(20); // Paginate results
 
         // Return the view with purchase orders and the search/query parameters

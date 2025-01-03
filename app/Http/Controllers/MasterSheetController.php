@@ -9,14 +9,17 @@ use Illuminate\Http\Request;
 
 class MasterSheetController extends Controller
 {
-    //function to get all the details related to the master sheet
+    // Function to get all the details related to the master sheet
     public function getMasterSheet(Request $request)
     {
-        $invoices = MasterSheet::all();
+        // Fetch invoices in descending order of ID and paginate with 20 items per page
+        $invoices = MasterSheet::orderBy('id', 'desc')->paginate(20);
         $items = Items::all();
 
         return view('mastersheet', compact('invoices', 'items'));
     }
+
+
 
     //function to create a new master sheet
     public function createMasterSheet(Request $request)

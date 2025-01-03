@@ -143,6 +143,10 @@
             </tbody>
         </table>
     </div>
+    <!-- Pagination Links -->
+    <div class="mt-4">
+        {{ $invoices->links('pagination::tailwind') }}
+    </div>
 </div>
 
 <!-- Add Invoice Modal -->
