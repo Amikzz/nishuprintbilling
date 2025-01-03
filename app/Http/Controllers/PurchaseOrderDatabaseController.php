@@ -137,10 +137,10 @@ class PurchaseOrderDatabaseController extends Controller
             DB::rollBack();
 
             // Log the error for debugging
-            \Log::error('Error creating purchase order and invoice: ' . $e->getMessage());
+            \Log::error('Error creating purchase order');
 
             // Redirect back with an error message
-            return redirect()->back()->with('error', 'An error occurred while creating the purchase order and invoice. Please try again.' .$e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred while creating the purchase order. Please try again.');
         }
     }
 

@@ -107,6 +107,13 @@
                         <label for="new_dnote_no" class="form-label">Enter New Delivery Note Number</label>
                         <input type="text" name="new_dnote_no" id="new_dnote_no" class="form-control" required>
                     </div>
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Type</label>
+                        <select name="type" id="type" class="form-select" required>
+                            <option value="Return">Return</option>
+                            <option value="Shortage">Shortage</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

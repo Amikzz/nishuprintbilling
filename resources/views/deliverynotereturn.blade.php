@@ -166,7 +166,7 @@
 
         <br>
         <br>
-        <h1> Recalled Delivery Note </h1>
+        <h1> Recalled Delivery Note - {{$type}}</h1>
         <br>
         <br>
 

@@ -165,7 +165,8 @@ class ReturnController extends Controller
     public function createDeliveryNote(Request $request, $d_note_no)
     {
         $request->validate([
-            'new_dnote_no' => 'required|string'
+            'new_dnote_no' => 'required|string',
+            'type' => 'required|string'
         ]);
 
         $returnItems = ReturnDatabase::where('delivery_note_no', $d_note_no)->get();
@@ -221,6 +222,7 @@ class ReturnController extends Controller
 
         // Generate the delivery note PDF with paginated items
         $pdf = Pdf::loadView('deliverynotereturn', [
+            'type' => $request->type,
             'date' => now()->format('Y-m-d'),
             'po_no' => $returnItems->first()->po_no,
             'pages' => $pages,
