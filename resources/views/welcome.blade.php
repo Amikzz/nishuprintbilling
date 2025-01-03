@@ -123,7 +123,7 @@
                                     @endforeach
                                 </select>
                             </td>
-                            <td><input type="number" class="form-control quantity" id="quantity_0" name="items[0][quantity]" min="1" value="1" required></td>
+                            <td><input type="number" class="form-control quantity" id="quantity_0" name="items[0][quantity]" min="1" required></td>
                             <td><input type="text" class="form-control" id="color_number_0" name="items[0][color_number]"></td>
                             <td><input type="text" class="form-control" id="color_0" name="items[0][color]"></td>
                             <td>
@@ -217,7 +217,7 @@
             </option>
 @endforeach
             </select></td>
-                <td><input type="number" class="form-control quantity" id="quantity_${index}" name="items[${index}][quantity]" min="1" value="1" required></td>
+                <td><input type="number" class="form-control quantity" id="quantity_${index}" name="items[${index}][quantity]" min="1" required></td>
                 <td><input type="text" class="form-control" id="color_number_${index}" name="items[${index}][color_number]"></td>
                 <td><input type="text" class="form-control" id="color_${index}" name="items[${index}][color]"></td>
                 <td> <input type="text" class="form-control" id="size_${index}" name="items[${index}][size]"> </td>

@@ -69,7 +69,6 @@
         </div>
     @endif
 
-    <!-- Date filter section -->
     <div class="flex gap-4 items-end mb-6">
         <div>
             <label for="start_date" class="block text-gray-700 font-medium mb-1">Start Date:</label>
@@ -79,7 +78,19 @@
             <label for="end_date" class="block text-gray-700 font-medium mb-1">End Date:</label>
             <input type="date" id="end_date" class="w-full px-3 py-2 border border-gray-300 rounded shadow">
         </div>
-        <button onclick="filterByDate()" class="px-4 py-2 bg-gray-700 text-white rounded shadow">Filter</button>
+        <div>
+            <label for="po_number" class="block text-gray-700 font-medium mb-1">PO Number:</label>
+            <input type="text" id="po_number" class="w-full px-3 py-2 border border-gray-300 rounded shadow" placeholder="Enter PO Number">
+        </div>
+        <div>
+            <label for="invoice_number" class="block text-gray-700 font-medium mb-1">Invoice Number:</label>
+            <input type="text" id="invoice_number" class="w-full px-3 py-2 border border-gray-300 rounded shadow" placeholder="Enter Invoice Number">
+        </div>
+        <div>
+            <label for="dn" class="block text-gray-700 font-medium mb-1">DN:</label>
+            <input type="text" id="dn" class="w-full px-3 py-2 border border-gray-300 rounded shadow" placeholder="Enter DN">
+        </div>
+        <button onclick="filterByCriteria()" class="px-4 py-2 bg-gray-700 text-white rounded shadow">Filter</button>
     </div>
 
     <!-- Table for displaying the master sheet -->
@@ -183,15 +194,20 @@
 </div>
 
 <script>
-    // Function to filter table rows based on date range
-    function filterByDate() {
+    function filterByCriteria() {
         const startDate = document.getElementById('start_date').value;
         const endDate = document.getElementById('end_date').value;
+        const poNumber = document.getElementById('po_number').value.trim().toLowerCase();
+        const invoiceNumber = document.getElementById('invoice_number').value.trim().toLowerCase();
+        const dn = document.getElementById('dn').value.trim().toLowerCase();
 
         const rows = document.querySelectorAll('table tbody tr');
         rows.forEach(row => {
             const mailDate = row.cells[1].textContent.trim();
             const invoiceDate = row.cells[7].textContent.trim();
+            const rowPONumber = row.cells[9].textContent.trim().toLowerCase();
+            const rowInvoiceNumber = row.cells[8].textContent.trim().toLowerCase();
+            const rowDN = row.cells[11].textContent.trim().toLowerCase();
 
             const rowStartDate = new Date(mailDate);
             const rowEndDate = new Date(invoiceDate);
@@ -205,6 +221,15 @@
                 showRow = false;
             }
             if (endFilterDate && rowEndDate > endFilterDate) {
+                showRow = false;
+            }
+            if (poNumber && !rowPONumber.includes(poNumber)) {
+                showRow = false;
+            }
+            if (invoiceNumber && !rowInvoiceNumber.includes(invoiceNumber)) {
+                showRow = false;
+            }
+            if (dn && !rowDN.includes(dn)) {
                 showRow = false;
             }
 
