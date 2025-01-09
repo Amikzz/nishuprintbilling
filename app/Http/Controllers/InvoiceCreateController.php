@@ -6,10 +6,11 @@ use App\Models\ExchangeRate;
 use App\Models\InvoiceDatabase;
 use App\Models\Items;
 use App\Models\MasterSheet;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use App\Models\PurchaseOrderDatabase;
 use App\Models\Customer;
-use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class InvoiceCreateController extends Controller
 {
@@ -97,7 +98,7 @@ class InvoiceCreateController extends Controller
         $pages = $purchaseOrderItemsDetails->chunk($itemsPerPage);
 
         // Generate the invoice PDF view
-        $pdf = Pdf::loadView('invoice', [
+        $pdf = PDF::loadView('invoice', [
             'date' => now(),
             'invoice' => $invoice,
             'pages' => $pages,

@@ -94,7 +94,7 @@ class DeliveryNCreateController extends Controller
         $pages = $purchaseOrderItemsDetails->chunk($itemsPerPage);
 
         // Generate the delivery note PDF with paginated items
-        $pdf = Pdf::loadView('deliverynote', [
+        $pdf = PDF::loadView('deliverynote', [
             'date' => now(),
             'invoice' => $invoice,
             'pages' => $pages,
