@@ -12,8 +12,10 @@ class MasterSheetController extends Controller
     // Function to get all the details related to the master sheet
     public function getMasterSheet(Request $request)
     {
-        // Fetch invoices in descending order of ID and paginate with 20 items per page
-        $invoices = MasterSheet::orderBy('id', 'desc')->paginate(20);
+        // Fetch invoices, prioritizing urgent ones first (assuming `status` field indicates if it's urgent)
+        $invoices = MasterSheet::orderByRaw("status = 'urgent' DESC")  // Prioritize urgent orders
+        ->orderBy('id', 'desc')               // Then order by ID in descending order
+        ->paginate(20);
         $items = Items::all();
 
         return view('mastersheet', compact('invoices', 'items'));

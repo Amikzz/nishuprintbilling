@@ -99,9 +99,11 @@
                     <td class="px-4 py-2 {{
                         $invoice->status === 'Order Dispatched' ? 'text-green-600' :
                         ($invoice->status === 'Pending' ? 'text-blue-500' :
-                        ($invoice->status === 'Order Complete' ? 'text-orange-500' :
-                        ($invoice->status === 'Artwork_approved' ? 'text-gray-500' :
-                        ($invoice->status === 'Artwork_sent' ? 'text-yellow-500' : ''))))
+                        ($invoice->status === 'Order Complete' ? 'text-green-600' :
+                        ($invoice->status === 'Artwork_approved' ? 'text-orange-500' :
+                        ($invoice->status === 'Items_printed' ? 'text-purple-500' :
+                        ($invoice->status === 'Urgent' ? 'text-pink-600' :
+                        ($invoice->status === 'Artwork_sent' ? 'text-yellow-500' : ''))))))
                     }}">
                         {{ $invoice->status }}
                     </td>
@@ -193,10 +195,17 @@
                             @endif
 
                             @if($invoice->status == 'Artwork_approved')
-                                <a href="{{ route('purchaseorder.printed', ['invoice_id' => $invoice->id]) }}"
-                                   class="bg-purple-400 text-white px-2 py-1 rounded hover:bg-purple-600 text-center w-1/2">
-                                    Printed
-                                </a>
+
+                                <div class="flex space-x-2">
+                                    <a href="{{ route('purchaseorder.printed', ['invoice_id' => $invoice->id]) }}"
+                                       class="bg-purple-400 text-white px-3 py-1 rounded hover:bg-purple-600 text-center">
+                                        &nbsp; &nbsp; &nbsp; Printed &nbsp; &nbsp; &nbsp;
+                                    </a>
+                                    <a href="{{ route('purchaseorder.urgent', ['invoice_id' => $invoice->id]) }}"
+                                       class="bg-pink-600 px-3 py-1 rounded hover:bg-pink-700 text-white text-center">
+                                        &nbsp; &nbsp; &nbsp; Urgent &nbsp; &nbsp; &nbsp;
+                                    </a>
+                                </div>
                             @endif
 
 

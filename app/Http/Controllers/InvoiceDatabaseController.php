@@ -323,6 +323,50 @@ class InvoiceDatabaseController extends Controller
         }
     }
 
+    //items printed function
+    public function itemsUrgent($invoice_id)
+    {
+        try {
+            // Find the invoice by ID
+                $invoice = InvoiceDatabase::findOrFail($invoice_id);
+                $invoice->status = 'Urgent';
+                $invoice->save();
+
+                $mastersheet = MasterSheet::where('cust_ref', $invoice->po_number)->first();
+                $mastersheet->print_date = now();
+                $mastersheet->status = 'urgent';
+                $mastersheet->save();
+
+                // Get the PO number associated with the invoice
+                $poNumber = $invoice->po_number;
+
+                // Fetch all related purchase orders based on the PO number
+                $purchaseOrders = PurchaseOrderDatabase::where('po_no', $poNumber)->get();
+
+                // Check if related purchase orders exist
+                if ($purchaseOrders->isEmpty()) {
+                    session()->flash('error', 'No related purchase orders found for this invoice.');
+                    return redirect()->back();
+                }
+
+                // Update the status of each related purchase order to 'Items_printed'
+                foreach ($purchaseOrders as $purchaseOrder) {
+                    $purchaseOrder->status = 'Urgent';  // Modify the status if needed
+                    $purchaseOrder->save();
+                }
+
+                // Flash a success message with return back
+                session()->flash('success', 'Purchase order and related items updated to Items Printed.');
+                return redirect()->back();
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Flash an error message if the purchase order is not found
+            session()->flash('error', 'Purchase order not found.');
+        } catch (\Exception $e) {
+            // Flash a general error message for any other exceptions
+            session()->flash('error', 'An error occurred while updating the purchase order status.');
+        }
+    }
+
     public function export($id)
     {
         $invoice = InvoiceDatabase::findOrFail($id);
