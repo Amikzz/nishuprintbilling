@@ -98,7 +98,12 @@
             text-align: left;
         }
         .signature-box-right {
-            width: 30%;
+            width: 25%;
+            float: right;
+            text-align: left;
+        }
+        .signature-box-center {
+            width: 40%;
             float: right;
             text-align: left;
         }
@@ -224,6 +229,10 @@
                     <br>
                     <p>__________________________</p>
                 </div>
+                <div class="signature-box-center">
+                    <p>Received by __________________________</p>
+                    <p>Designation __________________________ </p>
+                    <p>Date _______________________-</p>
             </div>
         </div>
     </div>
