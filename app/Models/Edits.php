@@ -8,5 +8,5 @@ class Edits extends Model
 {
     protected $table = 'edits';
 
-    protected $fillable = ['date', 'invoice_no', 'reference_no', 'description'];
+    protected $fillable = ['date', 'po_no', 'reference_no', 'description'];
 }

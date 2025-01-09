@@ -9,7 +9,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            font-size: 10px;
+            font-size: 18px;
             color: #333;
         }
         .container {
@@ -29,7 +29,7 @@
             width: 40%;
             float: right;
             text-align: right;
-            font-size: 9px;
+            font-size: 10px;
             line-height: 1.1;
         }
         .image {
@@ -49,7 +49,7 @@
         .invoice-details table {
             width: 70%;
             border-collapse: collapse;
-            font-size: 10px;
+            font-size: 12px;
         }
         .invoice-details th, .invoice-details td {
             padding: 3px;
@@ -62,7 +62,7 @@
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 9px;
+            font-size: 10px;
             margin-top: 5px;
         }
         .items-table th, .items-table td {
@@ -155,7 +155,7 @@
                 </tr>
                 <tr>
                     <th>Invoice Date</th>
-                    <td>{{ \Carbon\Carbon::parse($invoice->date)->format('Y-m-d') }}</td>
+                    <td>{{ $date }}</td>
                 </tr>
                 <tr>
                     <th>Your PO Number</th>

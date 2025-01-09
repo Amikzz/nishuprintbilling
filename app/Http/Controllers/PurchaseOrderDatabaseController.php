@@ -207,7 +207,7 @@ class PurchaseOrderDatabaseController extends Controller
     {
         // Validate the incoming request data
         $validatedData = $request->validate([
-            'invoice_no' => 'required|string|max:255',
+            'po_no' => 'required|string|max:255',
             'reference_no' => 'required|string|max:255',
             'items' => 'required|array',
             'items.*.id' => 'required|integer',
@@ -226,14 +226,14 @@ class PurchaseOrderDatabaseController extends Controller
         //Update the edits table
         $edit = new Edits();
         $edit->date = Date::now();
-        $edit->invoice_no = $validatedData['invoice_no'];
+        $edit->po_no = $validatedData['po_no'];
         $edit->reference_no = $validatedData['reference_no'];
 
         // Find the invoice by ID
         $invoice = InvoiceDatabase::findOrFail($invoiceId);
 
         // Update invoice information (invoice_no, reference_no, etc.)
-        $invoice->invoice_no = $validatedData['invoice_no'];
+        $invoice->po_number = $validatedData['po_no'];
         $invoice->reference_no = $validatedData['reference_no'];
         $invoice->save();
 
@@ -269,7 +269,7 @@ class PurchaseOrderDatabaseController extends Controller
         }
 
         // Redirect back with a success message
-        return redirect()->route('invoice-databases.index', $invoiceId)->with('success', 'Invoice updated successfully');
+        return redirect()->route('invoices.edit', $invoiceId)->with('success', 'Invoice updated successfully');
     }
 
     /**
@@ -339,5 +339,4 @@ class PurchaseOrderDatabaseController extends Controller
         fclose($output);
         exit;
     }
-
 }

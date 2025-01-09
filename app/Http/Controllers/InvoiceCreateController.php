@@ -98,6 +98,7 @@ class InvoiceCreateController extends Controller
 
         // Generate the invoice PDF view
         $pdf = Pdf::loadView('invoice', [
+            'date' => now(),
             'invoice' => $invoice,
             'pages' => $pages,
             'customer' => $customer,

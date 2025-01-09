@@ -9,6 +9,8 @@ use App\Models\InvoiceDatabase;
 use App\Http\Requests\StoreInvoiceDatabaseRequest;
 use App\Http\Requests\UpdateInvoiceDatabaseRequest;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class InvoiceDatabaseController extends Controller
 {
@@ -334,46 +336,46 @@ class InvoiceDatabaseController extends Controller
             ->where('reference_no', $invoice->reference_no)
             ->first();
 
-        // Define the headers for the file download
-        $filename = "po_" . $poNumber->po_no . ".csv";
+        // Define the filename for the Excel file
+        $filename = $poNumber->po_no . ".xlsx";
 
-        // Create an output buffer
-        $output = fopen('php://output', 'w');
+        // Create a new spreadsheet
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
-        // Set headers for the Excel file download
-        header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        header('Pragma: no-cache');
-        header('Expires: 0');
+        // Set headers for the Excel file
+        $sheet->setCellValue('A1', 'COLOR NO');
+        $sheet->setCellValue('B1', 'COLOR NAME');
+        $sheet->setCellValue('C1', 'SIZE');
+        $sheet->setCellValue('D1', 'STYLE');
+        $sheet->setCellValue('E1', 'BARCODE');
+        $sheet->setCellValue('F1', 'MORE 1');
+        $sheet->setCellValue('G1', 'MORE 2');
 
-        // Define the CSV header row
-        fputcsv($output, [
-            'Item Code',
-            'Color No',
-            'Color Name',
-            'Size',
-            'Style',
-            'UPC No',
-            'More 1',
-            'More 2',
-        ]);
-
-        // Write each purchase order record to the file
+        // Write purchase order records to the Excel sheet
+        $row = 2; // Start writing data from row 2
         foreach ($purchaseOrders as $order) {
-            fputcsv($output, [
-                $order->item_code,
-                $order->color_no ?? '-',
-                $order->color_name ?? '-',
-                $order->size ?? '-',
-                $order->style ?? '-',
-                $order->upc_no ?? '-',
-                $order->more1 ?? '-',
-                $order->more2 ?? '-',
-            ]);
+            $sheet->setCellValue('A' . $row, $order->color_no ?? '-');
+            $sheet->setCellValue('B' . $row, $order->color_name ?? '-');
+            $sheet->setCellValue('C' . $row, $order->size ?? '-');
+            $sheet->setCellValue('D' . $row, $order->style ?? '-');
+            $sheet->setCellValue('E' . $row, $order->upc_no ?? '-');
+            $sheet->setCellValue('F' . $row, $order->more1 ?? '-');
+            $sheet->setCellValue('G' . $row, $order->more2 ?? '-');
+            $row++;
         }
 
-        // Close the output buffer
-        fclose($output);
-        exit;
+        // Set headers for the file download
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        // Create the Excel writer and output to php://output
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+
+        // Return with success flash
+        session()->flash('success', 'Excel file exported successfully.');
     }
+
 }

@@ -18,8 +18,8 @@
         <!-- Invoice Information -->
         <div class="mb-4 flex justify-between gap-4">
             <div class="w-full">
-                <label for="invoice_no" class="block text-sm font-medium text-gray-700">Invoice No</label>
-                <input type="text" id="invoice_no" name="invoice_no" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value="{{ $invoice->invoice_no }}" readonly>
+                <label for="po_no" class="block text-sm font-medium text-gray-700">Purchase Order No</label>
+                <input type="text" id="po_no" name="po_no" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value="{{ $invoice->po_number }}" readonly>
             </div>
 
             <div class="w-full">

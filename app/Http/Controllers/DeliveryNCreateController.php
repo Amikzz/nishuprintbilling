@@ -95,6 +95,7 @@ class DeliveryNCreateController extends Controller
 
         // Generate the delivery note PDF with paginated items
         $pdf = Pdf::loadView('deliverynote', [
+            'date' => now(),
             'invoice' => $invoice,
             'pages' => $pages,
             'customer' => $customer,

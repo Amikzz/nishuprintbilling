@@ -9,7 +9,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            font-size: 10px;
+            font-size: 18px;
             color: #333;
         }
         .container {
@@ -29,7 +29,7 @@
             width: 40%;
             float: right;
             text-align: right;
-            font-size: 9px;
+            font-size: 10px;
             line-height: 1.1;
         }
         .image {
@@ -49,7 +49,7 @@
         .invoice-details table {
             width: 70%;
             border-collapse: collapse;
-            font-size: 10px;
+            font-size: 12px;
         }
         .invoice-details th, .invoice-details td {
             padding: 3px;
@@ -62,7 +62,7 @@
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 9px;
+            font-size: 10px;
             margin-top: 5px;
         }
         .items-table th, .items-table td {
@@ -88,7 +88,7 @@
             display: block;
             width: 100%;
             justify-content: space-between;
-            margin-top: 10px;
+            margin-top: 15px;
             border-top: 1px solid #ddd;
             padding-top: 10px;
         }
@@ -123,7 +123,7 @@
         <!-- Header -->
         <div class="header">
             <div class="details">
-                <p><strong>Nisu Creations (Pvt) Ltd</strong></p>
+                <h3>Nisu Creations (Pvt) Ltd</h3>
                 <p>493/5, Makola North, Makola</p>
                 <p>Tel: 0114063878</p>
                 <p>Email: nisucreations@gmail.com</p>
@@ -146,8 +146,8 @@
                     <td>{{ $delivery_note_no }}</td>
                 </tr>
                 <tr>
-                    <th>Invoice Date</th>
-                    <td>{{ \Carbon\Carbon::parse($invoice->date)->format('Y-m-d') }}</td>
+                    <th>Deliver Note Date</th>
+                    <td>{{ $date }}</td>
                 </tr>
                 <tr>
                     <th>Your PO Number</th>
@@ -216,10 +216,12 @@
             <div class="signatures">
                 <div class="signature-box-left">
                     <p>Checked by</p>
+                    <br>
                     <p>__________________________</p>
                 </div>
                 <div class="signature-box-right">
                     <p>Approved by</p>
+                    <br>
                     <p>__________________________</p>
                 </div>
             </div>
