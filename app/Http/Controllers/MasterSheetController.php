@@ -41,7 +41,7 @@ class MasterSheetController extends Controller
                 'created_by' => $validated['created_by'],
                 'cust_ref' => $validated['cust_ref'],
                 'description' => $validated['description'],
-                'status' => 'pending'
+                'status' => null
             ]);
 
             return redirect()->route('mastersheet')->with('success', 'Master Sheet created successfully');

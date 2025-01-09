@@ -54,7 +54,7 @@
         <h1 class="text-2xl font-bold text-gray-800">Master Sheet</h1>
         <!-- Modal Trigger -->
         <button class="px-4 py-2 bg-blue-500 text-white rounded shadow" data-bs-toggle="modal" data-bs-target="#addInvoiceModal">
-            Add New Invoice
+            Add New Purchase Order
         </button>
     </div>
 
@@ -122,6 +122,7 @@
                            @elseif($invoice->status === 'printed') bg-purple-300
                            @elseif($invoice->status === 'delivered') bg-green-200
                            @elseif($invoice->status === 'urgent') bg-pink-200
+                           @elseif($invoice->status === null) bg-gray-100
                            @else bg-gray-100 @endif">
                     <td class="border px-4 py-2">{{ $invoice->id ?? '-' }}</td>
                     <td class="border px-4 py-2">{{ $invoice->mail_date ?? '-'}}</td>
@@ -156,7 +157,7 @@
             <form action="{{ route('mastersheet.create') }}" method="POST">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addInvoiceModalLabel">Add New Invoice</h5>
+                    <h5 class="modal-title" id="addInvoiceModalLabel">Add New Purchase Order</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body grid grid-cols-2 gap-4">
@@ -190,7 +191,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save Invoice</button>
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save Purchase Order</button>
                 </div>
             </form>
         </div>

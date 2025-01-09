@@ -120,7 +120,7 @@ class InvoiceDatabaseController extends Controller
                 $invoice->artwork_sent_date = now();
                 $invoice->save();
 
-                $mastersheet = MasterSheet::where('invoice_no', $invoice->invoice_no)->first();
+                $mastersheet = MasterSheet::where('cust_ref', $invoice->po_number)->first();
                 $mastersheet->art_sent_date = now();
                 $mastersheet->save();
 
@@ -181,7 +181,7 @@ class InvoiceDatabaseController extends Controller
                 $invoice->artwork_approved_date = now();
                 $invoice->save();
 
-                $mastersheet = MasterSheet::where('invoice_no', $invoice->invoice_no)->first();
+                $mastersheet = MasterSheet::where('cust_ref', $invoice->po_number)->first();
                 $mastersheet->art_approved_date = now();
                 $mastersheet->status = 'approved';
                 $mastersheet->save();
@@ -282,7 +282,7 @@ class InvoiceDatabaseController extends Controller
                 $invoice->status = 'Items_printed';
                 $invoice->save();
 
-                $mastersheet = MasterSheet::where('invoice_no', $invoice->invoice_no)->first();
+                $mastersheet = MasterSheet::where('cust_ref', $invoice->po_number)->first();
                 $mastersheet->print_date = now();
                 $mastersheet->status = 'printed';
                 $mastersheet->save();
