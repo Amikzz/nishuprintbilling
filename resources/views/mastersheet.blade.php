@@ -117,12 +117,12 @@
             </thead>
             <tbody>
             @foreach ($invoices as $invoice)
-                <tr class="@if($invoice->status === 'pending') bg-blue-200
-                           @elseif($invoice->status === 'approved') bg-purple-100
-                           @elseif($invoice->status === 'printed') bg-purple-300
-                           @elseif($invoice->status === 'delivered') bg-green-200
-                           @elseif($invoice->status === 'urgent') bg-pink-200
-                           @elseif($invoice->status === null) bg-gray-100
+                <tr class="@if($invoice->status === 'pending') bg-blue-600 font-bold
+                           @elseif($invoice->status === 'approved') bg-purple-300 font-bold
+                           @elseif($invoice->status === 'printed') bg-purple-600 font-bold
+                           @elseif($invoice->status === 'delivered') bg-green-600 font-bold
+                           @elseif($invoice->status === 'urgent') bg-pink-600 font-bold
+                           @elseif($invoice->status === null) bg-gray-200 font-bold
                            @else bg-gray-100 @endif">
                     <td class="border px-4 py-2">{{ $invoice->id ?? '-' }}</td>
                     <td class="border px-4 py-2">{{ $invoice->mail_date ?? '-'}}</td>

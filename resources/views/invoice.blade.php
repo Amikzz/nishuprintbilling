@@ -218,10 +218,12 @@
             <div class="signatures">
                 <div class="signature-box-left">
                     <p>Checked by</p>
+                    <br>
                     <p>__________________________</p>
                 </div>
                 <div class="signature-box-right">
                     <p>Approved by</p>
+                    <br>
                     <p>__________________________</p>
                 </div>
             </div>
