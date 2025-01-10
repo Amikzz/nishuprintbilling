@@ -327,11 +327,6 @@
 
         </table>
     </div>
-
-    <!-- Pagination -->
-    <div class="mt-4">
-        {{ $invoices->links('pagination::tailwind') }}
-    </div>
 </div>
 </body>
 

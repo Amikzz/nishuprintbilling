@@ -160,10 +160,6 @@
         <p><strong>Total PCS:</strong> <span id="total_pcs">0</span></p>
         <p><strong>Total Invoice Value:</strong> <span id="total_invoice_value">0.00</span></p>
     </div>
-    <!-- Pagination Links -->
-    <div class="mt-4">
-        {{ $invoices->links('pagination::tailwind') }}
-    </div>
 </div>
 
 <!-- Add Invoice Modal -->

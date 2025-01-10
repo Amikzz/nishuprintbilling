@@ -48,8 +48,8 @@ class InvoiceDatabaseController extends Controller
         // Order by creation date (newest items first)
         $query->orderBy('created_at', 'desc');
 
-        // Paginate the results, 10 records per page
-        $invoices = $query->paginate(10);
+        // Retrieve all results without pagination
+        $invoices = $query->get();
 
         // Return the results to the view
         return view('invoicedelivery', compact('invoices'));

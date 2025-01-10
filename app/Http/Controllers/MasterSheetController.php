@@ -14,8 +14,8 @@ class MasterSheetController extends Controller
     {
         // Fetch invoices, prioritizing urgent ones first (assuming `status` field indicates if it's urgent)
         $invoices = MasterSheet::orderByRaw("status = 'urgent' DESC")  // Prioritize urgent orders
-        ->orderBy('id', 'desc')               // Then order by ID in descending order
-        ->paginate(20);
+        ->orderBy('id', 'desc') // Then order by ID in descending order
+        ->get();
         $items = Items::all();
 
         return view('mastersheet', compact('invoices', 'items'));
