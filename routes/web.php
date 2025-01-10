@@ -28,6 +28,7 @@ Route::get('/mastersheet', 'App\Http\Controllers\MasterSheetController@getMaster
 Route::post('/mastersheet/create', 'App\Http\Controllers\MasterSheetController@createMasterSheet')->name('mastersheet.create');
 Route::get('/purchaseorder/printed/{invoice_id}', 'App\Http\Controllers\InvoiceDatabaseController@itemsPrinted')->name('purchaseorder.printed');
 Route::get('/purchaseorder/urgent/{invoice_id}', 'App\Http\Controllers\InvoiceDatabaseController@itemsUrgent')->name('purchaseorder.urgent');
+Route::get('/urgentorders', 'App\Http\Controllers\UrgentController@getMasterSheet')->name('urgentorders');
 
 //Report Routes
 Route::get('/reports/invoices', 'App\Http\Controllers\ReportGenerateController@invoiceReport')->name('report.invoices');
