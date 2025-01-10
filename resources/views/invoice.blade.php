@@ -111,6 +111,7 @@
     $itemsPerPage = 30;
     $totalPages = ceil($purchaseOrderItemsDetails->count() / $itemsPerPage);
     $grandTotal = $purchaseOrderItemsDetails->sum('price');
+    $grandQtyTotal = $purchaseOrderItemsDetails->sum('po_qty');
     $convertedTotal = $grandTotal * $exchangeRate;
 @endphp
 
@@ -120,6 +121,7 @@
         $end = min($start + $itemsPerPage, $purchaseOrderItemsDetails->count());
         $pageItems = $purchaseOrderItemsDetails->slice($start, $end - $start);
         $pageTotal = $pageItems->sum('price');
+        $pageQtyTotal = $pageItems->sum('po_qty');
         $pageConvertedTotal = $pageTotal * $exchangeRate;
     @endphp
 
@@ -206,10 +208,9 @@
 
         <!-- Totals -->
         <div class="totals">
-            <p>Page Total: ${{ number_format($pageTotal, 2) }}</p>
-            <p>Grand Total: ${{ number_format($grandTotal, 2) }}</p>
-            <p>Exchange rate: Rs.{{number_format($exchangeRate)}}</p>
-            <p><b>Converted Grand Total: Rs. {{ number_format($convertedTotal, 2) }}</b></p>
+            <p>Page Total Quantity: {{ number_format($pageQtyTotal) }} <b>|</b>  Total: ${{ number_format($pageTotal, 2) }}</p>
+            <p>Grand Total Quantity: {{ number_format($grandQtyTotal) }} <b>|</b>  Grand Total: ${{ number_format($grandTotal, 2) }} </p>
+            <p><b>Converted Grand Total (USD --- LKR): Rs. {{ number_format($convertedTotal, 2) }}</b></p>
         </div>
 
         <!-- Footer Section -->
@@ -230,7 +231,7 @@
         </div>
     </div>
 
-    @if (($page+1) < $totalPages)
+    @if (($page+1) <= $totalPages)
         <div class="page-break"></div>
     @endif
 @endfor

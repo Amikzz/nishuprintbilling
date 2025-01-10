@@ -153,6 +153,12 @@
             </tbody>
         </table>
     </div>
+    <!-- Totals Section -->
+    <div class="mt-4 bg-gray-100 p-4 rounded shadow">
+        <h2 class="text-lg font-semibold">Summary</h2>
+        <p><strong>Total PCS:</strong> <span id="total_pcs">0</span></p>
+        <p><strong>Total Invoice Value:</strong> <span id="total_invoice_value">0.00</span></p>
+    </div>
     <!-- Pagination Links -->
     <div class="mt-4">
         {{ $invoices->links('pagination::tailwind') }}
@@ -208,8 +214,27 @@
 </div>
 
 <script>
+    function calculateTotals() {
+        const rows = document.querySelectorAll('table tbody tr');
+        let totalPcs = 0;
+        let totalInvoiceValue = 0;
+
+        rows.forEach(row => {
+            if (row.style.display !== 'none') { // Only include visible rows
+                const pcs = parseInt(row.cells[13].textContent.trim()) || 0; // Total PCS
+                const invoiceValue = parseFloat(row.cells[14].textContent.trim()) || 0; // Invoice Value
+
+                totalPcs += pcs;
+                totalInvoiceValue += invoiceValue;
+            }
+        });
+
+        document.getElementById('total_pcs').textContent = totalPcs;
+        document.getElementById('total_invoice_value').textContent = totalInvoiceValue.toFixed(2);
+    }
+
     function filterByCriteria() {
-        const dateFilter = document.getElementById('date_filter').value;  // Get selected date field
+        const dateFilter = document.getElementById('date_filter').value; // Get selected date field
         const startDate = document.getElementById('start_date').value;
         const endDate = document.getElementById('end_date').value;
         const poNumber = document.getElementById('po_number').value.trim().toLowerCase();
@@ -225,7 +250,6 @@
             const rowInvoiceNumber = row.cells[8].textContent.trim().toLowerCase(); // Invoice Number
             const rowDN = row.cells[11].textContent.trim().toLowerCase(); // DN
 
-            // Convert the text content to Date objects for comparison
             const rowMailDate = new Date(mailDate);
             const rowRequiredDate = new Date(requiredDate);
             const rowInvoiceDate = new Date(invoiceDate);
@@ -235,44 +259,30 @@
 
             let showRow = true;
 
-            // Date filtering based on the selected field
             if (dateFilter === 'mail_date') {
-                if (startFilterDate && rowMailDate < startFilterDate) {
-                    showRow = false;
-                }
-                if (endFilterDate && rowMailDate > endFilterDate) {
-                    showRow = false;
-                }
+                if (startFilterDate && rowMailDate < startFilterDate) showRow = false;
+                if (endFilterDate && rowMailDate > endFilterDate) showRow = false;
             } else if (dateFilter === 'required_date') {
-                if (startFilterDate && rowRequiredDate < startFilterDate) {
-                    showRow = false;
-                }
-                if (endFilterDate && rowRequiredDate > endFilterDate) {
-                    showRow = false;
-                }
+                if (startFilterDate && rowRequiredDate < startFilterDate) showRow = false;
+                if (endFilterDate && rowRequiredDate > endFilterDate) showRow = false;
             } else if (dateFilter === 'invoice_date') {
-                if (startFilterDate && rowInvoiceDate < startFilterDate) {
-                    showRow = false;
-                }
-                if (endFilterDate && rowInvoiceDate > endFilterDate) {
-                    showRow = false;
-                }
+                if (startFilterDate && rowInvoiceDate < startFilterDate) showRow = false;
+                if (endFilterDate && rowInvoiceDate > endFilterDate) showRow = false;
             }
 
-            // Filtering logic for PO Number, Invoice Number, and DN
-            if (poNumber && !rowPONumber.includes(poNumber)) {
-                showRow = false;
-            }
-            if (invoiceNumber && !rowInvoiceNumber.includes(invoiceNumber)) {
-                showRow = false;
-            }
-            if (dn && !rowDN.includes(dn)) {
-                showRow = false;
-            }
+            if (poNumber && !rowPONumber.includes(poNumber)) showRow = false;
+            if (invoiceNumber && !rowInvoiceNumber.includes(invoiceNumber)) showRow = false;
+            if (dn && !rowDN.includes(dn)) showRow = false;
 
             row.style.display = showRow ? '' : 'none';
         });
+
+        calculateTotals(); // Recalculate totals after filtering
     }
+
+    // Calculate totals initially when the page loads
+    calculateTotals();
+
 </script>
 </body>
 </html>
