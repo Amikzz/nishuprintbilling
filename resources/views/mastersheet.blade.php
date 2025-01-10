@@ -71,6 +71,15 @@
 
     <div class="flex gap-4 items-end mb-6">
         <div>
+            <label for="date_filter" class="block text-gray-700 font-medium mb-1">Filter By Date:</label>
+            <select id="date_filter" class="w-full px-3 py-2 border border-gray-300 rounded shadow">
+                <option value="mail_date">Mail Date</option>
+                <option value="required_date">Required Date</option>
+                <option value="invoice_date">Invoice Date</option>
+            </select>
+        </div>
+
+        <div>
             <label for="start_date" class="block text-gray-700 font-medium mb-1">Start Date:</label>
             <input type="date" id="start_date" class="w-full px-3 py-2 border border-gray-300 rounded shadow">
         </div>
@@ -200,6 +209,7 @@
 
 <script>
     function filterByCriteria() {
+        const dateFilter = document.getElementById('date_filter').value;  // Get selected date field
         const startDate = document.getElementById('start_date').value;
         const endDate = document.getElementById('end_date').value;
         const poNumber = document.getElementById('po_number').value.trim().toLowerCase();
@@ -208,26 +218,48 @@
 
         const rows = document.querySelectorAll('table tbody tr');
         rows.forEach(row => {
-            const mailDate = row.cells[1].textContent.trim();
-            const invoiceDate = row.cells[7].textContent.trim();
-            const rowPONumber = row.cells[9].textContent.trim().toLowerCase();
-            const rowInvoiceNumber = row.cells[8].textContent.trim().toLowerCase();
-            const rowDN = row.cells[11].textContent.trim().toLowerCase();
+            const mailDate = row.cells[1].textContent.trim(); // Mail Date
+            const requiredDate = row.cells[2].textContent.trim(); // Required Date
+            const invoiceDate = row.cells[7].textContent.trim(); // Invoice Date
+            const rowPONumber = row.cells[9].textContent.trim().toLowerCase(); // PO Number
+            const rowInvoiceNumber = row.cells[8].textContent.trim().toLowerCase(); // Invoice Number
+            const rowDN = row.cells[11].textContent.trim().toLowerCase(); // DN
 
-            const rowStartDate = new Date(mailDate);
-            const rowEndDate = new Date(invoiceDate);
+            // Convert the text content to Date objects for comparison
+            const rowMailDate = new Date(mailDate);
+            const rowRequiredDate = new Date(requiredDate);
+            const rowInvoiceDate = new Date(invoiceDate);
 
             const startFilterDate = startDate ? new Date(startDate) : null;
             const endFilterDate = endDate ? new Date(endDate) : null;
 
             let showRow = true;
 
-            if (startFilterDate && rowStartDate < startFilterDate) {
-                showRow = false;
+            // Date filtering based on the selected field
+            if (dateFilter === 'mail_date') {
+                if (startFilterDate && rowMailDate < startFilterDate) {
+                    showRow = false;
+                }
+                if (endFilterDate && rowMailDate > endFilterDate) {
+                    showRow = false;
+                }
+            } else if (dateFilter === 'required_date') {
+                if (startFilterDate && rowRequiredDate < startFilterDate) {
+                    showRow = false;
+                }
+                if (endFilterDate && rowRequiredDate > endFilterDate) {
+                    showRow = false;
+                }
+            } else if (dateFilter === 'invoice_date') {
+                if (startFilterDate && rowInvoiceDate < startFilterDate) {
+                    showRow = false;
+                }
+                if (endFilterDate && rowInvoiceDate > endFilterDate) {
+                    showRow = false;
+                }
             }
-            if (endFilterDate && rowEndDate > endFilterDate) {
-                showRow = false;
-            }
+
+            // Filtering logic for PO Number, Invoice Number, and DN
             if (poNumber && !rowPONumber.includes(poNumber)) {
                 showRow = false;
             }
@@ -242,6 +274,5 @@
         });
     }
 </script>
-
 </body>
 </html>
