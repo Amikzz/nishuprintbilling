@@ -36,11 +36,13 @@ class InvoiceCreateController extends Controller
 
         $invoiceNo = 'NC-' . '24-25' . '-' . $validated['invoice_number']; // Updated invoice number logic
         $invoice->invoice_no = $invoiceNo;
+        $invoice->status = 'Order Dispatched';
         $invoice->save();
 
         $masterSheet = MasterSheet::where('cust_ref', $po_number)->first();
         $masterSheet->invoice_no = $invoiceNo;
         $masterSheet->invoice_date = now();
+        $masterSheet->status = 'delivered';
         $masterSheet->save();
 
         // Fetch the related purchase order using the po_number and reference_no

@@ -207,28 +207,28 @@
             const lastItemPrice = parseFloat(lastSelectedItem.data('price')) || 0;
 
             const newRow = `
-            <tr class="item-row">
-                <td class="item-number mt-2">${index + 1}</td>
-                <td><select class="form-select item-select" id="item_${index}" name="items[${index}][name]" required>
-                        <option value="" disabled>Select Item</option>
-                        @foreach($items as $item)
-            <option value="{{ $item->item_code }}" data-price="{{ $item->price }}"
-                                ${'{{ $item->item_code }}' === lastItemCode ? 'selected' : ''}>
-                                {{ $item->item_code }} - ${{ $item->price }}
+        <tr class="item-row">
+            <td class="item-number mt-2">${index + 1}</td>
+            <td><select class="form-select item-select" id="item_${index}" name="items[${index}][name]" required>
+                    <option value="" disabled>Select Item</option>
+                    @foreach($items as $item)
+            <option value="{{ $item->item_code }}" data-price="{{ $item->price }} "
+                            ${'{{ $item->item_code }}' === lastItemCode ? 'selected' : ''}>
+                            {{ $item->item_code }} - ${{ $item->price }}
             </option>
-@endforeach
+    @endforeach
             </select></td>
                 <td><input type="number" class="form-control quantity" id="quantity_${index}" name="items[${index}][quantity]" min="1" required></td>
-                <td><input type="text" class="form-control" id="color_number_${index}" name="items[${index}][color_number]"></td>
-                <td><input type="text" class="form-control" id="color_${index}" name="items[${index}][color]"></td>
-                <td> <input type="text" class="form-control" id="size_${index}" name="items[${index}][size]"> </td>
-                <td><input type="text" class="form-control" id="style_${index}" name="items[${index}][style]"></td>
-                <td><input type="text" class="form-control" id="upc_${index}" name="items[${index}][upc]"></td>
-                <td><input type="text" class="form-control" id="more1_${index}" name="items[${index}][more1]"></td>
-                <td><input type="text" class="form-control" id="more2_${index}" name="items[${index}][more2]"></td>
-                <td><input type="text" class="form-control price" id="price_${index}" name="items[${index}][price]" readonly value="${lastItemPrice.toFixed(3)}"></td>
-                <td><button type="button" class="btn btn-danger remove-item">Remove</button></td>
-            </tr>`;
+            <td><input type="text" class="form-control" id="color_number_${index}" name="items[${index}][color_number]"></td>
+            <td><input type="text" class="form-control" id="color_${index}" name="items[${index}][color]"></td>
+            <td> <input type="text" class="form-control" id="size_${index}" name="items[${index}][size]"> </td>
+            <td><input type="text" class="form-control" id="style_${index}" name="items[${index}][style]"></td>
+            <td><input type="text" class="form-control" id="upc_${index}" name="items[${index}][upc]"></td>
+            <td><input type="text" class="form-control" id="more1_${index}" name="items[${index}][more1]"></td>
+            <td><input type="text" class="form-control" id="more2_${index}" name="items[${index}][more2]"></td>
+            <td><input type="text" class="form-control price" id="price_${index}" name="items[${index}][price]" readonly value="${lastItemPrice.toFixed(3)}"></td>
+            <td><button type="button" class="btn btn-danger remove-item">Remove</button></td>
+        </tr>`;
 
             $('#myTable tbody').append(newRow);
             updateItemNumbers();
@@ -242,16 +242,28 @@
             updateTotalPrice(); // Recalculate total price
         });
 
+        // Prevent form submission on Enter and move to the next row/input field
         $(document).on('keydown', function (e) {
             let currentElement = $(':focus');
             let currentRow = currentElement.closest('tr');
             let currentColumn = currentElement.closest('td').index(); // Get column index
 
+            if (e.key === 'Enter') {
+                // Find the next input/select field in the next row
+                let nextRow = currentRow.next('tr');
+                if (nextRow.length) {
+                    let nextElement = nextRow.find('td').eq(currentColumn).find('input, select').not(':disabled').first();
+                    if (nextElement.length) {
+                        nextElement.focus(); // Move focus to next element
+                    }
+                }
+                e.preventDefault(); // Prevent form submission
+            }
+
             if (e.key === 'ArrowDown') {
                 // Get the next row in the same column
                 let nextRow = currentRow.next('tr');
                 if (nextRow.length) {
-                    // Move the focus to the next element in the same column
                     let nextElement = nextRow.find('td').eq(currentColumn).find('input, select').not(':disabled').first();
                     if (nextElement.length) {
                         nextElement.focus();
