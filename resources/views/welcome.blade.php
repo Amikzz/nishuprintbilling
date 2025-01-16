@@ -32,7 +32,7 @@
             width: 90px; /* Reduce the width of Quantity and Color Number */
         }
         .upc-input {
-            width: 300px; /* Increase the width of UPC */
+            width: 200px; /* Increase the width of UPC */
         }
     </style>
 
