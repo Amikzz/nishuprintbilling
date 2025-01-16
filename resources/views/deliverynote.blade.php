@@ -54,7 +54,7 @@
         .invoice-details th, .invoice-details td {
             padding: 3px;
             text-align: left;
-            border: 1px solid #ddd;
+            border: 1px solid black; /* Changed to black */
         }
         .invoice-details th {
             background-color: #f4f4f4;
@@ -68,7 +68,7 @@
         .items-table th, .items-table td {
             padding: 3px;
             text-align: left;
-            border: 1px solid #ddd;
+            border: 1px solid black; /* Changed to black */
         }
         .items-table th {
             background-color: #f4f4f4;

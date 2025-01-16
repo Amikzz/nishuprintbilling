@@ -54,7 +54,7 @@
         .invoice-details th, .invoice-details td {
             padding: 3px;
             text-align: left;
-            border: 1px solid #ddd;
+            border: 1px solid #000000; /* Black border */
         }
         .invoice-details th {
             background-color: #f4f4f4;
@@ -68,7 +68,7 @@
         .items-table th, .items-table td {
             padding: 3px;
             text-align: left;
-            border: 1px solid #ddd;
+            border: 1px solid #000000; /* Black border */
         }
         .items-table th {
             background-color: #f4f4f4;
@@ -87,7 +87,7 @@
             width: 100%;
             justify-content: space-between;
             margin-top: 10px;
-            border-top: 1px solid #ddd;
+            border-top: 1px solid #000000; /* Black border */
             padding-top: 10px;
         }
         .signature-box-left {

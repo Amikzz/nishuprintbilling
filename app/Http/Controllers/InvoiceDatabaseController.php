@@ -328,36 +328,36 @@ class InvoiceDatabaseController extends Controller
     {
         try {
             // Find the invoice by ID
-                $invoice = InvoiceDatabase::findOrFail($invoice_id);
-                $invoice->status = 'Urgent';
-                $invoice->save();
+            $invoice = InvoiceDatabase::findOrFail($invoice_id);
+            $invoice->status = 'Urgent';
+            $invoice->save();
 
-                $mastersheet = MasterSheet::where('cust_ref', $invoice->po_number)->first();
-                $mastersheet->print_date = now();
-                $mastersheet->status = 'urgent';
-                $mastersheet->save();
+            $mastersheet = MasterSheet::where('cust_ref', $invoice->po_number)->first();
+            $mastersheet->print_date = now();
+            $mastersheet->status = 'urgent';
+            $mastersheet->save();
 
-                // Get the PO number associated with the invoice
-                $poNumber = $invoice->po_number;
+            // Get the PO number associated with the invoice
+            $poNumber = $invoice->po_number;
 
-                // Fetch all related purchase orders based on the PO number
-                $purchaseOrders = PurchaseOrderDatabase::where('po_no', $poNumber)->get();
+            // Fetch all related purchase orders based on the PO number
+            $purchaseOrders = PurchaseOrderDatabase::where('po_no', $poNumber)->get();
 
-                // Check if related purchase orders exist
-                if ($purchaseOrders->isEmpty()) {
-                    session()->flash('error', 'No related purchase orders found for this invoice.');
-                    return redirect()->back();
-                }
-
-                // Update the status of each related purchase order to 'Items_printed'
-                foreach ($purchaseOrders as $purchaseOrder) {
-                    $purchaseOrder->status = 'Urgent';  // Modify the status if needed
-                    $purchaseOrder->save();
-                }
-
-                // Flash a success message with return back
-                session()->flash('success', 'Purchase order and related items updated to Items Printed.');
+            // Check if related purchase orders exist
+            if ($purchaseOrders->isEmpty()) {
+                session()->flash('error', 'No related purchase orders found for this invoice.');
                 return redirect()->back();
+            }
+
+            // Update the status of each related purchase order to 'Items_printed'
+            foreach ($purchaseOrders as $purchaseOrder) {
+                $purchaseOrder->status = 'Urgent';  // Modify the status if needed
+                $purchaseOrder->save();
+            }
+
+            // Flash a success message with return back
+            session()->flash('success', 'Purchase order and related items updated to Items Printed.');
+            return redirect()->back();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             // Flash an error message if the purchase order is not found
             session()->flash('error', 'Purchase order not found.');
@@ -399,13 +399,14 @@ class InvoiceDatabaseController extends Controller
         // Write purchase order records to the Excel sheet
         $row = 2; // Start writing data from row 2
         foreach ($purchaseOrders as $order) {
-            $sheet->setCellValue('A' . $row, $order->color_no ?? '-');
-            $sheet->setCellValue('B' . $row, $order->color_name ?? '-');
-            $sheet->setCellValue('C' . $row, $order->size ?? '-');
-            $sheet->setCellValue('D' . $row, $order->style ?? '-');
-            $sheet->setCellValue('E' . $row, $order->upc_no ?? '-');
-            $sheet->setCellValue('F' . $row, $order->more1 ?? '-');
-            $sheet->setCellValue('G' . $row, $order->more2 ?? '-');
+            // Format the cells as text and add leading zeros
+            $sheet->setCellValueExplicit('A' . $row, $order->color_no ?? '-', \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+            $sheet->setCellValueExplicit('B' . $row, $order->color_name ?? '-', \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+            $sheet->setCellValueExplicit('C' . $row, $order->size ?? '-', \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+            $sheet->setCellValueExplicit('D' . $row, $order->style ?? '-', \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+            $sheet->setCellValueExplicit('E' . $row, $order->upc_no ?? '-', \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+            $sheet->setCellValueExplicit('F' . $row, $order->more1 ?? '-', \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+            $sheet->setCellValueExplicit('G' . $row, $order->more2 ?? '-', \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
             $row++;
         }
 
@@ -421,5 +422,4 @@ class InvoiceDatabaseController extends Controller
         // Return with success flash
         session()->flash('success', 'Excel file exported successfully.');
     }
-
 }
