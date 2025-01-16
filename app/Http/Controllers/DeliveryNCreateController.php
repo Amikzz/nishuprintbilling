@@ -78,7 +78,7 @@ class DeliveryNCreateController extends Controller
         $invoice->delivery_note_no = $validated['delivery_note_number'];
         $invoice->save();
 
-        $mastersheet = MasterSheet::where('invoice_no', $invoiceno)->first();
+        $mastersheet = MasterSheet::where('cust_ref', $po_number)->first();
         $mastersheet->dn = $validated['delivery_note_number'];
         $mastersheet->dn_date = now();
         $mastersheet->save();

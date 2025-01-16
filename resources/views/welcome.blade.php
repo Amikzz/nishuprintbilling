@@ -27,6 +27,13 @@
         .table {
             width: 100%;
         }
+        /* Custom widths for specific fields */
+        .qty-input, .color-number-input {
+            width: 90px; /* Reduce the width of Quantity and Color Number */
+        }
+        .upc-input {
+            width: 300px; /* Increase the width of UPC */
+        }
     </style>
 
 </head>
@@ -124,17 +131,17 @@
                                     @endforeach
                                 </select>
                             </td>
-                            <td><input type="number" class="form-control quantity" id="quantity_0" name="items[0][quantity]" min="1" required></td>
-                            <td><input type="text" class="form-control" id="color_number_0" name="items[0][color_number]"></td>
+                            <td><input type="number" class="form-control quantity qty-input" id="quantity_0" name="items[0][quantity]" min="1" required></td>
+                            <td><input type="text" class="form-control qty-input" id="color_number_0" name="items[0][color_number]"></td>
                             <td><input type="text" class="form-control" id="color_0" name="items[0][color]"></td>
                             <td>
                                 <input type="text" class="form-control" id="size_0" name="items[0][size]">
                             </td>
                             <td><input type="text" class="form-control" id="style_0" name="items[0][style]"></td>
-                            <td><input type="text" class="form-control" id="upc_0" name="items[0][upc]"></td>
+                            <td><input type="text" class="form-control upc-input" id="upc_0" name="items[0][upc]"></td>
                             <td><input type="text" class="form-control" id="more1_0" name="items[0][more1]"></td>
                             <td><input type="text" class="form-control" id="more2_0" name="items[0][more2]"></td>
-                            <td><input type="text" class="form-control price" id="price_0" name="items[0][price]" readonly value="0.000"></td>
+                            <td><input type="text" class="form-control price qty-input" id="price_0" name="items[0][price]" readonly value="0.000"></td>
                             <td><button type="button" class="btn btn-danger remove-item">Remove</button></td>
                         </tr>
                         </tbody>
@@ -218,15 +225,15 @@
             </option>
     @endforeach
             </select></td>
-                <td><input type="number" class="form-control quantity" id="quantity_${index}" name="items[${index}][quantity]" min="1" required></td>
-            <td><input type="text" class="form-control" id="color_number_${index}" name="items[${index}][color_number]"></td>
+                <td><input type="number" class="form-control quantity qty-input" id="quantity_${index}" name="items[${index}][quantity]" min="1" required></td>
+            <td><input type="text" class="form-control qty-input" id="color_number_${index}" name="items[${index}][color_number]"></td>
             <td><input type="text" class="form-control" id="color_${index}" name="items[${index}][color]"></td>
             <td> <input type="text" class="form-control" id="size_${index}" name="items[${index}][size]"> </td>
             <td><input type="text" class="form-control" id="style_${index}" name="items[${index}][style]"></td>
-            <td><input type="text" class="form-control" id="upc_${index}" name="items[${index}][upc]"></td>
+            <td><input type="text" class="form-control upc-input" id="upc_${index}" name="items[${index}][upc]"></td>
             <td><input type="text" class="form-control" id="more1_${index}" name="items[${index}][more1]"></td>
             <td><input type="text" class="form-control" id="more2_${index}" name="items[${index}][more2]"></td>
-            <td><input type="text" class="form-control price" id="price_${index}" name="items[${index}][price]" readonly value="${lastItemPrice.toFixed(3)}"></td>
+            <td><input type="text" class="form-control price qty-input" id="price_${index}" name="items[${index}][price]" readonly value="${lastItemPrice.toFixed(3)}"></td>
             <td><button type="button" class="btn btn-danger remove-item">Remove</button></td>
         </tr>`;
 

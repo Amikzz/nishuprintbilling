@@ -10,14 +10,17 @@ class UrgentController extends Controller
 {
     public function getMasterSheet(Request $request)
     {
-        // Fetch invoices, prioritizing urgent ones first (assuming `status` field indicates if it's urgent)
-        $invoices = MasterSheet::whereBetween('required_date', [now()->subDay(), now()->addDays(3)]) // Filter by required date between today and 3 days from today
+        // Fetch invoices with a required date less than 3 days from today
+        // Exclude completed and delivered statuses
+        $invoices = MasterSheet::where('required_date', '<', now()->addDays(3))  // Filter by required date less than 3 days from today
         ->whereNotIn('status', ['delivered', 'completed'])  // Exclude delivered and completed statuses
-        ->orderBy('id', 'desc')                             // Then order by ID in descending order
+        ->orderBy('id', 'desc')                             // Order by ID in descending order
         ->get();
 
+        // Get all items
         $items = Items::all();
 
         return view('urgent', compact('invoices', 'items'));
     }
+
 }
