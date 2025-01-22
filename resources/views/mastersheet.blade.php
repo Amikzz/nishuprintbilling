@@ -157,6 +157,7 @@
     <!-- Totals Section -->
     <div class="mt-4 bg-gray-100 p-4 rounded shadow">
         <h2 class="text-lg font-semibold">Summary</h2>
+        <p><strong>Number of Rows:</strong> <span id="visible_rows_count">0</span></p>
         <p><strong>Total PCS:</strong> <span id="total_pcs">0</span></p>
         <p><strong>Total Invoice Value:</strong> <span id="total_invoice_value">0.00</span></p>
     </div>
@@ -215,9 +216,11 @@
         const rows = document.querySelectorAll('table tbody tr');
         let totalPcs = 0;
         let totalInvoiceValue = 0;
+        let visibleRowsCount = 0; // Variable to count visible rows
 
         rows.forEach(row => {
             if (row.style.display !== 'none') { // Only include visible rows
+                visibleRowsCount++; // Increment count for visible rows
                 const pcs = parseInt(row.cells[13].textContent.trim()) || 0; // Total PCS
                 const invoiceValue = parseFloat(row.cells[14].textContent.trim()) || 0; // Invoice Value
 
@@ -226,8 +229,10 @@
             }
         });
 
+        // Update the totals and visible rows count in the DOM
         document.getElementById('total_pcs').textContent = totalPcs;
         document.getElementById('total_invoice_value').textContent = totalInvoiceValue.toFixed(2);
+        document.getElementById('visible_rows_count').textContent = visibleRowsCount; // Update the visible rows count
     }
 
     function filterByCriteria() {

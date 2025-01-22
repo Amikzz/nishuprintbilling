@@ -29,7 +29,7 @@
             width: 40%;
             float: right;
             text-align: right;
-            font-size: 10px;
+            font-size: 13px;
             line-height: 1.1;
         }
         .image {
@@ -129,8 +129,8 @@
         <div class="header">
             <div class="details">
                 <h3>Nisu Creations (Pvt) Ltd</h3>
-                <p>493/5, Makola North, Makola</p>
                 <p>Tel: 0114063878</p>
+                <p>493/5, Makola North, Makola</p>
                 <p>Email: nisucreations@gmail.com</p>
             </div>
             <div class="image">

@@ -151,6 +151,10 @@
         </div>
         <button type="button" class="btn btn-primary mb-3" id="add-item">Add Item</button>
         <div class="mb-3">
+            <label for="total_quantity" class="form-label">Total Quantity</label>
+            <input type="text" class="form-control" id="total_quantity" name="total_quantity" readonly>
+        </div>
+        <div class="mb-3">
             <label for="total_price" class="form-label">Total Price</label>
             <input type="text" class="form-control" id="total_price" name="total_price" readonly>
         </div>
@@ -162,11 +166,17 @@
     $(document).ready(function () {
         function updateTotalPrice() {
             let total = 0.000;
+            let totalQuantity = 0;
+
             $('.item-row').each(function () {
                 const price = parseFloat($(this).find('.price').val()) || 0;
+                const quantity = parseInt($(this).find('.quantity').val()) || 0;
+
                 total += price;
+                totalQuantity += quantity;
             });
             $('#total_price').val(total.toFixed(2));
+            $('#total_quantity').val(totalQuantity);
         }
 
         function updateItemNumbers() {

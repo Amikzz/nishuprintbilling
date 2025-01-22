@@ -17,33 +17,13 @@ class InvoiceDatabaseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
         // Initialize query builder
         $query = InvoiceDatabase::query();
 
         // Exclude invoices with 'Cancelled' status
         $query->where('status', '!=', 'Cancelled');
-
-        // Check for search terms in the request and apply filters
-        if ($request->has('search') && $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($q) use ($search) {
-                $q->where('invoice_no', 'like', '%' . $search . '%')
-                    ->orWhere('reference_no', 'like', '%' . $search . '%')
-                    ->orWhere('po_number', 'like', '%' . $search . '%');
-            });
-        }
-
-        // Check for date range in the request
-        if ($request->has('start_date') && $request->has('end_date') && $request->start_date != '' && $request->end_date != '') {
-            $startDate = $request->start_date;
-            $endDate = $request->end_date;
-
-            // Apply date filter (assuming the `date` column in your database stores the invoice date)
-            $query->whereBetween('date', [$startDate, $endDate]);
-        }
 
         // Order by creation date (newest items first)
         $query->orderBy('created_at', 'desc');
