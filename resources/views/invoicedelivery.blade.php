@@ -50,29 +50,17 @@
 
     <h1 class="text-2xl font-semibold mb-4">Invoice & Delivery Records</h1>
 
-    <div class="flex gap-4 items-end mb-6">
-        <div>
-            <label for="start_date" class="block text-gray-700 font-medium mb-1">Start Date:</label>
-            <input type="date" id="start_date" class="w-full px-3 py-2 border border-gray-300 rounded shadow">
-        </div>
-        <div>
-            <label for="end_date" class="block text-gray-700 font-medium mb-1">End Date:</label>
-            <input type="date" id="end_date" class="w-full px-3 py-2 border border-gray-300 rounded shadow">
-        </div>
-        <div>
-            <label for="po_number" class="block text-gray-700 font-medium mb-1">PO Number:</label>
-            <input type="text" id="po_number" class="w-full px-3 py-2 border border-gray-300 rounded shadow" placeholder="Enter PO Number">
-        </div>
-        <div>
-            <label for="invoice_number" class="block text-gray-700 font-medium mb-1">Invoice Number:</label>
-            <input type="text" id="invoice_number" class="w-full px-3 py-2 border border-gray-300 rounded shadow" placeholder="Enter Invoice Number">
-        </div>
-        <div>
-            <label for="dn" class="block text-gray-700 font-medium mb-1">DN:</label>
-            <input type="text" id="dn" class="w-full px-3 py-2 border border-gray-300 rounded shadow" placeholder="Enter DN">
-        </div>
-        <button onclick="filterByCriteria()" class="px-4 py-2 bg-gray-700 text-white rounded shadow">Filter</button>
-    </div>
+    <!-- Search Form -->
+    <form action="{{ route('invoice-databases.index') }}" method="GET" class="mb-4 flex items-center space-x-4">
+        <input type="text" name="search" value="{{ request()->search }}" placeholder="Search by Invoice No, Reference No, or PO Number"
+               class="p-2 border border-gray-300 rounded-md w-1/2">
+
+        <input type="date" name="start_date" value="{{ request()->start_date }}" class="p-2 border border-gray-300 rounded-md">
+
+        <input type="date" name="end_date" value="{{ request()->end_date }}" class="p-2 border border-gray-300 rounded-md">
+
+        <button type="submit" class="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">Search</button>
+    </form>
 
     <!-- Display Success/Error Messages -->
     @if(session('success'))
@@ -224,20 +212,20 @@
 
                             <div class="flex space-x-4 items-center">
 
-                            <!-- Additional Button -->
-                            @if(in_array($invoice->status, ['Pending', 'Artwork_sent', 'Artwork_approved']))
+                                <!-- Additional Button -->
+                                @if(in_array($invoice->status, ['Pending', 'Artwork_sent', 'Artwork_approved']))
                                     <a href="{{ route('invoices.edit', ['invoice_id' => $invoice->id]) }}"
                                        class="bg-teal-500 text-white px-2 py-1 rounded hover:bg-teal-600 text-center block">
                                         Edit Details
                                     </a>
-                                    @endif
+                                @endif
                                 @if(in_array($invoice->status, ['Pending', 'Artwork_sent']))
-                                        <a href="{{route('invoice.details', ['id' => $invoice->id])}}" class="bg-gray-800 text-white px-2 py-1 rounded hover:bg-black text-center block">
+                                    <a href="{{route('invoice.details', ['id' => $invoice->id])}}" class="bg-gray-800 text-white px-2 py-1 rounded hover:bg-black text-center block">
                                         Download Details
                                     </a>
                                 @endif
 
-                                </div>
+                            </div>
 
                             <!-- Invoice Modal -->
                             <div id="invoice-{{ $invoice->po_number }}" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
@@ -281,7 +269,7 @@
                                 </div>
                             </div>
 
-                                <!-- Order Actions -->
+                            <!-- Order Actions -->
                             <div class="flex space-x-2 items-center">
                                 @if($invoice->status == 'Items_printed')
                                     <form action="{{ route('order.dispatch', $invoice->id) }}" method="POST" class="inline">
@@ -331,53 +319,12 @@
                                 });
                             });
 
-                            function filterByCriteria() {
-                                const startDate = document.getElementById('start_date').value;
-                                const endDate = document.getElementById('end_date').value;
-                                const poNumber = document.getElementById('po_number').value.trim().toLowerCase();
-                                const invoiceNumber = document.getElementById('invoice_number').value.trim().toLowerCase();
-                                const dn = document.getElementById('dn').value.trim().toLowerCase();
-
-                                // Select all rows in the table body
-                                const rows = document.querySelectorAll('table tbody tr');
-                                rows.forEach(row => {
-                                    // Map the table's columns to variables
-                                    const rowInvoiceNumber = row.cells[0].textContent.trim().toLowerCase(); // Invoice No
-                                    const rowDeliveryNoteNo = row.cells[1].textContent.trim().toLowerCase(); // Delivery Note No
-                                    const rowReferenceNo = row.cells[2].textContent.trim().toLowerCase(); // Reference No
-                                    const rowPONumber = row.cells[3].textContent.trim().toLowerCase(); // PO Number
-                                    const rowDate = row.cells[4].textContent.trim(); // Date
-                                    const rowStatus = row.cells[5].textContent.trim().toLowerCase(); // Status
-
-                                    // Parse the row's date into a Date object
-                                    const rowInvoiceDate = new Date(rowDate);
-
-                                    // Parse filter dates into Date objects
-                                    const startFilterDate = startDate ? new Date(startDate) : null;
-                                    const endFilterDate = endDate ? new Date(endDate) : null;
-
-                                    let showRow = true;
-
-                                    // Apply date range filter
-                                    if (startFilterDate && rowInvoiceDate < startFilterDate) showRow = false;
-                                    if (endFilterDate && rowInvoiceDate > endFilterDate) showRow = false;
-
-                                    // Apply other filters
-                                    if (poNumber && !rowPONumber.includes(poNumber)) showRow = false;
-                                    if (invoiceNumber && !rowInvoiceNumber.includes(invoiceNumber)) showRow = false;
-                                    if (dn && !rowDeliveryNoteNo.includes(dn)) showRow = false;
-
-                                    // Show or hide the row based on filtering criteria
-                                    row.style.display = showRow ? '' : 'none';
-                                });
-                            }
-
-
                         </script>
                     </td>
                 </tr>
             @endforeach
             </tbody>
+
         </table>
     </div>
 </div>
