@@ -115,7 +115,6 @@ class PurchaseOrderDatabaseController extends Controller
 //            $masterSheet->invoice_date = $validated['date'];
             $masterSheet->pcs = array_sum(array_column($validated['items'], 'quantity'));
             $masterSheet->invoice_value = array_sum(array_column($validated['items'], 'price'));
-            $masterSheet->status = 'pending';
             $masterSheet->save();
 
             InvoiceDatabase::create([

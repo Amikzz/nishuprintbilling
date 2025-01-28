@@ -111,7 +111,9 @@ class InvoiceCreateController extends Controller
             'purchaseOrderItemsDetails' => $purchaseOrderItemsDetails,
         ]);
 
-        return $pdf->download($invoice->invoice_no . '.pdf');
+        return response($pdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="' . $invoiceNo . '.pdf"');
     }
 
     public function orderDispatch($id)

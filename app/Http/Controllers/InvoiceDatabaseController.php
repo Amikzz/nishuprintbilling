@@ -124,6 +124,7 @@ class InvoiceDatabaseController extends Controller
 
                 $mastersheet = MasterSheet::where('cust_ref', $invoice->po_number)->first();
                 $mastersheet->art_sent_date = now();
+                $mastersheet->status = 'pending';
                 $mastersheet->save();
 
                 // Get the PO number associated with the invoice

@@ -320,6 +320,11 @@
                 }
                 e.preventDefault();
             }
+
+            if (e.key === '+' || e.key === '=') { // Handles both "+" and "=" keys since "+" requires Shift
+                $('#add-item').click(); // Trigger the click event of the "Add Item" button
+                e.preventDefault(); // Prevent default action of the key
+            }
         });
 
         updateItemNumbers();

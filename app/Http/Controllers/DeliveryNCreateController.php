@@ -105,6 +105,8 @@ class DeliveryNCreateController extends Controller
 
         ]);
 
-        return $pdf->download($delivery_note_no. '.pdf');
+        return response($pdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="' . $delivery_note_no . '.pdf"');
     }
 }

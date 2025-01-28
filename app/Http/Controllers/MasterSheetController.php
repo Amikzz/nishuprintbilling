@@ -12,14 +12,16 @@ class MasterSheetController extends Controller
     // Function to get all the details related to the master sheet
     public function getMasterSheet(Request $request)
     {
-        // Fetch invoices, prioritizing urgent ones first (assuming `status` field indicates if it's urgent)
+        // Fetch invoices, prioritizing urgent ones first and ordering by mail_date
         $invoices = MasterSheet::orderByRaw("status = 'urgent' DESC")  // Prioritize urgent orders
-        ->orderBy('id', 'desc') // Then order by ID in descending order
+        ->orderBy('mail_date', 'asc')  // Then order by mail_date (oldest to newest)
         ->get();
+
         $items = Items::all();
 
         return view('mastersheet', compact('invoices', 'items'));
     }
+
 
 
 
