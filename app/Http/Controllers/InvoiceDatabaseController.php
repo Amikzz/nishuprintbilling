@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use App\Models\InvoiceDatabase;
 use App\Http\Requests\StoreInvoiceDatabaseRequest;
 use App\Http\Requests\UpdateInvoiceDatabaseRequest;
-use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -23,7 +22,7 @@ class InvoiceDatabaseController extends Controller
         $query = InvoiceDatabase::query();
 
         // Exclude invoices with 'Cancelled' status
-        $query->where('status', '!=', 'Cancelled');
+        $query->where('status', '!=', 'Order Complete');
 
         // Check for search terms in the request and apply filters
         if ($request->has('search') && $request->search != '') {

@@ -31,7 +31,6 @@ class DeliveryNCreateController extends Controller
 
         // Fetch the related purchase order using the po_number and reference_no from the invoice
         $purchaseOrder = PurchaseOrderDatabase::where('po_no', $invoice->po_number)
-            ->where('reference_no', $invoice->reference_no)
             ->first();
 
         if (!$purchaseOrder) {
@@ -47,7 +46,6 @@ class DeliveryNCreateController extends Controller
 
         // Fetch the related purchase orders and the corresponding items using the po_number and reference_no from the invoice
         $purchaseOrderItems = PurchaseOrderDatabase::where('po_no', $invoice->po_number)
-            ->where('reference_no', $invoice->reference_no)
             ->get();
 
         //get the number of items
@@ -102,11 +100,8 @@ class DeliveryNCreateController extends Controller
             'delivery_note_no' => $delivery_note_no,
             'purchaseOrderItemsDetails' => $purchaseOrderItemsDetails,
             'item_count' => $item_count,
-
         ]);
 
-        return response($pdf->output(), 200)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'inline; filename="' . $delivery_note_no . '.pdf"');
+        return $pdf->download("$delivery_note_no.pdf");
     }
 }

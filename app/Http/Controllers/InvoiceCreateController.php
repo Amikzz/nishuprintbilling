@@ -10,54 +10,84 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use App\Models\PurchaseOrderDatabase;
 use App\Models\Customer;
-
+use Illuminate\Support\Facades\Log;
 
 class InvoiceCreateController extends Controller
 {
     public function createInvoice(Request $request, $po_number)
     {
+        // Increase timeout and memory limits
+        set_time_limit(300); // 5 minutes
+        ini_set('memory_limit', '512M');
+
+        // Log the start of the process
+        Log::info('Start processing invoice for PO: ' . $po_number);
+
+        // Validate the request
         $validated = $request->validate([
             'invoice_number' => 'required|string|max:255',
         ]);
 
-        //Get the exchnage rate from the exchange_rates table
-        $exchangeRate = ExchangeRate::where('currency_from', 'USD')->where('currency_to', 'LKR')->first();
+        // Fetch the exchange rate
+        $exchangeRate = ExchangeRate::where('currency_from', 'USD')
+            ->where('currency_to', 'LKR')
+            ->first();
 
-        // Fetch the exchange rate from the request
+        // Log exchange rate fetch
+        Log::info('Exchange rate fetched', ['rate' => $exchangeRate ? $exchangeRate->rate : 'Not found']);
+
         $exchangeRate = $exchangeRate ? $exchangeRate->rate : 0;
 
-        // Fetch the invoice details based on the invoice number
+        // Fetch the invoice details based on the PO number
         $invoice = InvoiceDatabase::where('po_number', $po_number)->first();
 
+        // Log invoice fetch
+        Log::info('Invoice fetched', ['invoice' => $invoice ? $invoice->id : 'Not found']);
 
         if (!$invoice) {
+            Log::error('Invoice not found for PO: ' . $po_number);
             return response()->json(['error' => 'Invoice not found'], 404);
         }
 
-        $invoiceNo = 'NC-' . '24-25' . '-' . $validated['invoice_number']; // Updated invoice number logic
+        // Update invoice number and status
+        $invoiceNo = 'NC-' . '24-25' . '-' . $validated['invoice_number'];
         $invoice->invoice_no = $invoiceNo;
         $invoice->status = 'Order Dispatched';
         $invoice->save();
 
+        // Update master sheet
         $masterSheet = MasterSheet::where('cust_ref', $po_number)->first();
-        $masterSheet->invoice_no = $invoiceNo;
-        $masterSheet->invoice_date = now();
-        $masterSheet->status = 'delivered';
-        $masterSheet->save();
+        if ($masterSheet) {
+            $masterSheet->invoice_no = $invoiceNo;
+            $masterSheet->invoice_date = now();
+            $masterSheet->status = 'delivered';
+            $masterSheet->save();
+        }
 
-        // Fetch the related purchase order using the po_number and reference_no
+        // Log master sheet update
+        Log::info('Master sheet updated', ['invoice_no' => $invoiceNo]);
+
+        // Fetch the related purchase order
         $purchaseOrder = PurchaseOrderDatabase::where('po_no', $invoice->po_number)
             ->where('reference_no', $invoice->reference_no)
             ->first();
 
+        // Log purchase order fetch
+        Log::info('Purchase order fetched', ['purchase_order' => $purchaseOrder ? $purchaseOrder->id : 'Not found']);
+
         if (!$purchaseOrder) {
+            Log::error('Purchase order not found for PO: ' . $po_number);
             return response()->json(['error' => 'Purchase order not found'], 404);
         }
 
         // Fetch customer details
         $customer = Customer::find($purchaseOrder->customer_id);
 
+        // Log customer fetch
+        Log::info('Customer fetched', ['customer' => $customer ? $customer->id : 'Not found']);
+
         if (!$customer) {
+            Log::error('Customer not found for PO: ' . $po_number);
             return response()->json(['error' => 'Customer not found'], 404);
         }
 
@@ -66,18 +96,25 @@ class InvoiceCreateController extends Controller
             ->where('reference_no', $invoice->reference_no)
             ->get();
 
+        // Log purchase order items fetch
+        Log::info('Purchase order items fetched', ['count' => $purchaseOrderItems->count()]);
+
         if ($purchaseOrderItems->isEmpty()) {
+            Log::error('No items found for PO: ' . $po_number);
             return response()->json(['error' => 'No items found for this purchase order'], 404);
         }
 
-        // Fetch and map the item details
-        $purchaseOrderItemsDetails = $purchaseOrderItems->map(function ($orderItem) {
-            $item = Items::where('item_code', $orderItem->item_code)->first();
+        // Optimize item fetching by querying all items at once
+        $itemCodes = $purchaseOrderItems->pluck('item_code')->unique()->filter();
+        $itemsCollection = Items::whereIn('item_code', $itemCodes)->get()->keyBy('item_code');
 
+        // Map purchase order items with their details
+        $purchaseOrderItemsDetails = $purchaseOrderItems->map(function ($orderItem) use ($itemsCollection) {
+            $item = $itemsCollection[$orderItem->item_code] ?? null;
             $unit_price = ($orderItem->price) / $orderItem->po_qty;
 
             return (object) [
-                'item_code' => $item ? $item->item_code : 'N/A',
+                'item_code' => $orderItem->item_code,
                 'item_name' => $item ? $item->name : 'Unknown Item',
                 'sticker_size' => $item ? $item->description : 'N/A',
                 'color_no' => $orderItem->color_no,
@@ -85,9 +122,12 @@ class InvoiceCreateController extends Controller
                 'size' => $orderItem->size,
                 'po_qty' => $orderItem->po_qty,
                 'unit_price' => $unit_price,
-                'price' => ($unit_price*$orderItem->po_qty),
+                'price' => ($unit_price * $orderItem->po_qty),
             ];
         });
+
+        // Log item details mapping
+        Log::info('Item details mapped', ['count' => $purchaseOrderItemsDetails->count()]);
 
         // Calculate the grand total in local currency
         $grandTotalLocal = $purchaseOrderItemsDetails->sum('price');
@@ -95,25 +135,44 @@ class InvoiceCreateController extends Controller
         // Calculate the grand total in the converted currency using the exchange rate
         $grandTotalConverted = $grandTotalLocal * $exchangeRate;
 
+        // Log grand totals
+        Log::info('Grand totals calculated', [
+            'local' => $grandTotalLocal,
+            'converted' => $grandTotalConverted,
+        ]);
+
         // Split items into chunks of 30 for pagination
         $itemsPerPage = 30;
         $pages = $purchaseOrderItemsDetails->chunk($itemsPerPage);
 
-        // Generate the invoice PDF view
-        $pdf = PDF::loadView('invoice', [
-            'date' => now(),
-            'invoice' => $invoice,
-            'pages' => $pages,
-            'customer' => $customer,
-            'grandTotalLocal' => $grandTotalLocal,
-            'grandTotalConverted' => $grandTotalConverted,
-            'exchangeRate' => $exchangeRate,
-            'purchaseOrderItemsDetails' => $purchaseOrderItemsDetails,
-        ]);
+        // Log PDF generation start
+        Log::info('Starting PDF generation');
 
-        return response($pdf->output(), 200)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'inline; filename="' . $invoiceNo . '.pdf"');
+        try {
+            // Generate the invoice PDF view
+            $pdf = PDF::loadView('invoice', [
+                'date' => now(),
+                'invoice' => $invoice,
+                'pages' => $pages,
+                'customer' => $customer,
+                'grandTotalLocal' => $grandTotalLocal,
+                'grandTotalConverted' => $grandTotalConverted,
+                'exchangeRate' => $exchangeRate,
+                'purchaseOrderItemsDetails' => $purchaseOrderItemsDetails,
+            ]);
+
+            // Log PDF generation success
+            Log::info('PDF generated successfully');
+
+            // Return the PDF for download
+            return $pdf->download($invoice->invoice_no . '.pdf');
+        } catch (\Exception $e) {
+            // Log PDF generation failure
+            Log::error('PDF Generation Failed: ' . $e->getMessage());
+
+            // Return an error response
+            return response()->json(['error' => 'PDF generation failed. Please try again.'], 500);
+        }
     }
 
     public function orderDispatch($id)

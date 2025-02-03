@@ -44,7 +44,7 @@
             text-transform: uppercase;
         }
         .invoice-details {
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
         .invoice-details table {
             width: 70%;
@@ -54,7 +54,7 @@
         .invoice-details th, .invoice-details td {
             padding: 3px;
             text-align: left;
-            border: 1px solid #000000; /* Black border */
+            border: 1px solid black; /* Changed to black */
         }
         .invoice-details th {
             background-color: #f4f4f4;
@@ -68,26 +68,28 @@
         .items-table th, .items-table td {
             padding: 3px;
             text-align: left;
-            border: 1px solid #000000; /* Black border */
+            border: 1px solid black; /* Changed to black */
         }
         .items-table th {
             background-color: #f4f4f4;
         }
-        .totals {
-            margin-top: 10px;
-            font-size: 10px;
-            text-align: right;
+        .total-row {
+            font-weight: bold;
+            background-color: #f9f9f9;
+        }
+        .page-break {
+            page-break-after: auto;
         }
         .sign-space {
-            margin-top: 30px;
+            margin-top: 50px;
             font-size: 10px;
         }
         .signatures {
             display: block;
             width: 100%;
             justify-content: space-between;
-            margin-top: 10px;
-            border-top: 1px solid #000000; /* Black border */
+            margin-top: 15px;
+            border-top: 1px solid #ddd;
             padding-top: 10px;
         }
         .signature-box-left {
@@ -96,12 +98,14 @@
             text-align: left;
         }
         .signature-box-right {
-            width: 30%;
+            width: 25%;
             float: right;
             text-align: left;
         }
-        .page-break {
-            page-break-after: always;
+        .totals{
+            float: right;
+            margin-top: 0px;
+            font-size: 10px;
         }
     </style>
 </head>
