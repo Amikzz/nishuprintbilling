@@ -165,18 +165,25 @@
 <script>
     $(document).ready(function () {
         function updateTotalPrice() {
-            let total = 0.000;
+            let total = 0.0000;
             let totalQuantity = 0;
 
             $('.item-row').each(function () {
                 const price = parseFloat($(this).find('.price').val()) || 0;
                 const quantity = parseInt($(this).find('.quantity').val()) || 0;
 
-                total += price;
+                total += price; // Multiply price by quantity
                 totalQuantity += quantity;
             });
-            $('#total_price').val(total.toFixed(2));
-            $('#total_quantity').val(totalQuantity);
+
+            // Round off the total price to 2 decimal places
+            total = Math.round(total * 100) / 100;
+
+            // Add 0.0030 to the total
+            total += 0.0030;
+
+            $('#total_price').val(total.toFixed(4)); // Update the total price with 2 decimal places
+            $('#total_quantity').val(totalQuantity); // Update the total quantity
         }
 
         function updateItemNumbers() {

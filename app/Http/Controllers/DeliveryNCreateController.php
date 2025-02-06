@@ -22,8 +22,6 @@ class DeliveryNCreateController extends Controller
         // Fetch the invoice details based on the invoice number from the URL
         $invoice = InvoiceDatabase::where('po_number', $po_number)->first();
 
-        $invoiceno = $invoice->invoice_no;
-
         // If the invoice is not found, return an error response
         if (!$invoice) {
             return response()->json(['error' => 'Invoice not found'], 404);

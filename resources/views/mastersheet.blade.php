@@ -10,6 +10,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
             width: 100%;
@@ -72,6 +74,18 @@
 
     <div class="flex gap-4 items-end mb-6">
         <div>
+            <label for="statusFilter" class="block text-gray-700 font-medium mb-1">Filter By Color:</label>
+            <select id="statusFilter" class="w-full px-3 py-2 border border-gray-300 rounded shadow">
+                <option value="" class="bg-white">All</option>
+                <option value="pending" class="bg-blue-600 text-white">Pending</option>
+                <option value="approved" class="bg-purple-300 text-black">Approved</option>
+                <option value="printed" class="bg-purple-600 text-white">Printed</option>
+                <option value="delivered" class="bg-green-600 text-white">Delivered</option>
+                <option value="urgent" class="bg-pink-600 text-white">Urgent</option>
+            </select>
+        </div>
+
+        <div>
             <label for="date_filter" class="block text-gray-700 font-medium mb-1">Filter By Date:</label>
             <select id="date_filter" class="w-full px-3 py-2 border border-gray-300 rounded shadow">
                 <option value="mail_date">Mail Date</option>
@@ -103,57 +117,113 @@
         <button onclick="filterByCriteria()" class="px-4 py-2 bg-gray-700 text-white rounded shadow">Filter</button>
     </div>
 
-    <!-- Table for displaying the master sheet -->
-    <div class="overflow-x-auto bg-white shadow rounded">
-        <table class="table-auto w-full text-sm text-left">
-            <thead class="bg-gray-800 text-white">
-            <tr>
-                <th class="px-4 py-2">Our Ref#</th>
-                <th class="px-4 py-2">Mail Date</th>
-                <th class="px-4 py-2">Required Date</th>
-                <th class="px-4 py-2">Create By</th>
-                <th class="px-4 py-2">Art Sent Date</th>
-                <th class="px-4 py-2">Art Approved Date</th>
-                <th class="px-4 py-2">Print Date</th>
-                <th class="px-4 py-2">Invoice Date</th>
-                <th class="px-4 py-2">Invoice No</th>
-                <th class="px-4 py-2">PO Number</th>
-                <th class="px-4 py-2">Description</th>
-                <th class="px-4 py-2">DN</th>
-                <th class="px-4 py-2">DN Date</th>
-                <th class="px-4 py-2">Total PCS</th>
-                <th class="px-4 py-2">Invoice Value</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach ($invoices as $invoice)
-                <tr class="@if($invoice->status === 'pending') bg-blue-600 font-bold
-                           @elseif($invoice->status === 'approved') bg-purple-300 font-bold
-                           @elseif($invoice->status === 'printed') bg-purple-600 font-bold
-                           @elseif($invoice->status === 'delivered') bg-green-600 font-bold
-                           @elseif($invoice->status === 'urgent') bg-pink-600 font-bold
-                           @elseif($invoice->status === null) bg-gray-200 font-bold
-                           @else bg-gray-100 @endif">
-                    <td class="border px-4 py-2">{{ $invoice->id ?? '-' }}</td>
-                    <td class="border px-4 py-2">{{ $invoice->mail_date ?? '-'}}</td>
-                    <td class="border px-4 py-2">{{ $invoice->required_date ?? '-'}}</td>
-                    <td class="border px-4 py-2">{{ $invoice->created_by ?? '-'}}</td>
-                    <td class="border px-4 py-2">{{ $invoice->art_sent_date ?? '-'}}</td>
-                    <td class="border px-4 py-2">{{ $invoice->art_approved_date ?? '-'}}</td>
-                    <td class="border px-4 py-2">{{ $invoice->print_date ?? '-'}}</td>
-                    <td class="border px-4 py-2">{{ $invoice->invoice_date ?? '-'}}</td>
-                    <td class="border px-4 py-2">{{ $invoice->invoice_no ?? '-'}}</td>
-                    <td class="border px-4 py-2">{{ $invoice->cust_ref ?? '-'}}</td>
-                    <td class="border px-4 py-2">{{ $invoice->description ?? '-'}}</td>
-                    <td class="border px-4 py-2">{{ $invoice->dn ?? '-'}}</td>
-                    <td class="border px-4 py-2">{{ $invoice->dn_date ?? '-'}}</td>
-                    <td class="border px-4 py-2">{{ $invoice->pcs ?? '-'}}</td>
-                    <td class="border px-4 py-2">{{ $invoice->invoice_value ?? '-'}}</td>
-                </tr>
-            @endforeach
-            </tbody>
-        </table>
+    <!-- Nav Tabs -->
+    <ul class="nav nav-tabs" id="invoiceTabs" role="tablist">
+        @foreach($invoices as $month => $records)
+            @php
+                $tabId = strtolower(str_replace(' ', '-', $month)); // Convert to safe format
+            @endphp
+            <li class="nav-item">
+                <a class="nav-link {{ $loop->first ? 'active' : '' }}"
+                   data-toggle="tab"
+                   href="#{{ $tabId }}"
+                   role="tab">
+                    {{ $month }}
+                </a>
+            </li>
+        @endforeach
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content mt-4">
+        @foreach ($invoices as $month => $monthInvoices)
+            @php
+                $tabId = strtolower(str_replace(' ', '-', $month)); // Ensure consistent tab ID
+            @endphp
+            <div class="tab-pane fade {{ $loop->first ? 'show active' : '' }}"
+                 id="{{ $tabId }}"
+                 role="tabpanel">
+                <div class="bg-gray-700 text-white text-lg font-bold p-2">{{ $month }}</div>
+                <table class="table-auto w-full text-sm text-left mb-4">
+                    <thead class="bg-gray-800 text-white">
+                    <tr>
+                        <th class="px-4 py-2">Our Ref#</th>
+                        <th class="px-4 py-2">Mail Date</th>
+                        <th class="px-4 py-2">Required Date</th>
+                        <th class="px-4 py-2">Create By</th>
+                        <th class="px-4 py-2">Art Sent Date</th>
+                        <th class="px-4 py-2">Art Approved Date</th>
+                        <th class="px-4 py-2">Print Date</th>
+                        <th class="px-4 py-2">Invoice Date</th>
+                        <th class="px-4 py-2">Invoice No</th>
+                        <th class="px-4 py-2">PO Number</th>
+                        <th class="px-4 py-2">Description</th>
+                        <th class="px-4 py-2">DN</th>
+                        <th class="px-4 py-2">DN Date</th>
+                        <th class="px-4 py-2">Total PCS</th>
+                        <th class="px-4 py-2">Invoice Value</th>
+                        <th class="px-4 py-2">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach ($monthInvoices as $invoice)
+                        <tr class="
+                            @if($invoice->status === 'pending') bg-blue-600 font-bold
+                            @elseif($invoice->status === 'approved') bg-purple-300 font-bold
+                            @elseif($invoice->status === 'printed') bg-purple-600 font-bold
+                            @elseif($invoice->status === 'delivered') bg-green-600 font-bold
+                            @elseif($invoice->status === 'urgent') bg-pink-600 font-bold
+                            @elseif($invoice->status === null) bg-gray-200 font-bold
+                            @else bg-gray-100
+                            @endif">
+                            <td class="border px-4 py-2">{{ $invoice->id ?? '-' }}</td>
+                            <td class="border px-4 py-2">{{ $invoice->mail_date ?? '-' }}</td>
+                            <td class="border px-4 py-2">{{ $invoice->required_date ?? '-' }}</td>
+                            <td class="border px-4 py-2">{{ $invoice->created_by ?? '-' }}</td>
+                            <td class="border px-4 py-2">{{ $invoice->art_sent_date ?? '-' }}</td>
+                            <td class="border px-4 py-2">{{ $invoice->art_approved_date ?? '-' }}</td>
+                            <td class="border px-4 py-2">{{ $invoice->print_date ?? '-' }}</td>
+                            <td class="border px-4 py-2">{{ $invoice->invoice_date ?? '-' }}</td>
+                            <td class="border px-4 py-2">{{ $invoice->invoice_no ?? '-' }}</td>
+                            <td class="border px-4 py-2">{{ $invoice->cust_ref ?? '-' }}</td>
+                            <td class="border px-4 py-2">{{ $invoice->description ?? '-' }}</td>
+                            <td class="border px-4 py-2">{{ $invoice->dn ?? '-' }}</td>
+                            <td class="border px-4 py-2">{{ $invoice->dn_date ?? '-' }}</td>
+                            <td class="border px-4 py-2">{{ $invoice->pcs ?? '-' }}</td>
+                            <td class="border px-4 py-2">{{ $invoice->invoice_value ?? '-' }}</td>
+                            <td class="border px-4 py-2">{{ $invoice->status ?? '-' }}</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endforeach
     </div>
+
+    <!-- jQuery and Bootstrap JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            // Ensure Bootstrap tabs work properly
+            $('#invoiceTabs a').on('click', function (e) {
+                e.preventDefault();
+                $(this).tab('show');
+            });
+
+            // Restore active tab on page reload
+            var activeTab = localStorage.getItem('activeTab');
+            if (activeTab) {
+                $('#invoiceTabs a[href="' + activeTab + '"]').tab('show');
+            }
+
+            $('#invoiceTabs a').on('shown.bs.tab', function (e) {
+                localStorage.setItem('activeTab', $(e.target).attr('href'));
+            });
+        });
+    </script>
+
     <!-- Totals Section -->
     <div class="mt-4 bg-gray-100 p-4 rounded shadow">
         <h2 class="text-lg font-semibold">Summary</h2>
@@ -242,6 +312,7 @@
         const poNumber = document.getElementById('po_number').value.trim().toLowerCase();
         const invoiceNumber = document.getElementById('invoice_number').value.trim().toLowerCase();
         const dn = document.getElementById('dn').value.trim().toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value.trim().toLowerCase(); // Get selected status
 
         const rows = document.querySelectorAll('table tbody tr');
         rows.forEach(row => {
@@ -251,16 +322,39 @@
             const rowPONumber = row.cells[9].textContent.trim().toLowerCase(); // PO Number
             const rowInvoiceNumber = row.cells[8].textContent.trim().toLowerCase(); // Invoice Number
             const rowDN = row.cells[11].textContent.trim().toLowerCase(); // DN
+            const rowStatus = row.cells[15].textContent.trim().toLowerCase(); // Status (assuming it's in the 13th column)
 
-            const rowMailDate = new Date(mailDate);
-            const rowRequiredDate = new Date(requiredDate);
-            const rowInvoiceDate = new Date(invoiceDate);
+            // Convert dates to Date objects
+            const rowMailDate = parseDate(mailDate);
+            const rowRequiredDate = parseDate(requiredDate);
+            const rowInvoiceDate = parseDate(invoiceDate);
 
-            const startFilterDate = startDate ? new Date(startDate) : null;
-            const endFilterDate = endDate ? new Date(endDate) : null;
+            const startFilterDate = startDate ? parseDate(startDate) : null;
+            const endFilterDate = endDate ? parseDate(endDate) : null;
 
             let showRow = true;
 
+            // Check PO Number
+            if (poNumber && !rowPONumber.includes(poNumber)) {
+                showRow = false;
+            }
+
+            // Check Invoice Number
+            if (invoiceNumber && !rowInvoiceNumber.includes(invoiceNumber)) {
+                showRow = false;
+            }
+
+            // Check DN
+            if (dn && !rowDN.includes(dn)) {
+                showRow = false;
+            }
+
+            // Check Status Filter
+            if (statusFilter && rowStatus !== statusFilter) {
+                showRow = false;
+            }
+
+            // Apply date filters depending on the selected column
             if (dateFilter === 'mail_date') {
                 if (startFilterDate && rowMailDate < startFilterDate) showRow = false;
                 if (endFilterDate && rowMailDate > endFilterDate) showRow = false;
@@ -272,14 +366,22 @@
                 if (endFilterDate && rowInvoiceDate > endFilterDate) showRow = false;
             }
 
-            if (poNumber && !rowPONumber.includes(poNumber)) showRow = false;
-            if (invoiceNumber && !rowInvoiceNumber.includes(invoiceNumber)) showRow = false;
-            if (dn && !rowDN.includes(dn)) showRow = false;
-
+            // Show or hide the row based on the result
             row.style.display = showRow ? '' : 'none';
         });
 
-        calculateTotals(); // Recalculate totals after filtering
+        // Call the calculateTotals function to update totals after filtering
+        calculateTotals();
+    }
+
+    // Function to parse different date formats into a Date object
+    function parseDate(dateStr) {
+        // Try to parse the date, and return a Date object or null if invalid
+        const parsedDate = new Date(dateStr);
+        if (parsedDate.toString() === 'Invalid Date') {
+            return null;  // If parsing fails, return null
+        }
+        return parsedDate;
     }
 
     // Calculate totals initially when the page loads

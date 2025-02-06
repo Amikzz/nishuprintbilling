@@ -147,7 +147,7 @@ class ReportGenerateController extends Controller
         $to_date = $request->to_date;
 
         // Fetch master sheet records within the date range
-        $masterSheet = MasterSheet::whereBetween('created_at', [$from_date, $to_date])->get();
+        $masterSheet = MasterSheet::whereBetween('invoice_date', [$from_date, $to_date])->get();
 
         // Define the filename for the Excel file
         $filename = "master_sheet_" . $from_date . "_to_" . $to_date . ".xls";

@@ -16,13 +16,6 @@ class InvoiceCreateController extends Controller
 {
     public function createInvoice(Request $request, $po_number)
     {
-        // Increase timeout and memory limits
-        set_time_limit(300); // 5 minutes
-        ini_set('memory_limit', '512M');
-
-        // Log the start of the process
-        Log::info('Start processing invoice for PO: ' . $po_number);
-
         // Validate the request
         $validated = $request->validate([
             'invoice_number' => 'required|string|max:255',
@@ -97,7 +90,6 @@ class InvoiceCreateController extends Controller
             ->get();
 
         // Log purchase order items fetch
-        Log::info('Purchase order items fetched', ['count' => $purchaseOrderItems->count()]);
 
         if ($purchaseOrderItems->isEmpty()) {
             Log::error('No items found for PO: ' . $po_number);
@@ -127,7 +119,6 @@ class InvoiceCreateController extends Controller
         });
 
         // Log item details mapping
-        Log::info('Item details mapped', ['count' => $purchaseOrderItemsDetails->count()]);
 
         // Calculate the grand total in local currency
         $grandTotalLocal = $purchaseOrderItemsDetails->sum('price');
@@ -135,18 +126,11 @@ class InvoiceCreateController extends Controller
         // Calculate the grand total in the converted currency using the exchange rate
         $grandTotalConverted = $grandTotalLocal * $exchangeRate;
 
-        // Log grand totals
-        Log::info('Grand totals calculated', [
-            'local' => $grandTotalLocal,
-            'converted' => $grandTotalConverted,
-        ]);
-
         // Split items into chunks of 30 for pagination
         $itemsPerPage = 30;
         $pages = $purchaseOrderItemsDetails->chunk($itemsPerPage);
 
         // Log PDF generation start
-        Log::info('Starting PDF generation');
 
         try {
             // Generate the invoice PDF view

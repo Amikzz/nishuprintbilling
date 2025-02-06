@@ -9,21 +9,17 @@ use Illuminate\Http\Request;
 
 class MasterSheetController extends Controller
 {
-    // Function to get all the details related to the master sheet
     public function getMasterSheet(Request $request)
     {
-        // Fetch invoices, prioritizing urgent ones first and ordering by mail_date
-        $invoices = MasterSheet::orderByRaw("status = 'urgent' DESC")  // Prioritize urgent orders
-        ->orderBy('mail_date', 'asc')  // Then order by mail_date (oldest to newest)
-        ->get();
+        // Fetch all invoices, ensuring they are categorized by full month & year
+        $invoices = MasterSheet::orderBy('mail_date', 'asc')->get()->groupBy(function ($invoice) {
+            return \Carbon\Carbon::parse($invoice->mail_date)->format('F Y'); // Group by full month and year
+        });
 
         $items = Items::all();
 
         return view('mastersheet', compact('invoices', 'items'));
     }
-
-
-
 
     //function to create a new master sheet
     public function createMasterSheet(Request $request)

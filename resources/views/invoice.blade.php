@@ -114,9 +114,21 @@
 @php
     $itemsPerPage = 30;
     $totalPages = ceil($purchaseOrderItemsDetails->count() / $itemsPerPage);
-    $grandTotal = $purchaseOrderItemsDetails->sum('price');
+
+    // Calculate the total price and round it to 2 decimal places, then add 0.0030
+    $total = $purchaseOrderItemsDetails->sum('price');
+    $total = round($total, 2) + 0.0030;
+
+    // Calculate the grand total and quantity
+    $grandTotal = $total;
     $grandQtyTotal = $purchaseOrderItemsDetails->sum('po_qty');
+
+    // Calculate the converted total using the exchange rate
     $convertedTotal = $grandTotal * $exchangeRate;
+
+    // Format totals to 4 decimal places for display
+    $formattedGrandTotal = number_format($grandTotal, 4);
+    $formattedConvertedTotal = number_format($convertedTotal, 4);
 @endphp
 
 @for ($page = 1; $page <= $totalPages; $page++)
@@ -125,8 +137,15 @@
         $end = min($start + $itemsPerPage, $purchaseOrderItemsDetails->count());
         $pageItems = $purchaseOrderItemsDetails->slice($start, $end - $start);
         $pageTotal = $pageItems->sum('price');
+
+        // Round each page total, then add 0.0030
+        $pageTotal = round($pageTotal, 2) + 0.0030;
         $pageQtyTotal = $pageItems->sum('po_qty');
         $pageConvertedTotal = $pageTotal * $exchangeRate;
+
+        // Format page totals to 4 decimal places
+        $formattedPageTotal = number_format($pageTotal, 4);
+        $formattedPageConvertedTotal = number_format($pageConvertedTotal, 4);
     @endphp
 
     <div class="container">
@@ -212,8 +231,8 @@
 
         <!-- Totals -->
         <div class="totals">
-            <p>Page Total Quantity: {{ number_format($pageQtyTotal) }} <b>|</b>  Total: ${{ number_format($pageTotal, 2) }}</p>
-            <p>Grand Total Quantity: {{ number_format($grandQtyTotal) }} <b>|</b>  Grand Total: ${{ number_format($grandTotal, 2) }} </p>
+            <p>Page Total Quantity: {{ number_format($pageQtyTotal) }} <b>|</b>  Total: ${{ number_format($formattedPageTotal, 4) }}</p>
+            <p>Grand Total Quantity: {{ number_format($grandQtyTotal) }} <b>|</b>  Grand Total: ${{ number_format($formattedGrandTotal, 4) }} </p>
             <p><b>Converted Grand Total (USD --- LKR): Rs. {{ number_format($convertedTotal, 2) }}</b></p>
         </div>
 
