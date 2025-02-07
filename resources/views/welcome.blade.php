@@ -141,7 +141,7 @@
                             <td><input type="text" class="form-control upc-input" id="upc_0" name="items[0][upc]"></td>
                             <td><input type="text" class="form-control" id="more1_0" name="items[0][more1]"></td>
                             <td><input type="text" class="form-control" id="more2_0" name="items[0][more2]"></td>
-                            <td><input type="text" class="form-control price qty-input" id="price_0" name="items[0][price]" readonly value="0.000"></td>
+                            <td><input type="text" class="form-control price qty-input" id="price_0" name="items[0][price]" readonly value="0.00"></td>
                             <td><button type="button" class="btn btn-danger remove-item">Remove</button></td>
                         </tr>
                         </tbody>
@@ -179,10 +179,7 @@
             // Round off the total price to 2 decimal places
             total = Math.round(total * 100) / 100;
 
-            // Add 0.0030 to the total
-            total += 0.0030;
-
-            $('#total_price').val(total.toFixed(4)); // Update the total price with 2 decimal places
+            $('#total_price').val(total.toFixed(2)); // Update the total price with 2 decimal places
             $('#total_quantity').val(totalQuantity); // Update the total quantity
         }
 
@@ -200,8 +197,8 @@
             const quantity = parseInt(row.find('.quantity').val()) || 1;
 
             // Update price field based on selected item and quantity
-            const totalItemPrice = pricePerUnit * quantity;
-            row.find('.price').val(totalItemPrice.toFixed(3));
+            let totalItemPrice = pricePerUnit * quantity;
+            row.find('.price').val(totalItemPrice.toFixed(2));
 
             updateTotalPrice(); // Recalculate total price
         });
@@ -215,7 +212,7 @@
 
             // Update price field based on new quantity
             const totalItemPrice = pricePerUnit * quantity;
-            row.find('.price').val(totalItemPrice.toFixed(3));
+            row.find('.price').val(totalItemPrice.toFixed(2));
 
             updateTotalPrice(); // Recalculate total price
         });
