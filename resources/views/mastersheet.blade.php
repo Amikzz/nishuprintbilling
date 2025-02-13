@@ -82,6 +82,7 @@
                 <option value="printed" class="bg-purple-600 text-white">Printed</option>
                 <option value="delivered" class="bg-green-600 text-white">Delivered</option>
                 <option value="urgent" class="bg-pink-600 text-white">Urgent</option>
+                <option value="null" class="bg-white text-black">No Status</option>
             </select>
         </div>
 
@@ -366,8 +367,14 @@
             }
 
             // Check Status Filter
-            if (statusFilter && rowStatus !== statusFilter) {
-                showRow = false;
+            if (statusFilter) {
+                if (statusFilter === "null") {
+                    // Show rows where status is null, empty, or "-"
+                    showRow = !rowStatus || rowStatus.trim() === "-" || rowStatus.trim().toLowerCase() === "null";
+                } else {
+                    // Normal status filtering
+                    showRow = rowStatus.trim().toLowerCase() === statusFilter.toLowerCase();
+                }
             }
 
             // Apply date filters depending on the selected column
