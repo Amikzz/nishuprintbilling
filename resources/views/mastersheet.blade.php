@@ -282,28 +282,44 @@
 </div>
 
 <script>
-    function calculateTotals() {
-        const rows = document.querySelectorAll('table tbody tr');
-        let totalPcs = 0;
-        let totalInvoiceValue = 0;
-        let visibleRowsCount = 0; // Variable to count visible rows
+    $(document).ready(function () {
+        function calculateTotals(tabId) {
+            let totalPCS = 0;
+            let totalInvoiceValue = 0;
+            let visibleRows = 0;
 
-        rows.forEach(row => {
-            if (row.style.display !== 'none') { // Only include visible rows
-                visibleRowsCount++; // Increment count for visible rows
-                const pcs = parseInt(row.cells[13].textContent.trim()) || 0; // Total PCS
-                const invoiceValue = parseFloat(row.cells[14].textContent.trim()) || 0; // Invoice Value
-
-                totalPcs += pcs;
+            $("#" + tabId + " tbody tr").each(function () {
+                let pcs = parseFloat($(this).find("td:eq(13)").text()) || 0;
+                let invoiceValue = parseFloat($(this).find("td:eq(14)").text()) || 0;
+                totalPCS += pcs;
                 totalInvoiceValue += invoiceValue;
-            }
+                visibleRows++;
+            });
+
+            $("#visible_rows_count").text(visibleRows);
+            $("#total_pcs").text(totalPCS);
+            $("#total_invoice_value").text(totalInvoiceValue.toFixed(2));
+        }
+
+        // Ensure Bootstrap tabs work properly
+        $('#invoiceTabs a').on('click', function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+            let tabId = $(this).attr('href').substring(1);
+            calculateTotals(tabId);
+            localStorage.setItem('activeTab', tabId);
         });
 
-        // Update the totals and visible rows count in the DOM
-        document.getElementById('total_pcs').textContent = totalPcs;
-        document.getElementById('total_invoice_value').textContent = totalInvoiceValue.toFixed(2);
-        document.getElementById('visible_rows_count').textContent = visibleRowsCount; // Update the visible rows count
-    }
+        // Restore active tab and calculate totals on page load
+        let activeTab = localStorage.getItem('activeTab');
+        if (activeTab) {
+            $('#invoiceTabs a[href="#' + activeTab + '"]').tab('show');
+            calculateTotals(activeTab);
+        } else {
+            let firstTab = $('#invoiceTabs a:first').attr('href').substring(1);
+            calculateTotals(firstTab);
+        }
+    });
 
     function filterByCriteria() {
         const dateFilter = document.getElementById('date_filter').value; // Get selected date field
