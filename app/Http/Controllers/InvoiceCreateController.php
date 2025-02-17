@@ -130,8 +130,6 @@ class InvoiceCreateController extends Controller
         $itemsPerPage = 30;
         $pages = $purchaseOrderItemsDetails->chunk($itemsPerPage);
 
-        // Log PDF generation start
-
         try {
             // Generate the invoice PDF view
             $pdf = PDF::loadView('invoice', [
