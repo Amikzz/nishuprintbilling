@@ -43,7 +43,7 @@ class InvoiceCreateController extends Controller
         }
 
         // Update invoice number and status
-        $invoiceNo = 'NC-' . '24-25' . '-' . $validated['invoice_number'];
+        $invoiceNo = 'NC-' . '25-26' . '-' . $validated['invoice_number'];
         $invoice->invoice_no = $invoiceNo;
         $invoice->status = 'Order Dispatched';
         $invoice->save();
