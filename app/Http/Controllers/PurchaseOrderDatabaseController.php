@@ -329,8 +329,8 @@ class PurchaseOrderDatabaseController extends Controller
                 $order->po_qty,
                 $order->price,
                 $order->status,
-                $order->more1 ?? '-',
-                $order->more2 ?? '-',
+                $order->more1,
+                $order->more2,
             ]);
         }
 

@@ -213,7 +213,7 @@
                             <div class="flex space-x-4 items-center">
 
                                 <!-- Additional Button -->
-                                @if(in_array($invoice->status, ['Pending', 'Artwork_sent', 'Artwork_approved']))
+                                @if(in_array($invoice->status, ['Pending', 'Artwork_sent', 'Artwork_approved', 'Items_printed', 'Order Dispatched']))
                                     <a href="{{ route('invoices.edit', ['invoice_id' => $invoice->id]) }}"
                                        class="bg-teal-500 text-white px-2 py-1 rounded hover:bg-teal-600 text-center block">
                                         Edit Details

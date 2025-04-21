@@ -84,9 +84,14 @@ class ReportGenerateController extends Controller
         $to_date = $request->to_date;
 
         // Fetch pending list records within the date range
-        $pendingList = InvoiceDatabase::whereBetween('date', [$from_date, $to_date])
-            ->where('status', 'Pending')
+        $pendingList = MasterSheet::whereBetween('mail_date', [$from_date, $to_date])
+            ->where(function ($query) {
+                $query->where('status', '!=', 'delivered')
+                    ->orWhereNull('status');
+            })
             ->get();
+
+
 
         // Define the filename for the Excel file
         $filename = "pending_list_" . $from_date . "_to_" . $to_date . ".xls";

@@ -262,6 +262,10 @@
                         <input type="text" id="cust_ref" name="cust_ref" class="w-full px-3 py-2 border rounded" required>
                     </div>
                     <div>
+                        <label for="invoice_value" class="block mb-1">Invoice Value</label>
+                        <input type="text" id="invoice_value" name="invoice_value" class="w-full px-3 py-2 border rounded" required>
+                    </div>
+                    <div>
                         <label for="description" class="block mb-1">Item</label>
                         <select class="form-select item-select" id="description" name="description">
                             <option value="" disabled selected>Select Item</option>

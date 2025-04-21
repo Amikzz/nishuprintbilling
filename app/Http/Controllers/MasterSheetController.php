@@ -30,6 +30,7 @@ class MasterSheetController extends Controller
             'required_date' => 'required|date|after_or_equal:mail_date', // Ensure required date is after or equal to mail date
             'created_by' => 'required|string|max:255',
             'cust_ref' => 'required|string|max:255',
+            'invoice_value' => 'required|string|max:255',
             'description' => 'nullable|string|max:255'
         ]);
 
@@ -40,6 +41,7 @@ class MasterSheetController extends Controller
                 'required_date' => $validated['required_date'],
                 'created_by' => $validated['created_by'],
                 'cust_ref' => $validated['cust_ref'],
+                'invoice_value' => $validated['invoice_value'],
                 'description' => $validated['description'],
                 'status' => null
             ]);
