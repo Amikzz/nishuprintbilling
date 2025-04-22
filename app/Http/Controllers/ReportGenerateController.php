@@ -107,10 +107,10 @@ class ReportGenerateController extends Controller
 
         // Write the header row
         $headers = [
-            'Invoice No',
             'PO No',
             'Reference No',
-            'Date',
+            'Mail Date',
+            'Required Date',
             'Total Qty',
             'Total Amount',
             'Status',
@@ -119,17 +119,14 @@ class ReportGenerateController extends Controller
 
         // Write data rows
         foreach ($pendingList as $invoice) {
-            // Fetch the total price from the master sheet based on the invoice number
-            $masterRecord = MasterSheet::where('invoice_no', $invoice->invoice_no)->first();
-            $total_price = $masterRecord ? $masterRecord->invoice_value : 'N/A';
 
             fputcsv($output, [
-                $invoice->invoice_no ?? '-',
-                $invoice->po_number ?? '-',
-                $invoice->reference_no ?? '-',
-                $invoice->date ?? '-',
+                $invoice->cust_ref ?? '-',
+                $invoice->id ?? '-',
+                $invoice->mail_date ?? '-',
+                $invoice->required_date ?? '-',
                 $invoice->no_of_items ?? '-',
-                $total_price,
+                $invoice->invoice_value ?? '-',
                 $invoice->status ?? '-',
             ], "\t");
         }
