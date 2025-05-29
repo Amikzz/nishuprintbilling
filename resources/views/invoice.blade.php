@@ -203,6 +203,7 @@
             <table class="items-table">
                 <thead>
                 <tr>
+                    <th>#</th>
                     <th>Item Code</th>
                     <th>Item Name</th>
                     <th>Sticker Size</th>
@@ -212,8 +213,12 @@
                 </tr>
                 </thead>
                 <tbody>
+                @php
+                    $index = 1;
+                @endphp
                 @foreach ($pageItems as $item)
                     <tr>
+                        <td>{{ $index++ }}</td>
                         <td>{{ $item->item_code }}</td>
                         <td>{{ $item->item_name }}</td>
                         <td>{{ $item->sticker_size ?? '-' }}</td>

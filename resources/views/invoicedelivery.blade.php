@@ -195,20 +195,23 @@
                                 </div>
                             @endif
 
-                            @if($invoice->status == 'Artwork_approved')
-
+                            @if($invoice->status == 'Artwork_approved' || $invoice->status == 'Urgent')
                                 <div class="flex space-x-2">
+                                    {{-- Show Printed button in both cases --}}
                                     <a href="{{ route('purchaseorder.printed', ['invoice_id' => $invoice->id]) }}"
                                        class="bg-purple-400 text-white px-3 py-1 rounded hover:bg-purple-600 text-center">
                                         &nbsp; &nbsp; &nbsp; Printed &nbsp; &nbsp; &nbsp;
                                     </a>
-                                    <a href="{{ route('purchaseorder.urgent', ['invoice_id' => $invoice->id]) }}"
-                                       class="bg-pink-600 px-3 py-1 rounded hover:bg-pink-700 text-white text-center">
-                                        &nbsp; &nbsp; &nbsp; Urgent &nbsp; &nbsp; &nbsp;
-                                    </a>
+
+                                    {{-- Show Urgent button only when status is Artwork_approved --}}
+                                    @if($invoice->status == 'Artwork_approved')
+                                        <a href="{{ route('purchaseorder.urgent', ['invoice_id' => $invoice->id]) }}"
+                                           class="bg-pink-600 px-3 py-1 rounded hover:bg-pink-700 text-white text-center">
+                                            &nbsp; &nbsp; &nbsp; Urgent &nbsp; &nbsp; &nbsp;
+                                        </a>
+                                    @endif
                                 </div>
                             @endif
-
 
                             <div class="flex space-x-4 items-center">
 

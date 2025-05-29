@@ -279,7 +279,7 @@ class InvoiceDatabaseController extends Controller
             $invoice = InvoiceDatabase::findOrFail($invoice_id);
 
             // Check if the current status is 'Artwork_approved'
-            if ($invoice->status === 'Artwork_approved') {
+            if ($invoice->status === 'Artwork_approved' || $invoice->status === 'Urgent') {
                 // Update the status of the invoice to 'Items_printed'
                 $invoice->status = 'Items_printed';
                 $invoice->save();
