@@ -112,6 +112,17 @@
             <input type="text" id="invoice_number" class="w-full px-3 py-2 border border-gray-300 rounded shadow" placeholder="Enter Invoice Number">
         </div>
         <div>
+            <label for="reference_number" class="block text-gray-700 font-medium mb-1">Reference Number:</label>
+            <select class="w-full px-3 py-2 border border-gray-300 rounded shadow" id="reference_number" name="reference_number">
+                <option value="" disabled selected>Select Item</option>
+                @foreach($items as $item)
+                    <option value="{{ $item->item_code }}, {{$item->description}}">
+                        {{ $item->item_code }} - {{ $item->description }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div>
             <label for="dn" class="block text-gray-700 font-medium mb-1">DN:</label>
             <input type="text" id="dn" class="w-full px-3 py-2 border border-gray-300 rounded shadow" placeholder="Enter DN">
         </div>
@@ -287,65 +298,80 @@
 </div>
 
 <script>
-    $(document).ready(function () {
-        function calculateTotals(tabId) {
-            let totalPCS = 0;
-            let totalInvoiceValue = 0;
-            let visibleRows = 0;
+    function calculateTotals(tabId = null) {
+        let totalPCS = 0;
+        let totalInvoiceValue = 0;
+        let visibleRows = 0;
 
-            $("#" + tabId + " tbody tr").each(function () {
-                let pcs = parseFloat($(this).find("td:eq(13)").text()) || 0;
-                let invoiceValue = parseFloat($(this).find("td:eq(14)").text()) || 0;
-                totalPCS += pcs;
-                totalInvoiceValue += invoiceValue;
-                visibleRows++;
-            });
-
-            $("#visible_rows_count").text(visibleRows);
-            $("#total_pcs").text(totalPCS);
-            $("#total_invoice_value").text(totalInvoiceValue.toFixed(2));
+        // If no tabId is passed, get the active tab
+        if (!tabId) {
+            const activeTabLink = document.querySelector('#invoiceTabs .nav-link.active');
+            tabId = activeTabLink ? activeTabLink.getAttribute('href').substring(1) : null;
         }
 
-        // Ensure Bootstrap tabs work properly
+        if (!tabId) return;
+
+        const rows = document.querySelectorAll(`#${tabId} tbody tr`);
+
+        rows.forEach(row => {
+            if (row.style.display === 'none') return; // Skip hidden rows
+
+            const pcs = parseFloat(row.cells[13].textContent.trim()) || 0;
+            const invoiceValue = parseFloat(row.cells[14].textContent.trim()) || 0;
+
+            totalPCS += pcs;
+            totalInvoiceValue += invoiceValue;
+            visibleRows++;
+        });
+
+        document.getElementById("visible_rows_count").textContent = visibleRows;
+        document.getElementById("total_pcs").textContent = totalPCS;
+        document.getElementById("total_invoice_value").textContent = totalInvoiceValue.toFixed(2);
+    }
+
+    $(document).ready(function () {
         $('#invoiceTabs a').on('click', function (e) {
             e.preventDefault();
             $(this).tab('show');
-            let tabId = $(this).attr('href').substring(1);
+            const tabId = $(this).attr('href').substring(1);
             calculateTotals(tabId);
             localStorage.setItem('activeTab', tabId);
         });
 
-        // Restore active tab and calculate totals on page load
-        let activeTab = localStorage.getItem('activeTab');
+        const activeTab = localStorage.getItem('activeTab');
         if (activeTab) {
             $('#invoiceTabs a[href="#' + activeTab + '"]').tab('show');
             calculateTotals(activeTab);
         } else {
-            let firstTab = $('#invoiceTabs a:first').attr('href').substring(1);
+            const firstTab = $('#invoiceTabs a:first').attr('href').substring(1);
             calculateTotals(firstTab);
         }
     });
-
     function filterByCriteria() {
-        const dateFilter = document.getElementById('date_filter').value; // Get selected date field
+        const dateFilter = document.getElementById('date_filter').value;
         const startDate = document.getElementById('start_date').value;
         const endDate = document.getElementById('end_date').value;
         const poNumber = document.getElementById('po_number').value.trim().toLowerCase();
         const invoiceNumber = document.getElementById('invoice_number').value.trim().toLowerCase();
         const dn = document.getElementById('dn').value.trim().toLowerCase();
-        const statusFilter = document.getElementById('statusFilter').value.trim().toLowerCase(); // Get selected status
+        const statusFilter = document.getElementById('statusFilter').value.trim().toLowerCase();
+        const selectedReference = document.getElementById('reference_number').value.trim().toLowerCase();
 
-        const rows = document.querySelectorAll('table tbody tr');
+        const activeTabLink = document.querySelector('#invoiceTabs .nav-link.active');
+        const activeTabId = activeTabLink ? activeTabLink.getAttribute('href').substring(1) : null;
+        if (!activeTabId) return;
+
+        const rows = document.querySelectorAll(`#${activeTabId} tbody tr`);
         rows.forEach(row => {
-            const mailDate = row.cells[1].textContent.trim(); // Mail Date
-            const requiredDate = row.cells[2].textContent.trim(); // Required Date
-            const invoiceDate = row.cells[7].textContent.trim(); // Invoice Date
-            const rowPONumber = row.cells[9].textContent.trim().toLowerCase(); // PO Number
-            const rowInvoiceNumber = row.cells[8].textContent.trim().toLowerCase(); // Invoice Number
-            const rowDN = row.cells[11].textContent.trim().toLowerCase(); // DN
-            const rowStatus = row.cells[15].textContent.trim().toLowerCase(); // Status (assuming it's in the 13th column)
+            const mailDate = row.cells[1].textContent.trim();
+            const requiredDate = row.cells[2].textContent.trim();
+            const invoiceDate = row.cells[7].textContent.trim();
+            const rowPONumber = row.cells[9].textContent.trim().toLowerCase();
+            const rowInvoiceNumber = row.cells[8].textContent.trim().toLowerCase();
+            const rowDN = row.cells[11].textContent.trim().toLowerCase();
+            const rowStatus = row.cells[15].textContent.trim().toLowerCase();
+            const rowDescription = row.cells[10].textContent.trim().toLowerCase(); // Reference column
 
-            // Convert dates to Date objects
             const rowMailDate = parseDate(mailDate);
             const rowRequiredDate = parseDate(requiredDate);
             const rowInvoiceDate = parseDate(invoiceDate);
@@ -355,33 +381,19 @@
 
             let showRow = true;
 
-            // Check PO Number
-            if (poNumber && !rowPONumber.includes(poNumber)) {
-                showRow = false;
-            }
+            if (poNumber && !rowPONumber.includes(poNumber)) showRow = false;
+            if (invoiceNumber && !rowInvoiceNumber.includes(invoiceNumber)) showRow = false;
+            if (dn && !rowDN.includes(dn)) showRow = false;
+            if (selectedReference && !rowDescription.includes(selectedReference)) showRow = false;
 
-            // Check Invoice Number
-            if (invoiceNumber && !rowInvoiceNumber.includes(invoiceNumber)) {
-                showRow = false;
-            }
-
-            // Check DN
-            if (dn && !rowDN.includes(dn)) {
-                showRow = false;
-            }
-
-            // Check Status Filter
             if (statusFilter) {
                 if (statusFilter === "null") {
-                    // Show rows where status is null, empty, or "-"
-                    showRow = !rowStatus || rowStatus.trim() === "-" || rowStatus.trim().toLowerCase() === "null";
+                    showRow = !rowStatus || rowStatus === "-" || rowStatus === "null";
                 } else {
-                    // Normal status filtering
-                    showRow = rowStatus.trim().toLowerCase() === statusFilter.toLowerCase();
+                    showRow = rowStatus === statusFilter;
                 }
             }
 
-            // Apply date filters depending on the selected column
             if (dateFilter === 'mail_date') {
                 if (startFilterDate && rowMailDate < startFilterDate) showRow = false;
                 if (endFilterDate && rowMailDate > endFilterDate) showRow = false;
@@ -393,27 +405,18 @@
                 if (endFilterDate && rowInvoiceDate > endFilterDate) showRow = false;
             }
 
-            // Show or hide the row based on the result
             row.style.display = showRow ? '' : 'none';
         });
 
-        // Call the calculateTotals function to update totals after filtering
-        calculateTotals();
+        // Update totals after filtering
+        calculateTotals(activeTabId);
     }
 
-    // Function to parse different date formats into a Date object
+
     function parseDate(dateStr) {
-        // Try to parse the date, and return a Date object or null if invalid
         const parsedDate = new Date(dateStr);
-        if (parsedDate.toString() === 'Invalid Date') {
-            return null;  // If parsing fails, return null
-        }
-        return parsedDate;
+        return isNaN(parsedDate.getTime()) ? null : parsedDate;
     }
-
-    // Calculate totals initially when the page loads
-    calculateTotals();
-
 </script>
 </body>
 </html>
