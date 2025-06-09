@@ -114,8 +114,8 @@
     <tbody>
     <tr>
         <td class="text-left">Invoiced This Month (Current)</td>
-        <td>{{ number_format($summary['invoiced_in_range'], 2) }}</td>
-        <td>{{ number_format($summary['invoiced_in_range'] * $rate, 2) }}</td>
+        <td>{{ number_format($summary['invoiced_in_range2'], 2) }}</td>
+        <td>{{ number_format($summary['invoiced_in_range2'] * $rate, 2) }}</td>
     </tr>
     <tr>
         <td class="text-left">Invoiced This Month (Previous)</td>
@@ -124,8 +124,8 @@
     </tr>
     <tr class="total">
         <td class="text-left">Total Invoiced</td>
-        <td>{{ number_format($summary['invoiced_in_range'] + $summary['invoiced_from_previous'], 2) }}</td>
-        <td>{{ number_format(($summary['invoiced_in_range'] + $summary['invoiced_from_previous']) * $rate, 2) }}</td>
+        <td>{{ number_format($summary['invoiced_in_range2'] + $summary['invoiced_from_previous'], 2) }}</td>
+        <td>{{ number_format(($summary['invoiced_in_range2'] + $summary['invoiced_from_previous']) * $rate, 2) }}</td>
     </tr>
     </tbody>
 </table>
@@ -147,7 +147,7 @@
     </tr>
     <tr>
         <td class="text-left">Current Month Not Invoiced</td>
-        <td>{{ number_format($summary['not_invoiced_in_range'], 2) }}</td>
+        <td>{{ number_format(($summary['invoiced_in_range'] + $summary['not_invoiced_in_range']) - $summary['invoiced_in_range2'], 2) }}</td>
         <td>{{ number_format($summary['not_invoiced_in_range'] * $rate, 2) }}</td>
     </tr>
     <tr class="total">

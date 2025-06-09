@@ -297,6 +297,10 @@ class ReportGenerateController extends Controller
 
         // Step 3: PO calculations
         $invoicedInRange = MasterSheet::whereNotNull('invoice_date')
+            ->whereBetween('mail_date', [$from_date, $to_date])
+            ->sum('invoice_value');
+
+        $invoicedInRange2 = MasterSheet::whereNotNull('invoice_date')
             ->whereBetween('invoice_date', [$from_date, $to_date])
             ->whereBetween('mail_date', [$from_date, $to_date])
             ->sum('invoice_value');
@@ -323,6 +327,7 @@ class ReportGenerateController extends Controller
 
         $summary = [
             'invoiced_in_range' => $invoicedInRange,
+            'invoiced_in_range2' => $invoicedInRange2,
             'not_invoiced_in_range' => $notInvoicedInRange,
             'carried_forward' => $carriedForward,
             'invoiced_from_previous' => $invoicedFromPrevious,
