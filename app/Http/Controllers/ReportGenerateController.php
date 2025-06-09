@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ExchangeRate;
 use App\Models\InvoiceDatabase;
 use App\Models\MasterSheet;
 use App\Models\PurchaseOrderDatabase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ReportGenerateController extends Controller
 {
@@ -274,79 +277,65 @@ class ReportGenerateController extends Controller
         exit;
     }
 
-    // Report Generate for purchase orders related with the invoice number within a date range
-    // Report Generate for purchase orders
     public function purchaseOrderReport(Request $request)
     {
-        // Validate the input dates
+        // Step 1: Validate input
         $validated = $request->validate([
             'from_date' => 'required|date',
             'to_date' => 'required|date|after_or_equal:from_date',
         ]);
 
-        $from_date = $request->from_date;
-        $to_date = $request->to_date;
+        $from_date = Carbon::parse($request->from_date)->startOfDay();
+        $to_date = Carbon::parse($request->to_date)->endOfDay();
 
-        // Fetch purchase orders within the date range
-        $purchase_orders = InvoiceDatabase::whereBetween('date', [$from_date, $to_date])->get();
+        // Step 2: Exchange rate - pick latest rate in range or latest available
+        $exchangeRate = ExchangeRate::where('currency_from', 'USD')
+            ->where('currency_to', 'LKR')
+            ->first();
 
-        // Define the filename for the Excel file
-        $filename = "purchase_orders_" . $from_date . "_to_" . $to_date . ".xls";
+        $rate = $exchangeRate ? $exchangeRate->rate : 0;
 
-        // Set headers for Excel file download
-        header('Content-Type: application/vnd.ms-excel');
-        header("Content-Disposition: attachment; filename=\"$filename\"");
-        header('Pragma: no-cache');
-        header('Expires: 0');
+        // Step 3: PO calculations
+        $invoicedInRange = MasterSheet::whereNotNull('invoice_date')
+            ->whereBetween('invoice_date', [$from_date, $to_date])
+            ->whereBetween('mail_date', [$from_date, $to_date])
+            ->sum('invoice_value');
 
-        // Open the output buffer
-        $output = fopen('php://output', 'w');
+        $notInvoicedInRange = MasterSheet::whereNull('invoice_date')
+            ->whereBetween('mail_date', [$from_date, $to_date])
+            ->sum('invoice_value');
 
-        // Write the header row
-        $headers = [
-            'Invoice No',
-            'PO No',
-            'Reference No',
-            'Date',
-            'Item Code',
-            'Color No',
-            'Color Name',
-            'Size',
-            'Style',
-            'UPC No',
-            'More 1',
-            'More 2',
+        $totalBefore = MasterSheet::where('mail_date', '<', $from_date)
+            ->sum('invoice_value');
+
+        $alreadyInvoicedBefore = MasterSheet::where('mail_date', '<', $from_date)
+            ->whereNotNull('invoice_date')
+            ->where('invoice_date', '<', $from_date)
+            ->sum('invoice_value');
+
+        $carriedForward = $totalBefore - $alreadyInvoicedBefore;
+
+        $invoicedFromPrevious = MasterSheet::where('mail_date', '<', $from_date)
+            ->whereBetween('invoice_date', [$from_date, $to_date])
+            ->sum('invoice_value');
+
+        $remainingFromPrevious = $carriedForward;
+
+        $summary = [
+            'invoiced_in_range' => $invoicedInRange,
+            'not_invoiced_in_range' => $notInvoicedInRange,
+            'carried_forward' => $carriedForward,
+            'invoiced_from_previous' => $invoicedFromPrevious,
+            'remaining_from_previous' => $remainingFromPrevious,
         ];
-        fputcsv($output, $headers, "\t");
 
-        // Write data rows
-        foreach ($purchase_orders as $invoice) {
-            $purchaseOrderItems = PurchaseOrderDatabase::where('po_no', $invoice->po_number)
-                ->where('reference_no', $invoice->reference_no)
-                ->get();
-
-            foreach ($purchaseOrderItems as $order) {
-                fputcsv($output, [
-                    $invoice->invoice_no ?? '-',
-                    $order->po_no ?? '-',
-                    $order->reference_no ?? '-',
-                    $invoice->date ?? '-',
-                    $order->item_code ?? '-',
-                    $order->color_no ?? '-',
-                    $order->color_name ?? '-',
-                    $order->size ?? '-',
-                    $order->style ?? '-',
-                    $order->upc_no ?? '-',
-                    $order->more1 ?? '-',
-                    $order->more2 ?? '-',
-                ], "\t");
-            }
+        if ($invoicedFromPrevious > $carriedForward) {
+            Log::warning("Invoiced from previous months ({$invoicedFromPrevious}) exceeds carried forward ({$carriedForward}) — check data integrity.");
         }
 
-        // Close the output buffer
-        fclose($output);
-        exit;
+        return view('summaryreport', compact('summary', 'from_date', 'to_date', 'rate'));
     }
+
 
     //Generate the sales report
     public function salesReport(Request $request)

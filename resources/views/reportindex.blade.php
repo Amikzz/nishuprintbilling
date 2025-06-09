@@ -69,7 +69,7 @@
             <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#dateRangeModal" data-report="Completed Orders Report">Download Completed Orders Report</button>
         </div>
         <div class="col-md-4 mb-3">
-            <button class="btn btn-secondary w-100" data-bs-toggle="modal" data-bs-target="#dateRangeModal" data-report="All Orders Report">Download All Orders Report</button>
+            <button class="btn btn-secondary w-100" data-bs-toggle="modal" data-bs-target="#dateRangeModal" data-report="All Orders Report">Download Summary Report</button>
         </div>
     </div>
 </div>
