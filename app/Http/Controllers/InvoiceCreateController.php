@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\ExchangeRate;
 use App\Models\InvoiceDatabase;
 use App\Models\Items;
 use App\Models\MasterSheet;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
 use App\Models\PurchaseOrderDatabase;
-use App\Models\Customer;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class InvoiceCreateController extends Controller
@@ -100,12 +102,12 @@ class InvoiceCreateController extends Controller
         $itemCodes = $purchaseOrderItems->pluck('item_code')->unique()->filter();
         $itemsCollection = Items::whereIn('item_code', $itemCodes)->get()->keyBy('item_code');
 
-        // Map purchase order items with their details
+        // Map purchases order items with their details
         $purchaseOrderItemsDetails = $purchaseOrderItems->map(function ($orderItem) use ($itemsCollection) {
             $item = $itemsCollection[$orderItem->item_code] ?? null;
             $unit_price = ($orderItem->price) / $orderItem->po_qty;
 
-            return (object) [
+            return (object)[
                 'item_code' => $orderItem->item_code,
                 'item_name' => $item ? $item->name : 'Unknown Item',
                 'sticker_size' => $item ? $item->description : 'N/A',
@@ -150,7 +152,7 @@ class InvoiceCreateController extends Controller
 
             // Return the PDF for download
             return $pdf->download($invoice->invoice_no . '.pdf');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Log PDF generation failure
             Log::error('PDF Generation Failed: ' . $e->getMessage());
 
@@ -194,10 +196,10 @@ class InvoiceCreateController extends Controller
             // Flash a success message
             session()->flash('success', 'Invoice and related purchase orders status updated to Order Dispatched.');
 
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             // Flash an error message if the invoice is not found
             session()->flash('error', 'Invoice not found.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Flash a general error message for any other exceptions
             session()->flash('error', 'An error occurred while updating the invoice status.');
         }
@@ -237,10 +239,10 @@ class InvoiceCreateController extends Controller
             // Flash a success message
             session()->flash('success', 'Invoice and related purchase orders status updated to Order Complete.');
 
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             // Flash an error message if the invoice is not found
             session()->flash('error', 'Invoice not found.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Flash a general error message for any other exceptions
             session()->flash('error', 'An error occurred while updating the invoice status.');
         }
