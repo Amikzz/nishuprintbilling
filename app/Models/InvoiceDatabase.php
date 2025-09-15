@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method static whereBetween(string $string, array $array)
+ */
 class InvoiceDatabase extends Model
 {
     /** @use HasFactory<\Database\Factories\InvoiceDatabaseFactory> */

@@ -5,6 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method static where(string $string, $invoice_no)
+ * @method static whereBetween(string $string, array $array)
+ * @method static whereNotNull(string $string)
+ * @method static whereNull(string $string)
+ * @method static whereDate(string $string, string $string1, \Illuminate\Support\Carbon $from_date)
+ */
 class MasterSheet extends Model
 {
     use HasFactory;

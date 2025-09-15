@@ -5,24 +5,28 @@ namespace App\Http\Controllers;
 use App\Models\ExchangeRate;
 use App\Models\InvoiceDatabase;
 use App\Models\MasterSheet;
-use App\Models\PurchaseOrderDatabase;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use JetBrains\PhpStorm\NoReturn;
 
 class ReportGenerateController extends Controller
 {
     // Report Generate for invoices within a date range
-    public function invoiceReport(Request $request)
+    #[NoReturn]
+    public function invoiceReport(Request $request): void
     {
         // Validate the input dates
-        $validated = $request->validate([
+        $request->validate([
             'from_date' => 'required|date',
             'to_date' => 'required|date|after_or_equal:from_date',
         ]);
 
-        $from_date = $request->from_date;
-        $to_date = $request->to_date;
+        $from_date = $request->input('from_date');
+        $to_date = $request->input('to_date');
 
         // Fetch invoice records within the date range
         $invoices = InvoiceDatabase::whereBetween('date', [$from_date, $to_date])->get();
@@ -37,7 +41,7 @@ class ReportGenerateController extends Controller
         header('Expires: 0');
 
         // Open the output buffer
-        $output = fopen('php://output', 'w');
+        $output = fopen('php://output', 'wb');
 
         // Write the header row
         $headers = [
@@ -54,7 +58,7 @@ class ReportGenerateController extends Controller
         // Write data rows
         foreach ($invoices as $invoice) {
 
-            // Fetch the total price from the master sheet based on the invoice number
+            // Fetch the total price from the "master" sheet based on the invoice number
             $masterRecord = MasterSheet::where('invoice_no', $invoice->invoice_no)->first();
             $total_price = $masterRecord ? $masterRecord->invoice_value : 'N/A';
 
@@ -74,17 +78,18 @@ class ReportGenerateController extends Controller
         exit;
     }
 
-    // Report Generate for pending list within a date range
-    public function pendingListReport(Request $request)
+    // Report Generates for a pending list within a date range
+    #[NoReturn]
+    public function pendingListReport(Request $request): void
     {
         // Validate the input dates
-        $validated = $request->validate([
+        $request->validate([
             'from_date' => 'required|date',
             'to_date' => 'required|date|after_or_equal:from_date',
         ]);
 
-        $from_date = $request->from_date;
-        $to_date = $request->to_date;
+        $from_date = $request->input('from_date');
+        $to_date = $request->input('to_date');
 
         // Fetch pending list records within the date range
         $pendingList = MasterSheet::whereBetween('mail_date', [$from_date, $to_date])
@@ -93,7 +98,6 @@ class ReportGenerateController extends Controller
                     ->orWhereNull('status');
             })
             ->get();
-
 
 
         // Define the filename for the Excel file
@@ -106,7 +110,7 @@ class ReportGenerateController extends Controller
         header('Expires: 0');
 
         // Open the output buffer
-        $output = fopen('php://output', 'w');
+        $output = fopen('php://output', 'wb');
 
         // Write the header row
         $headers = [
@@ -139,17 +143,18 @@ class ReportGenerateController extends Controller
         exit;
     }
 
-    //Report generate for master sheet with date filters
-    public function masterSheetReport(Request $request)
+    //Report generates for a "master" sheet with date filters
+    #[NoReturn]
+    public function masterSheetReport(Request $request): void
     {
         // Validate the input dates
-        $validated = $request->validate([
+        $request->validate([
             'from_date' => 'required|date',
             'to_date' => 'required|date|after_or_equal:from_date',
         ]);
 
-        $from_date = $request->from_date;
-        $to_date = $request->to_date;
+        $from_date = $request->input('from_date');
+        $to_date = $request->input('to_date');
 
         // Fetch master sheet records within the date range
         $masterSheet = MasterSheet::whereBetween('invoice_date', [$from_date, $to_date])->get();
@@ -164,7 +169,7 @@ class ReportGenerateController extends Controller
         header('Expires: 0');
 
         // Open the output buffer
-        $output = fopen('php://output', 'w');
+        $output = fopen('php://output', 'wb');
 
         // Write the header row
         $headers = [
@@ -215,16 +220,17 @@ class ReportGenerateController extends Controller
     }
 
     // Report Generate for complete orders within a date range
-    public function completeOrderReport(Request $request)
+    #[NoReturn]
+    public function completeOrderReport(Request $request): void
     {
         // Validate the input dates
-        $validated = $request->validate([
+        $request->validate([
             'from_date' => 'required|date',
             'to_date' => 'required|date|after_or_equal:from_date',
         ]);
 
-        $from_date = $request->from_date;
-        $to_date = $request->to_date;
+        $from_date = $request->input('from_date');
+        $to_date = $request->input('to_date');
 
         // Fetch complete orders records within the date range
         $completeOrders = InvoiceDatabase::whereBetween('date', [$from_date, $to_date])
@@ -241,7 +247,7 @@ class ReportGenerateController extends Controller
         header('Expires: 0');
 
         // Open the output buffer
-        $output = fopen('php://output', 'w');
+        $output = fopen('php://output', 'wb');
 
         // Write the header row
         $headers = [
@@ -257,7 +263,7 @@ class ReportGenerateController extends Controller
 
         // Write data rows
         foreach ($completeOrders as $invoice) {
-            // Fetch the total price from the master sheet based on the invoice number
+            // Fetch the total price from the "master" sheet based on the invoice number
             $masterRecord = MasterSheet::where('invoice_no', $invoice->invoice_no)->first();
             $total_price = $masterRecord ? $masterRecord->invoice_value : 'N/A';
 
@@ -277,16 +283,16 @@ class ReportGenerateController extends Controller
         exit;
     }
 
-    public function purchaseOrderReport(Request $request)
+    public function purchaseOrderReport(Request $request): View|Factory|Application
     {
         // Step 1: Validate input
-        $validated = $request->validate([
+        $request->validate([
             'from_date' => 'required|date',
             'to_date' => 'required|date|after_or_equal:from_date',
         ]);
 
-        $from_date = Carbon::parse($request->from_date)->startOfDay();
-        $to_date = Carbon::parse($request->to_date)->endOfDay();
+        $from_date = Carbon::parse($request->input('from_date'))->startOfDay();
+        $to_date = Carbon::parse($request->input('to_date'))->endOfDay();
 
         // Step 2: Exchange rate - pick latest rate in range or latest available
         $exchangeRate = ExchangeRate::where('currency_from', 'USD')
@@ -309,17 +315,17 @@ class ReportGenerateController extends Controller
             ->whereBetween('mail_date', [$from_date, $to_date])
             ->sum('invoice_value');
 
-        $totalBefore = MasterSheet::where('mail_date', '<', $from_date)
+        $totalBefore = MasterSheet::whereDate('mail_date', '<', $from_date)
             ->sum('invoice_value');
 
-        $alreadyInvoicedBefore = MasterSheet::where('mail_date', '<', $from_date)
+        $alreadyInvoicedBefore = MasterSheet::whereDate('mail_date', '<', $from_date)
             ->whereNotNull('invoice_date')
             ->where('invoice_date', '<', $from_date)
             ->sum('invoice_value');
 
         $carriedForward = $totalBefore - $alreadyInvoicedBefore;
 
-        $invoicedFromPrevious = MasterSheet::where('mail_date', '<', $from_date)
+        $invoicedFromPrevious = MasterSheet::whereDate('mail_date', '<', $from_date)
             ->whereBetween('invoice_date', [$from_date, $to_date])
             ->sum('invoice_value');
 
@@ -335,7 +341,7 @@ class ReportGenerateController extends Controller
         ];
 
         if ($invoicedFromPrevious > $carriedForward) {
-            Log::warning("Invoiced from previous months ({$invoicedFromPrevious}) exceeds carried forward ({$carriedForward}) — check data integrity.");
+            Log::warning("Invoiced from previous months ($invoicedFromPrevious) exceeds carried forward ($carriedForward) — check data integrity.");
         }
 
         return view('summaryreport', compact('summary', 'from_date', 'to_date', 'rate'));
@@ -343,17 +349,18 @@ class ReportGenerateController extends Controller
 
 
     //Generate the sales report
-    public function salesReport(Request $request)
+    #[NoReturn]
+    public function salesReport(Request $request): void
     {
         // Validate the input date range
-        $validated = $request->validate([
+        $request->validate([
             'from_date' => 'required|date', // from_date must be a valid date
             'to_date' => 'required|date|after_or_equal:from_date', // to_date must be a valid date and after from_date
         ]);
 
         // Get the from_date and to_date from the request
-        $from_date = $request->from_date;
-        $to_date = $request->to_date;
+        $from_date = $request->input('from_date');
+        $to_date = $request->input('to_date');
 
         // Fetch invoice records within the date range
         $invoices = InvoiceDatabase::whereBetween('date', [$from_date, $to_date])->get();
@@ -368,7 +375,7 @@ class ReportGenerateController extends Controller
         header('Expires: 0');
 
         // Open the output buffer
-        $output = fopen('php://output', 'w');
+        $output = fopen('php://output', 'wb');
 
         // Write the header row
         $headers = [
