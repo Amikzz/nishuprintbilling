@@ -8,7 +8,16 @@ use App\Models\Items;
 use App\Models\PurchaseOrderDatabase;
 use App\Models\ReturnDatabase;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Exception;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 
 class ReturnController extends Controller
 {
@@ -22,7 +31,7 @@ class ReturnController extends Controller
             ]);
 
             // Fetch the invoice details
-            $invoice = InvoiceDatabase::where('delivery_note_no', $request->delivery_note_no)->first();
+            $invoice = InvoiceDatabase::where('delivery_note_no', $request->input('delivery_note_no'))->first();
             if (!$invoice) {
                 return response()->json(['message' => 'Delivery note not found'], 404);
             }
@@ -37,7 +46,7 @@ class ReturnController extends Controller
             foreach ($poDetails as $po) {
                 ReturnDatabase::create([
                     'invoice_number' => $invoice->invoice_no,
-                    'delivery_note_no' => $request->delivery_note_no,
+                    'delivery_note_no' => $request->input('delivery_note_no'),
                     'po_no' => $po->po_no,
                     'item_code' => $po->item_code,
                     'color_name' => $po->color_name,
@@ -55,30 +64,30 @@ class ReturnController extends Controller
             // Flash success message and redirect
             return redirect()->route('return.page')->with('success', 'Invoice found and items added to return database');
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             // Handle validation errors
             return redirect()->back()->withErrors($e->errors())->withInput();
 
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             // Handle database errors
             return redirect()->back()->with('error', 'A database error occurred. Please try again later.' . $e->getMessage());
 
-        } catch (\Exception $e) {
+        } catch (Exception) {
             // Handle any other exceptions
             return redirect()->back()->with('error', 'An unexpected error occurred. Please try again.');
         }
 
     }
 
-    public function viewUpdated(Request $request)
+    public function viewUpdated(Request $request): View|Application|Factory
     {
         $request->validate([
             'delivery_note_no' => 'required|string'
         ]);
 
-        // get the all the items of the return database related to the invoice number
-        $returnItems = ReturnDatabase::where('delivery_note_no', $request->delivery_note_no)->get();
-        $d_note_no = $request->delivery_note_no;
+        // get all the items of the return database related to the invoice number
+        $returnItems = ReturnDatabase::where('delivery_note_no', $request->input('delivery_note_no'))->get();
+        $d_note_no = $request->input('delivery_note_no');
 
         return view('updatedrecord', compact('returnItems', 'd_note_no'));
     }
@@ -86,11 +95,11 @@ class ReturnController extends Controller
     /**
      * Update a specific return item.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @param Request $request
+     * @param int $id
+     * @return RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id): RedirectResponse
     {
         // Validate the incoming request data
         $validated = $request->validate([
@@ -128,10 +137,10 @@ class ReturnController extends Controller
     /**
      * Delete a specific return item.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @param int $id
+     * @return RedirectResponse
      */
-    public function destroy($id)
+    public function destroy(int $id): RedirectResponse
     {
         // Find the return item by ID
         $returnItem = ReturnDatabase::findOrFail($id);
@@ -144,7 +153,7 @@ class ReturnController extends Controller
     }
 
     // Delete Item in Return Database
-    public function deleteItem($id)
+    public function deleteItem($id): RedirectResponse
     {
         // Find the item by its ID
         $item = ReturnDatabase::find($id);
@@ -162,7 +171,7 @@ class ReturnController extends Controller
 
 
     // Create Delivery Note
-    public function createDeliveryNote(Request $request, $d_note_no)
+    public function createDeliveryNote(Request $request, $d_note_no): Response|JsonResponse
     {
         $request->validate([
             'new_dnote_no' => 'required|string',
@@ -171,7 +180,7 @@ class ReturnController extends Controller
 
         $returnItems = ReturnDatabase::where('delivery_note_no', $d_note_no)->get();
 
-        if($returnItems->isEmpty()) {
+        if ($returnItems->isEmpty()) {
             return response()->json(['message' => 'No items found for the delivery note'], 404);
         }
 
@@ -186,7 +195,7 @@ class ReturnController extends Controller
         $purchaseOrderItemsDetails = $returnItems->map(function ($orderItem) {
             $item = Items::where('item_code', $orderItem->item_code)->first();
 
-            return (object) [
+            return (object)[
                 'item_code' => $item ? $item->item_code : 'N/A',
                 'item_name' => $item ? $item->name : 'Unknown Item',
                 'sticker_size' => $item ? $item->description : 'N/A',
@@ -207,7 +216,7 @@ class ReturnController extends Controller
             return response()->json(['error' => 'No items found for this purchase order'], 404);
         }
 
-        $newDeliveryNoteNo = $request->new_dnote_no;
+        $newDeliveryNoteNo = $request->input('new_dnote_no');
 
         //enter the new delivery note number in the return database
         foreach ($returnItems as $item) {
@@ -222,7 +231,7 @@ class ReturnController extends Controller
 
         // Generate the delivery note PDF with paginated items
         $pdf = Pdf::loadView('deliverynotereturn', [
-            'type' => $request->type,
+            'type' => $request->input('type'),
             'date' => now()->format('Y-m-d'),
             'po_no' => $returnItems->first()->po_no,
             'pages' => $pages,
@@ -231,6 +240,6 @@ class ReturnController extends Controller
             'purchaseOrderItemsDetails' => $purchaseOrderItemsDetails,
         ]);
 
-        return $pdf->download($newDeliveryNoteNo. '.pdf');
+        return $pdf->download($newDeliveryNoteNo . '.pdf');
     }
 }

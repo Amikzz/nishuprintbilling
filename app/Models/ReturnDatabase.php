@@ -5,6 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method static create(array $array)
+ * @method static where(string $string, mixed $delivery_note_no)
+ * @method static findOrFail(int $id)
+ * @method static find($id)
+ */
 class ReturnDatabase extends Model
 {
 
