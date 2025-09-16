@@ -1,113 +1,39 @@
 <?php
 
-use App\Http\Controllers\DeliveryNCreateController;
-use App\Http\Controllers\InvoiceCreateController;
-use App\Http\Controllers\InvoiceDatabaseController;
-use App\Http\Controllers\MasterSheetController;
-use App\Http\Controllers\PurchaseOrderDatabaseController;
-use App\Http\Controllers\ReportGenerateController;
-use App\Http\Controllers\ReturnController;
-use App\Http\Controllers\UrgentController;
 use Illuminate\Support\Facades\Route;
 
-// Controllers
+Route::get('/', 'App\Http\Controllers\PurchaseOrderDatabaseController@create')->name('home');
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-| This file defines all application routes. Routes are grouped and
-| documented by feature/module for better maintainability.
-|--------------------------------------------------------------------------
-*/
+Route::resource('purchase-order-databases', 'App\Http\Controllers\PurchaseOrderDatabaseController');
+Route::resource('invoice-databases', 'App\Http\Controllers\InvoiceDatabaseController');
+Route::get('invoice/create/{po_number}', 'App\Http\Controllers\InvoiceCreateController@createInvoice')->name('invoice.create');
+Route::get('deliverynote/create/{po_number}', 'App\Http\Controllers\DeliveryNCreateController@createDeliveryNote')->name('deliverynote.create');
+Route::post('purchaseorder/{id}', 'App\Http\Controllers\InvoiceDatabaseController@artworkNeed')->name('purchaseorder.artwork');
+Route::post('purchaseorderdone/{id}', 'App\Http\Controllers\InvoiceDatabaseController@artworkProduction')->name('purchaseorder.artworkdone');
+Route::post('orderdispatch/{id}', 'App\Http\Controllers\InvoiceCreateController@orderDispatch')->name('order.dispatch');
+Route::post('ordercomplete/{id}', 'App\Http\Controllers\InvoiceCreateController@ordercomplete')->name('order.complete');
+Route::view('/reports', 'reportindex')->name('reports.page');
+Route::get('/export', 'App\Http\Controllers\PurchaseOrderDatabaseController@export')->name('purchase-order-databases.export');
+Route::get('/invoices/{invoice_id}/edit', 'App\Http\Controllers\PurchaseOrderDatabaseController@edit')->name('invoices.edit');
+Route::put('/invoices/{invoiceId}', 'App\Http\Controllers\PurchaseOrderDatabaseController@update')->name('invoices.update');
+Route::view('/return', 'returns')->name('return.page');
+Route::post('/search-returninvoice', 'App\Http\Controllers\ReturnController@searchInvoice')->name('search.returninvoice');
+Route::delete('/delete-returnitem/{id}','App\Http\Controllers\ReturnController@deleteItem')->name('delete.returnitem');
+Route::put('/update-return-items/{id}', 'App\Http\Controllers\ReturnController@update')->name('update.returnitem');
+Route::get('/view-updated', 'App\Http\Controllers\ReturnController@viewUpdated')->name('view.updated.records');
+Route::post('/cancel/{id}', 'App\Http\Controllers\InvoiceDatabaseController@cancelInvoice')->name('cancel.invoice');
+Route::get('/invoicedetails/{id}', 'App\Http\Controllers\InvoiceDatabaseController@export')->name('invoice.details');
+Route::post('/deliverynote/return/{d_note_no}', 'App\Http\Controllers\ReturnController@createDeliveryNote')->name('deliverynote.return');
+Route::get('/mastersheet', 'App\Http\Controllers\MasterSheetController@getMasterSheet')->name('mastersheet');
+Route::post('/mastersheet/create', 'App\Http\Controllers\MasterSheetController@createMasterSheet')->name('mastersheet.create');
+Route::get('/purchaseorder/printed/{invoice_id}', 'App\Http\Controllers\InvoiceDatabaseController@itemsPrinted')->name('purchaseorder.printed');
+Route::get('/purchaseorder/urgent/{invoice_id}', 'App\Http\Controllers\InvoiceDatabaseController@itemsUrgent')->name('purchaseorder.urgent');
+Route::get('/urgentorders', 'App\Http\Controllers\UrgentController@getMasterSheet')->name('urgentorders');
 
-// Home
-Route::get('/', [PurchaseOrderDatabaseController::class, 'create'])->name('home');
-
-/*
-|--------------------------------------------------------------------------
-| Purchase Orders
-|--------------------------------------------------------------------------
-*/
-Route::resource('purchase-order-databases', PurchaseOrderDatabaseController::class);
-
-Route::prefix('purchaseorder')->name('purchaseorder.')->group(function () {
-    Route::post('{id}', [InvoiceDatabaseController::class, 'artworkNeed'])->name('artwork');
-    Route::post('done/{id}', [InvoiceDatabaseController::class, 'artworkProduction'])->name('artworkdone');
-    Route::get('printed/{invoice_id}', [InvoiceDatabaseController::class, 'itemsPrinted'])->name('printed');
-    Route::get('urgent/{invoice_id}', [InvoiceDatabaseController::class, 'itemsUrgent'])->name('urgent');
-});
-
-Route::get('/export', [PurchaseOrderDatabaseController::class, 'export'])->name('purchase-order-databases.export');
-
-/*
-|--------------------------------------------------------------------------
-| Invoices
-|--------------------------------------------------------------------------
-*/
-Route::resource('invoice-databases', InvoiceDatabaseController::class);
-
-Route::prefix('invoice')->name('invoice.')->group(function () {
-    Route::get('create/{po_number}', [InvoiceCreateController::class, 'createInvoice'])->name('create');
-    Route::get('{invoice_id}/edit', [PurchaseOrderDatabaseController::class, 'edit'])->name('edit');
-    Route::put('{invoiceId}', [PurchaseOrderDatabaseController::class, 'update'])->name('update');
-    Route::post('dispatch/{id}', [InvoiceCreateController::class, 'orderDispatch'])->name('dispatch');
-    Route::post('complete/{id}', [InvoiceCreateController::class, 'orderComplete'])->name('complete');
-    Route::post('cancel/{id}', [InvoiceDatabaseController::class, 'cancelInvoice'])->name('cancel');
-    Route::get('details/{id}', [InvoiceDatabaseController::class, 'export'])->name('details');
-});
-
-/*
-|--------------------------------------------------------------------------
-| Delivery Notes
-|--------------------------------------------------------------------------
-*/
-Route::prefix('deliverynote')->name('deliverynote.')->group(function () {
-    Route::get('create/{po_number}', [DeliveryNCreateController::class, 'createDeliveryNote'])->name('create');
-    Route::post('return/{d_note_no}', [ReturnController::class, 'createDeliveryNote'])->name('return');
-});
-
-/*
-|--------------------------------------------------------------------------
-| Returns
-|--------------------------------------------------------------------------
-*/
-Route::prefix('returns')->name('return.')->group(function () {
-    Route::view('/', 'returns')->name('page');
-    Route::post('search-invoice', [ReturnController::class, 'searchInvoice'])->name('searchinvoice');
-    Route::delete('delete-item/{id}', [ReturnController::class, 'deleteItem'])->name('deleteitem');
-    Route::put('update-items/{id}', [ReturnController::class, 'update'])->name('updateitem');
-    Route::get('view-updated', [ReturnController::class, 'viewUpdated'])->name('viewupdated');
-});
-
-/*
-|--------------------------------------------------------------------------
-| Master Sheet
-|--------------------------------------------------------------------------
-*/
-Route::prefix('mastersheet')->name('mastersheet.')->group(function () {
-    Route::get('/', [MasterSheetController::class, 'getMasterSheet'])->name('index');
-    Route::post('create', [MasterSheetController::class, 'createMasterSheet'])->name('create');
-});
-
-/*
-|--------------------------------------------------------------------------
-| Urgent Orders
-|--------------------------------------------------------------------------
-*/
-Route::get('/urgentorders', [UrgentController::class, 'getMasterSheet'])->name('urgentorders');
-
-/*
-|--------------------------------------------------------------------------
-| Reports
-|--------------------------------------------------------------------------
-*/
-Route::prefix('reports')->name('report.')->group(function () {
-    Route::view('/', 'reportindex')->name('index');
-    Route::get('invoices', [ReportGenerateController::class, 'invoiceReport'])->name('invoices');
-    Route::get('pending', [ReportGenerateController::class, 'pendingListReport'])->name('pendinglist');
-    Route::get('mastersheet', [ReportGenerateController::class, 'masterSheetReport'])->name('mastersheet');
-    Route::get('complete', [ReportGenerateController::class, 'completeOrderReport'])->name('completeorders');
-    Route::get('allorders', [ReportGenerateController::class, 'purchaseOrderReport'])->name('allorders');
-    Route::get('sales', [ReportGenerateController::class, 'salesReport'])->name('sales');
-});
+//Report Routes
+Route::get('/reports/invoices', 'App\Http\Controllers\ReportGenerateController@invoiceReport')->name('report.invoices');
+Route::get('/reports/pending', 'App\Http\Controllers\ReportGenerateController@pendingListReport')->name('report.pendinglist');
+Route::get('/reports/mastersheet', 'App\Http\Controllers\ReportGenerateController@masterSheetReport')->name('report.mastersheet');
+Route::get('/reports/complete', 'App\Http\Controllers\ReportGenerateController@completeOrderReport')->name('report.completeorders');
+Route::get('/reports/allorders', 'App\Http\Controllers\ReportGenerateController@purchaseOrderReport')->name('report.allorders');
+Route::get('/reports/sales', 'App\Http\Controllers\ReportGenerateController@salesReport')->name('report.sales');
