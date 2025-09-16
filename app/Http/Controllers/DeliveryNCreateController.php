@@ -112,7 +112,6 @@ class DeliveryNCreateController extends Controller
             'path' => $pdfPath
         ]);
 
-        // Return download and delete after sending
-        return response()->download($pdfPath, "DeliveryNote_{$delivery_note_no}.pdf");
+        return response()->file($pdfPath);
     }
 }

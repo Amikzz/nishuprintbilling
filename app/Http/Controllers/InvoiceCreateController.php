@@ -159,7 +159,7 @@ class InvoiceCreateController extends Controller
             ]);
 
             // Return download and delete after sending
-            return response()->download($pdfPath, "Invoice_{$invoice->invoice_no}.pdf");
+            return response()->file($pdfPath);
         } catch (Exception $e) {
             // Log PDF generation failure
             Log::error('PDF Generation Failed: ' . $e->getMessage());
