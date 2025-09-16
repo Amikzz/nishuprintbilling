@@ -4,21 +4,20 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-Class CreatePurchaseOrderDatabasesTable extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('purchase_orders', function (Blueprint $table) {
+        Schema::create('purchase_orders', static function (Blueprint $table) {
             $table->id(); // Primary key
             $table->date('date'); // Purchase order date
             $table->string('po_no'); // Purchase order number
-            $table->unsignedBigInteger('customer_id'); // Foreign key to customers table
-            $table->string('item_code'); // Foreign key to items table
+            $table->unsignedBigInteger('customer_id'); // Foreign key to customers' table
+            $table->string('item_code'); // Foreign key to item table
             $table->integer('po_qty'); // Purchase order quantity
             $table->string('color_no')->nullable(); // Color number
             $table->string('color_name')->nullable(); // Color name
@@ -42,8 +41,8 @@ Class CreatePurchaseOrderDatabasesTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('purchase_orders');
     }
-}
+};

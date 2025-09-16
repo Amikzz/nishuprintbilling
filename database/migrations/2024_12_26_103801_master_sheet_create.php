@@ -4,16 +4,16 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMasterSheetTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('master_sheet', function (Blueprint $table) {
+        Schema::create('master_sheet', static function (Blueprint $table) {
             $table->id(); // Primary key
             $table->string('our_ref')->nullable();
             $table->date('mail_date')->nullable();
@@ -30,7 +30,7 @@ class CreateMasterSheetTable extends Migration
             $table->string('dn')->nullable();
             $table->date('dn_date')->nullable();
             $table->integer('pcs')->nullable();
-            $table->decimal('invoice_value', 10, 2)->nullable();
+            $table->decimal('invoice_value', 10)->nullable();
             $table->string('status')->nullable();
             $table->timestamps(); // Created at & Updated at
         });
@@ -41,8 +41,8 @@ class CreateMasterSheetTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('master_sheet');
     }
-}
+};
