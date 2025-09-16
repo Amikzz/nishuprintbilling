@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @method static where(string $string, $po_number)
+ * @method static create(array $array)
  */
 class PurchaseOrderDatabase extends Model
 {

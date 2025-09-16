@@ -6,21 +6,24 @@ use App\Models\Edits;
 use App\Models\InvoiceDatabase;
 use App\Models\Items;
 use App\Models\MasterSheet;
-use Illuminate\Http\Request;
 use App\Models\PurchaseOrderDatabase;
-use App\Http\Requests\StorePurchaseOrderDatabaseRequest;
-use App\Http\Requests\UpdatePurchaseOrderDatabaseRequest;
+use Exception;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use Nette\Utils\Random;
+use Illuminate\Support\Facades\Log;
+use JetBrains\PhpStorm\NoReturn;
 
 class PurchaseOrderDatabaseController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): View|Application|Factory
     {
         // Retrieve search query and date range filters
         $search = $request->input('search');
@@ -28,11 +31,11 @@ class PurchaseOrderDatabaseController extends Controller
         $endDate = $request->input('end_date');
 
         // Build the query
-        $purchaseOrders = PurchaseOrderDatabase::with('items') // Assuming 'item' relationship exists
+        $purchaseOrders = PurchaseOrderDatabase::with('items') // Assuming an 'item' relationship exists
         ->when($search, function ($query, $search) {
-            $query->where('reference_no', 'like', "%{$search}%")
-                ->orWhere('po_no', 'like', "%{$search}%")
-                ->orWhere('item_code', 'like', "%{$search}%");
+            $query->where('reference_no', 'like', "%$search%")
+                ->orWhere('po_no', 'like', "%$search%")
+                ->orWhere('item_code', 'like', "%$search%");
         })
             ->when($startDate, function ($query, $startDate) {
                 $query->whereDate('date', '>=', $startDate); // Filter by start date
@@ -40,7 +43,7 @@ class PurchaseOrderDatabaseController extends Controller
             ->when($endDate, function ($query, $endDate) {
                 $query->whereDate('date', '<=', $endDate); // Filter by end date
             })
-            // Order by the creation date, most recent first
+            // Order by the creation date, the most recent first
             ->orderBy('created_at', 'desc')
             ->paginate(20); // Paginate results
 
@@ -51,7 +54,7 @@ class PurchaseOrderDatabaseController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): View|Application|Factory
     {
         $items = Items::all(); // Fetch all items from the database
         return view('welcome', compact('items'));
@@ -60,7 +63,7 @@ class PurchaseOrderDatabaseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         try {
             // Validate incoming request data
@@ -88,7 +91,7 @@ class PurchaseOrderDatabaseController extends Controller
             // Loop through each item and save it to the database
             foreach ($validated['items'] as $item) {
                 // Create the purchase order
-                $purchaseOrder = PurchaseOrderDatabase::create([
+                PurchaseOrderDatabase::create([
                     'date' => $validated['date'],                    // Current date
                     'reference_no' => $id,                           // Reference number
                     'po_no' => $validated['purchase_order_number'],  // Purchase order number
@@ -132,12 +135,12 @@ class PurchaseOrderDatabaseController extends Controller
             // Redirect back with a success message
             return redirect()->back()->with('success', 'Purchase order and invoice created successfully.');
 
-        } catch (\Exception $e) {
-            // Rollback the transaction in case of an error
+        } catch (Exception) {
+            // Roll back the transaction in case of an error
             DB::rollBack();
 
             // Log the error for debugging
-            \Log::error('Error creating purchase order');
+            Log::error('Error creating purchase order');
 
             // Redirect back with an error message
             return redirect()->back()->with('error', 'An error occurred while creating the purchase order. Please try again.');
@@ -148,7 +151,7 @@ class PurchaseOrderDatabaseController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show()
+    public function show(): void
     {
         //
     }
@@ -156,7 +159,7 @@ class PurchaseOrderDatabaseController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit($id): View|Application|Factory
     {
         // Fetch the invoice data by its ID
         $invoice = InvoiceDatabase::findOrFail($id);
@@ -202,7 +205,7 @@ class PurchaseOrderDatabaseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $invoiceId)
+    public function update(Request $request, $invoiceId): RedirectResponse
     {
         // Validate the incoming request data
         $validatedData = $request->validate([
@@ -222,7 +225,7 @@ class PurchaseOrderDatabaseController extends Controller
             'items.*.unit_price' => 'required|numeric|min:0',
         ]);
 
-        //Update the edits table
+        //Update the edit table
         $edit = new Edits();
         $edit->date = Date::now();
         $edit->po_no = $validatedData['po_no'];
@@ -237,7 +240,7 @@ class PurchaseOrderDatabaseController extends Controller
         $invoice->save();
 
         // Loop through the items and update each one
-        foreach ($validatedData['items'] as $index => $itemData) {
+        foreach ($validatedData['items'] as $itemData) {
             // Find the corresponding PurchaseOrderItem using the po_number from the invoice
             $item = PurchaseOrderDatabase::where('po_no', $invoice->po_number)
                 ->where('id', $itemData['id'])
@@ -246,7 +249,7 @@ class PurchaseOrderDatabaseController extends Controller
             if ($item) {
                 $descriptionUpdate = "Updated item: {$itemData['item_name']} - Color: {$itemData['color']} - Color_No: {$itemData['color_number']} - Size: {$itemData['size']} - Quantity: {$itemData['po_qty']}";
 
-                // Update the edits table
+                // Update the edit table
                 $edit->description = $descriptionUpdate;
 
                 // Update item details
@@ -274,12 +277,13 @@ class PurchaseOrderDatabaseController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PurchaseOrderDatabase $purchaseOrderDatabase)
+    public function destroy(PurchaseOrderDatabase $purchaseOrderDatabase): void
     {
         //
     }
 
-    public function export()
+    #[NoReturn]
+    public function export(): void
     {
         // Fetch data from the purchase orders table
         $purchaseOrders = DB::table('purchase_orders')->get();
@@ -288,7 +292,7 @@ class PurchaseOrderDatabaseController extends Controller
         $filename = "purchase_orders_" . now()->format('Ymd_His') . ".csv";
 
         // Create an output buffer
-        $output = fopen('php://output', 'w');
+        $output = fopen('php://output', 'wb');
 
         // Set headers for the Excel file download
         header('Content-Type: text/csv');

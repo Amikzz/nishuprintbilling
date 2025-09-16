@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\InvoiceDatabase;
 use App\Models\Items;
 use App\Models\MasterSheet;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 
 class MasterSheetController extends Controller
 {
-    public function getMasterSheet(Request $request)
+    public function getMasterSheet(): View|Application|Factory
     {
-        // Fetch all invoices, ensuring they are categorized by full month & year
+        // Fetch all invoices, ensuring they are categorized by full month and year
         $invoices = MasterSheet::orderBy('mail_date', 'asc')->get()->groupBy(function ($invoice) {
-            return \Carbon\Carbon::parse($invoice->mail_date)->format('F Y'); // Group by full month and year
+            return Carbon::parse($invoice->mail_date)->format('F Y'); // Group by full month and year
         });
 
         $items = Items::all();
@@ -21,13 +26,13 @@ class MasterSheetController extends Controller
         return view('mastersheet', compact('invoices', 'items'));
     }
 
-    //function to create a new master sheet
-    public function createMasterSheet(Request $request)
+    //function to create a new "master" sheet
+    public function createMasterSheet(Request $request): RedirectResponse
     {
         // Validate incoming request data
         $validated = $request->validate([
             'mail_date' => 'required|date',
-            'required_date' => 'required|date|after_or_equal:mail_date', // Ensure required date is after or equal to mail date
+            'required_date' => 'required|date|after_or_equal:mail_date', // Ensure the required date is after or equal to the mail date
             'created_by' => 'required|string|max:255',
             'cust_ref' => 'required|string|max:255',
             'invoice_value' => 'required|string|max:255',
@@ -47,7 +52,7 @@ class MasterSheetController extends Controller
             ]);
 
             return redirect()->route('mastersheet')->with('success', 'Master Sheet created successfully');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Handle errors in case of failure
             return redirect()->route('mastersheet')->with('error', 'Failed to create Master Sheet. Please try again later.' . $e->getMessage());
         }

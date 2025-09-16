@@ -11,7 +11,7 @@ class ItemsController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): void
     {
         //
     }
@@ -19,7 +19,7 @@ class ItemsController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): void
     {
         //
     }
@@ -27,7 +27,7 @@ class ItemsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreItemsRequest $request)
+    public function store(StoreItemsRequest $request): void
     {
         //
     }
@@ -35,7 +35,7 @@ class ItemsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Items $items)
+    public function show(Items $items): void
     {
         //
     }
@@ -43,7 +43,7 @@ class ItemsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Items $items)
+    public function edit(Items $items): void
     {
         //
     }
@@ -51,7 +51,7 @@ class ItemsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateItemsRequest $request, Items $items)
+    public function update(UpdateItemsRequest $request, Items $items): void
     {
         //
     }
@@ -59,7 +59,7 @@ class ItemsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Items $items)
+    public function destroy(Items $items): void
     {
         //
     }

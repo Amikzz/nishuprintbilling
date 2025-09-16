@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static whereBetween(string $string, array $array)
  * @method static where(string $string, $po_number)
  * @method static findOrFail($id)
+ * @method static create(array $array)
  */
 class InvoiceDatabase extends Model
 {
