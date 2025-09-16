@@ -12,6 +12,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -149,7 +150,7 @@ class InvoiceCreateController extends Controller
                 'purchaseOrderItemsDetails' => $purchaseOrderItemsDetails,
             ]);
 
-            $pdfPath = storage_path("app/public/invoices/Invoice_{$invoice->invoice_no}.pdf");
+            $pdfPath = storage_path("app/public/invoices/Invoice_$invoice->invoice_no.pdf");
             $pdf->save($pdfPath);
 
             Log::info('PDF saved to storage successfully', [
@@ -169,7 +170,7 @@ class InvoiceCreateController extends Controller
         }
     }
 
-    public function orderDispatch($id)
+    public function orderDispatch($id): RedirectResponse
     {
         try {
             // Find the invoice by ID
@@ -191,7 +192,7 @@ class InvoiceCreateController extends Controller
 
             // Check if related purchase orders exist
             if ($purchaseOrders->isEmpty()) {
-                session()->flash('error', 'No related purchase orders found for this invoice.');
+                session()?->flash('error', 'No related purchase orders found for this invoice.');
                 return redirect()->back();
             }
 
@@ -202,21 +203,21 @@ class InvoiceCreateController extends Controller
             }
 
             // Flash a success message
-            session()->flash('success', 'Invoice and related purchase orders status updated to Order Dispatched.');
+            session()?->flash('success', 'Invoice and related purchase orders status updated to Order Dispatched.');
 
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             // Flash an error message if the invoice is not found
-            session()->flash('error', 'Invoice not found.');
-        } catch (Exception $e) {
+            session()?->flash('error', 'Invoice not found.');
+        } catch (Exception) {
             // Flash a general error message for any other exceptions
-            session()->flash('error', 'An error occurred while updating the invoice status.');
+            session()?->flash('error', 'An error occurred while updating the invoice status.');
         }
 
         // Redirect back to the previous page
         return redirect()->back();
     }
 
-    public function ordercomplete($id)
+    public function ordercomplete($id): RedirectResponse
     {
         try {
             // Find the invoice by ID
@@ -234,7 +235,7 @@ class InvoiceCreateController extends Controller
 
             // Check if related purchase orders exist
             if ($purchaseOrders->isEmpty()) {
-                session()->flash('error', 'No related purchase orders found for this invoice.');
+                session()?->flash('error', 'No related purchase orders found for this invoice.');
                 return redirect()->back();
             }
 
@@ -245,14 +246,14 @@ class InvoiceCreateController extends Controller
             }
 
             // Flash a success message
-            session()->flash('success', 'Invoice and related purchase orders status updated to Order Complete.');
+            session()?->flash('success', 'Invoice and related purchase orders status updated to Order Complete.');
 
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             // Flash an error message if the invoice is not found
-            session()->flash('error', 'Invoice not found.');
-        } catch (Exception $e) {
+            session()?->flash('error', 'Invoice not found.');
+        } catch (Exception) {
             // Flash a general error message for any other exceptions
-            session()->flash('error', 'An error occurred while updating the invoice status.');
+            session()?->flash('error', 'An error occurred while updating the invoice status.');
         }
 
         // Redirect back to the previous page

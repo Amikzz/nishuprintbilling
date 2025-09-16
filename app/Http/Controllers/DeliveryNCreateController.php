@@ -72,7 +72,7 @@ class DeliveryNCreateController extends Controller
             ];
         });
 
-        // Create delivery note number
+        // Create a delivery note number
         $invoice->delivery_note_no = $validated['delivery_note_number'];
         $invoice->save();
 
@@ -102,7 +102,7 @@ class DeliveryNCreateController extends Controller
             'item_count' => $item_count,
         ]);
 
-        $pdfPath = storage_path("app/public/deliverynotes/DeliveryNote_{$delivery_note_no}.pdf");
+        $pdfPath = storage_path("app/public/deliverynotes/DeliveryNote_$delivery_note_no.pdf");
         $pdf->save($pdfPath);
 
         Log::info('PDF saved to storage successfully', [

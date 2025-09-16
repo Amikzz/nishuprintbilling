@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @method static paginate(int $int)
  * @method static where(string $string, $item_code)
+ * @method static whereIn(string $string, $itemCodes)
  * @property mixed $item_code
  * @property mixed $name
  * @property mixed|null $description
