@@ -8,12 +8,14 @@ use App\Models\Items;
 use App\Models\MasterSheet;
 use App\Models\PurchaseOrderDatabase;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Nette\Utils\Random;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class DeliveryNCreateController extends Controller
 {
-    public function createDeliveryNote(Request $request, $po_number)
+    public function createDeliveryNote(Request $request, $po_number): BinaryFileResponse|JsonResponse
     {
         $validated = $request->validate([
             'delivery_note_number' => 'required|string|max:255',
@@ -53,7 +55,7 @@ class DeliveryNCreateController extends Controller
         $purchaseOrderItemsDetails = $purchaseOrderItems->map(function ($orderItem) {
             $item = Items::where('item_code', $orderItem->item_code)->first();
 
-            return (object) [
+            return (object)[
                 'item_code' => $item ? $item->item_code : 'N/A',
                 'item_name' => $item ? $item->name : 'Unknown Item',
                 'sticker_size' => $item ? $item->description : 'N/A',
@@ -100,6 +102,17 @@ class DeliveryNCreateController extends Controller
             'item_count' => $item_count,
         ]);
 
-        return $pdf->download("$delivery_note_no.pdf");
+        $pdfPath = storage_path("app/public/deliverynotes/DeliveryNote_{$delivery_note_no}.pdf");
+        $pdf->save($pdfPath);
+
+        Log::info('PDF saved to storage successfully', [
+            'po_number' => $po_number,
+            'delivery_note_number' => $validated['delivery_note_number'],
+            'total_items' => $item_count,
+            'path' => $pdfPath
+        ]);
+
+        // Return download and delete after sending
+        return response()->download($pdfPath, "DeliveryNote_{$delivery_note_no}.pdf");
     }
 }

@@ -11,12 +11,14 @@ use App\Models\PurchaseOrderDatabase;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class InvoiceCreateController extends Controller
 {
-    public function createInvoice(Request $request, $po_number)
+    public function createInvoice(Request $request, $po_number): BinaryFileResponse|JsonResponse
     {
         // Validate the request
         $validated = $request->validate([
@@ -147,11 +149,17 @@ class InvoiceCreateController extends Controller
                 'purchaseOrderItemsDetails' => $purchaseOrderItemsDetails,
             ]);
 
-            // Log PDF generation success
-            Log::info('PDF generated successfully');
+            $pdfPath = storage_path("app/public/invoices/Invoice_{$invoice->invoice_no}.pdf");
+            $pdf->save($pdfPath);
 
-            // Return the PDF for download
-            return $pdf->download($invoice->invoice_no . '.pdf');
+            Log::info('PDF saved to storage successfully', [
+                'po_number' => $po_number,
+                'invoice_number' => $validated['invoice_number'],
+                'path' => $pdfPath
+            ]);
+
+            // Return download and delete after sending
+            return response()->download($pdfPath, "Invoice_{$invoice->invoice_no}.pdf");
         } catch (Exception $e) {
             // Log PDF generation failure
             Log::error('PDF Generation Failed: ' . $e->getMessage());
