@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use OpenAdmin\Admin\Facades\Admin;
 use OpenAdmin\Admin\Layout\Content;
+use Illuminate\Http\RedirectResponse;
 
 class ExchangeRateController extends Controller
 {
@@ -16,13 +17,13 @@ class ExchangeRateController extends Controller
      *
      * @return Content
      */
-    public function index()
+    public function index(): Content
     {
         // Retrieve all exchange rates
         $exchangeRates = ExchangeRate::all();
 
         // Return the view with the exchange rates
-        return Admin::content(function (Content $content) use ($exchangeRates) {
+        return Admin::content(static function (Content $content) use ($exchangeRates) {
             $content->header('Exchange Rate');
 
             $content->body(view('admin.exchange', ['exchangeRates' => $exchangeRates]));
@@ -32,11 +33,11 @@ class ExchangeRateController extends Controller
     /**
      * Update the specified exchange rate in the database.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @param Request $request
+     * @param int $id
+     * @return RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id): RedirectResponse
     {
         // Validate the incoming request data
         $validator = Validator::make($request->all(), [
@@ -56,7 +57,7 @@ class ExchangeRateController extends Controller
         // Update the exchange rate with the validated data
         $exchangeRate->currency_from = 'USD';
         $exchangeRate->currency_to = "LKR";
-        $exchangeRate->rate = $request->rate;
+        $exchangeRate->rate = $request->input('rate');
 
         // Save the changes to the database
         $exchangeRate->save();

@@ -4,6 +4,8 @@ namespace App\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Items;
+use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use OpenAdmin\Admin\Facades\Admin;
 use OpenAdmin\Admin\Layout\Content;
@@ -13,15 +15,14 @@ class ItemsController extends Controller
     /**
      * Display a paginated list of items.
      *
-     * @param Request $request
      * @return Content
      */
-    public function index(Request $request)
+    public function index(): Content
     {
         // Retrieve paginated items (10 items per page by default)
         $items = Items::paginate(10);
 
-        return Admin::content(function (Content $content) use ($items) {
+        return Admin::content(static function (Content $content) use ($items) {
             $content->header('Items');
             $content->description('List of all items');
 
@@ -29,7 +30,7 @@ class ItemsController extends Controller
         });
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         // Validate the request data
         $validatedData = $request->validate([
@@ -50,13 +51,13 @@ class ItemsController extends Controller
 
             // Flash a success message
             return redirect()->route('admin.items.index');
-        } catch (\Exception $e) {
-            // Handle error and return message
+        } catch (Exception) {
+            // Handle error and return a message
             return redirect()->back();
         }
     }
 
-    public function update(Request $request, $item_code)
+    public function update(Request $request, $item_code): RedirectResponse
     {
         // Validate the request
         $validatedData = $request->validate([
@@ -70,7 +71,7 @@ class ItemsController extends Controller
         $item = Items::where('item_code', $item_code)->first();
 
         if (!$item) {
-            // Handle case where item is not found
+            // Handle case where the item is not found
             return redirect()->route('admin.items');
         }
 
@@ -87,15 +88,12 @@ class ItemsController extends Controller
     }
 
 
-    public function destroy($item_code)
+    public function destroy($item_code): RedirectResponse
     {
         // Directly delete the item by item_code
-        $deleted = Items::where('item_code', $item_code)->delete();
-
-        if ($deleted) {
-            return redirect()->route('admin.items');
-        }
+        Items::where('item_code', $item_code)->delete();
 
         return redirect()->route('admin.items');
+
     }
 }

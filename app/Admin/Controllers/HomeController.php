@@ -11,12 +11,12 @@ use OpenAdmin\Admin\Layout\Row;
 
 class HomeController extends Controller
 {
-    public function index(Content $content)
+    public function index(Content $content): Content
     {
         return $content
             ->css_file(Admin::asset("open-admin/css/pages/dashboard.css"))
             ->title('Dashboard')
-            ->row('<center><h1>Welcome to the Admin Page</h1></center>')
+            ->row('<div style="text-align: center;"><h1>Welcome to the Admin Page</h1></div>')
             ->row('&nbsp;')
             ->row(function (Row $row) {
 

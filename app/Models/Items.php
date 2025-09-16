@@ -2,12 +2,21 @@
 
 namespace App\Models;
 
+use Database\Factories\ItemsFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method static paginate(int $int)
+ * @method static where(string $string, $item_code)
+ * @property mixed $item_code
+ * @property mixed $name
+ * @property mixed|null $description
+ * @property mixed $price
+ */
 class Items extends Model
 {
-    /** @use HasFactory<\Database\Factories\ItemsFactory> */
+    /** @use HasFactory<ItemsFactory> */
     use HasFactory;
 
     protected $primaryKey = 'item_code';

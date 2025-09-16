@@ -21,7 +21,7 @@ class ExampleController extends AdminController
      *
      * @return Grid
      */
-    protected function grid()
+    protected function grid(): Grid
     {
         $grid = new Grid(new ExampleModel);
 
@@ -38,7 +38,7 @@ class ExampleController extends AdminController
      * @param mixed   $id
      * @return Show
      */
-    protected function detail($id)
+    protected function detail($id): Show
     {
         $show = new Show(ExampleModel::findOrFail($id));
 
@@ -54,7 +54,7 @@ class ExampleController extends AdminController
      *
      * @return Form
      */
-    protected function form()
+    protected function form(): Form
     {
         $form = new Form(new ExampleModel);
 

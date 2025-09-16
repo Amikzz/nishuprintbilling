@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @method static where(string $string, string $string1)
+ * @method static findOrFail(int $id)
  */
 class ExchangeRate extends Model
 {
