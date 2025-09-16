@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Database\Factories\PurchaseOrderDatabaseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @method static where(string $string, $po_number)
@@ -11,11 +13,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PurchaseOrderDatabase extends Model
 {
-    /** @use HasFactory<\Database\Factories\PurchaseOrderDatabaseFactory> */
+    /** @use HasFactory<PurchaseOrderDatabaseFactory> */
     use HasFactory;
 
     /**
-     table name
+     * table name
      */
     protected $table = 'purchase_orders';
 
@@ -36,7 +38,7 @@ class PurchaseOrderDatabase extends Model
         'more2'
     ];
 
-    public function items()
+    public function items(): HasMany
     {
         return $this->hasMany(Items::class, 'item_code', 'item_code'); // Adjust field names as necessary
     }

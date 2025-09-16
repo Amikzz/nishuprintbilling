@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * @method static where(string $string, $invoice_no)
  * @method static whereBetween(string $string, array $array)
  * @method static whereNotNull(string $string)
  * @method static whereNull(string $string)
- * @method static whereDate(string $string, string $string1, \Illuminate\Support\Carbon $from_date)
+ * @method static whereDate(string $string, string $string1, Carbon $from_date)
  * @method static orderBy(string $string, string $string1)
  * @method static create(array $array)
  */
@@ -21,13 +22,7 @@ class MasterSheet extends Model
     // Table associated with the model
     protected $table = 'master_sheet';
 
-    // Primary key
-    protected $primaryKey = 'id';
-
-    // Indicates if the model should be timestamped.
-    public $timestamps = true;
-
-    // Define the fillable properties (optional: mass assignable fields)
+    // Define the fillable properties (optional: mass-assignable fields)
     protected $fillable = [
         'our_ref',
         'mail_date',
