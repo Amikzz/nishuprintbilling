@@ -11,11 +11,12 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DeliveryNCreateController extends Controller
 {
-    public function createDeliveryNote(Request $request, $po_number): BinaryFileResponse|JsonResponse
+    public function createDeliveryNote(Request $request, $po_number): JsonResponse|StreamedResponse
     {
         $validated = $request->validate([
             'delivery_note_number' => 'required|string|max:255',
@@ -102,16 +103,17 @@ class DeliveryNCreateController extends Controller
             'item_count' => $item_count,
         ]);
 
-        $pdfPath = storage_path("app/public/deliverynotes/DeliveryNote_$delivery_note_no.pdf");
-        $pdf->save($pdfPath);
+        $fileRelative = "deliverynotes/DeliveryNote_$delivery_note_no.pdf";
 
+        // Save to the public disk
+        Storage::disk('public')->put($fileRelative, $pdf->output());
+
+        // Log saved a path
         Log::info('PDF saved to storage successfully', [
-            'po_number' => $po_number,
-            'delivery_note_number' => $validated['delivery_note_number'],
-            'total_items' => $item_count,
-            'path' => $pdfPath
+            'path' => storage_path("app/public/$fileRelative"),
         ]);
 
-        return response()->file($pdfPath);
+        // Return a download response (this forces browser download)
+        return Storage::disk('public')->download($fileRelative, "DeliveryNote_$delivery_note_no.pdf");
     }
 }
