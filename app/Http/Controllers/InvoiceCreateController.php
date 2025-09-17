@@ -15,11 +15,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class InvoiceCreateController extends Controller
 {
-    public function createInvoice(Request $request, $po_number): BinaryFileResponse|JsonResponse
+    public function createInvoice(Request $request, $po_number): JsonResponse|StreamedResponse
     {
         // Validate the request
         $validated = $request->validate([
@@ -150,17 +151,21 @@ class InvoiceCreateController extends Controller
                 'purchaseOrderItemsDetails' => $purchaseOrderItemsDetails,
             ]);
 
-            $pdfPath = storage_path("app/public/invoices/Invoice_$invoice->invoice_no.pdf");
-            $pdf->save($pdfPath);
+            $fileRelative = "invoices/Invoice_$invoice->invoice_no.pdf";
 
+            // Save to the public disk
+            Storage::disk('public')->put($fileRelative, $pdf->output());
+
+            // Log saved a path
             Log::info('PDF saved to storage successfully', [
                 'po_number' => $po_number,
                 'invoice_number' => $validated['invoice_number'],
-                'path' => $pdfPath
+                'path' => storage_path("app/public/$fileRelative"),
             ]);
 
-            // Return download and delete after sending
-            return response()->file($pdfPath);
+            // Return a download response (forces browser download)
+            return Storage::disk('public')->download($fileRelative, "Invoice_$invoice->invoice_no.pdf");
+
         } catch (Exception $e) {
             // Log PDF generation failure
             Log::error('PDF Generation Failed: ' . $e->getMessage());
