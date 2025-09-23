@@ -3,7 +3,8 @@
 @section('content')
 <div class="container-fluid mx-auto mt-8">
 
-    <h1 class="text-2xl font-semibold mb-4">Invoice & Delivery Records</h1>
+    <h1 class="text-2xl font-bold text-gray-800">Invoice & Delivery Records</h1>
+    <br>
 
     <!-- Search Form -->
     <form action="{{ route('invoice-databases.index') }}" method="GET" class="mb-4 flex items-center space-x-4">

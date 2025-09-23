@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nisu Creation</title>
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
 </head>
 <body class="bg-gray-100">
 
@@ -19,35 +27,41 @@
 
         <!-- Desktop Menu -->
         <div class="hidden md:flex space-x-8 items-center text-gray-200 font-medium">
-            <a href="{{ route('home') }}" class="hover:text-white transition duration-200">Home</a>
-            <a href="{{ route('purchase-order-databases.index') }}" class="hover:text-white transition duration-200">All Orders</a>
-            <a href="{{ route('invoice-databases.index') }}" class="text-pink-400 font-semibold hover:text-pink-300 transition duration-200">Invoice & Delivery</a>
-            <a href="{{ route('mastersheet') }}" class="hover:text-white transition duration-200">Master Sheet</a>
-            <a href="{{ route('urgentorders') }}" class="hover:text-white transition duration-200">Urgent Orders</a>
-            <a href="{{ route('return.page') }}" class="hover:text-white transition duration-200">Returns</a>
-            <a href="{{ route('reports.page') }}" class="hover:text-white transition duration-200">Reports</a>
-        </div>
+            <a href="{{ route('home') }}"
+               class="transition duration-200 {{ Request::routeIs('home') ? 'text-white font-bold border-b-2 border-pink-500' : 'hover:text-white' }}">
+                Home
+            </a>
 
-        <!-- Mobile Menu Button -->
-        <div class="md:hidden">
-            <button id="menu-btn" class="text-white focus:outline-none">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M4 6h16M4 12h16M4 18h16"/>
-                </svg>
-            </button>
-        </div>
-    </div>
+            <a href="{{ route('purchase-order-databases.index') }}"
+               class="transition duration-200 {{ Request::routeIs('purchase-order-databases.index') ? 'text-white font-bold border-b-2 border-pink-500' : 'hover:text-white' }}">
+                All Orders
+            </a>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden md:hidden bg-gray-800 px-6 pb-4 space-y-2">
-        <a href="{{ route('home') }}" class="block text-gray-200 hover:text-white">Home</a>
-        <a href="{{ route('purchase-order-databases.index') }}" class="block text-gray-200 hover:text-white">All Orders</a>
-        <a href="{{ route('invoice-databases.index') }}" class="block text-pink-400 font-semibold hover:text-pink-300">Invoice & Delivery</a>
-        <a href="{{ route('mastersheet') }}" class="block text-gray-200 hover:text-white">Master Sheet</a>
-        <a href="{{ route('urgentorders') }}" class="block text-gray-200 hover:text-white">Urgent Orders</a>
-        <a href="{{ route('return.page') }}" class="block text-gray-200 hover:text-white">Returns</a>
-        <a href="{{ route('reports.page') }}" class="block text-gray-200 hover:text-white">Reports</a>
+            <a href="{{ route('invoice-databases.index') }}"
+               class="transition duration-200 {{ Request::routeIs('invoice-databases.index') ? 'text-white font-bold border-b-2 border-pink-500' : 'hover:text-white' }}">
+                Invoice & Delivery
+            </a>
+
+            <a href="{{ route('mastersheet') }}"
+               class="transition duration-200 {{ Request::routeIs('mastersheet') ? 'text-white font-bold border-b-2 border-pink-500' : 'hover:text-white' }}">
+                Master Sheet
+            </a>
+
+            <a href="{{ route('urgentorders') }}"
+               class="transition duration-200 {{ Request::routeIs('urgentorders') ? 'text-white font-bold border-b-2 border-pink-500' : 'hover:text-white' }}">
+                Urgent Orders
+            </a>
+
+            <a href="{{ route('return.page') }}"
+               class="transition duration-200 {{ Request::routeIs('return.page') ? 'text-white font-bold border-b-2 border-pink-500' : 'hover:text-white' }}">
+                Returns
+            </a>
+
+            <a href="{{ route('reports.page') }}"
+               class="transition duration-200 {{ Request::routeIs('reports.page') ? 'text-white font-bold border-b-2 border-pink-500' : 'hover:text-white' }}">
+                Reports
+            </a>
+        </div>
     </div>
 </nav>
 
