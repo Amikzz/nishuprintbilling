@@ -27,7 +27,7 @@
         <!-- Logo -->
         <a href="{{ route('home') }}" class="flex items-center text-white">
             <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="h-12 w-auto mr-2 shadow-md">
-            <span class="font-bold text-xl tracking-wide">Nisu Creation</span>
+            <span class="font-bold text-xl tracking-wide">Invoice & Dispatch System</span>
         </a>
 
         <!-- Desktop Menu -->

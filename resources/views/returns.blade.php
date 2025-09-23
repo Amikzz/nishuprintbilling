@@ -1,55 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Invoice Search</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            background-color: #f7fafc;
-        }
-        .container-fluid {
-            padding-left: 190px;
-            padding-right: 190px;
-        }
-        .navbar {
-            width: 100%;
-        }
-        .table {
-            width: 100%;
-        }
-    </style>
-</head>
-<body>
+@extends('layouts.navbar')
 
-<!-- Navbar -->
-<nav class="bg-black p-3">
-    <div class="flex items-center justify-between container-fluid">
-        <a href="{{ route('home') }}" class="flex items-center text-white">
-            <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="mr-3" style="height: 80px;">
-        </a>
-        <div class="flex space-x-6 text-white">
-            <a href="{{ route('home') }}" class="hover:text-gray-400">Home</a>
-            <a href="{{ route('purchase-order-databases.index') }}" class="hover:text-gray-400">All Orders</a>
-            <a href="{{ route('invoice-databases.index') }}" class="hover:text-gray-400">Invoice & Delivery</a>
-            <a href="{{route('mastersheet')}}" class="hover:text-gray-400">Master Sheet</a>
-            <a href="{{route('urgentorders')}}" class="hover:text-gray-400">Urgent Orders</a>
-            <a href="{{ route('return.page') }}" class="hover:text-gray-400 text-pink-500">Returns</a>
-            <a href="{{ route('reports.page') }}" class="hover:text-gray-400">Reports</a>
-        </div>
-    </div>
-</nav>
-
+@section('content')
 <!-- Flash Messages -->
-<div class="container-fluid mt-4">
+<div class="container-fluid mx-auto mt-8">
+
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-red-700">Handle Return Orders</h1>
+    </div>
+
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
@@ -100,5 +58,4 @@
     });
 </script>
 </div>
-</body>
-</html>
+@endsection
