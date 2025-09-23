@@ -1,50 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Purchase Orders</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            background-color: #f7fafc; /* Tailwind's bg-gray-100 equivalent */
-        }
-        .container-fluid {
-            padding-left: 30px;
-            padding-right: 30px;
-        }
-        .navbar {
-            width: 100%;
-        }
-    </style>
+@extends('layouts.navbar')
 
-</head>
-<body>
-
-<!-- Navbar -->
-<nav class="bg-gray-800 p-3">
-    <div class="flex items-center justify-between container-fluid">
-        <a href="{{ route('home') }}" class="flex items-center text-white">
-            <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="mr-3" style="height: 80px;">
-        </a>
-        <div class="flex space-x-6 text-white">
-            <a href="{{ route('home') }}" class="hover:text-gray-400">Home</a>
-            <a href="{{ route('purchase-order-databases.index') }}" class="hover:text-gray-400 text-pink-500">All Orders</a>
-            <a href="{{ route('invoice-databases.index') }}" class="hover:text-gray-400">Invoice & Delivery</a>
-            <a href="{{route('mastersheet')}}" class="hover:text-gray-400">Master Sheet</a>
-            <a href="{{route('urgentorders')}}" class="hover:text-gray-400">Urgent Orders</a>
-            <a href="{{ route('return.page') }}" class="hover:text-gray-400 ">Returns</a>
-            <a href="{{ route('reports.page') }}" class="hover:text-gray-400">Reports</a>
-        </div>
-    </div>
-</nav>
-
+@section('content')
 <div class="container-fluid mx-auto mt-8">
 
-    <h1 class="text-2xl font-semibold mb-4">All Orders</h1>
+    <h1 class="text-2xl font-bold text-gray-800">All Orders</h1>
 
     <!-- Search Form -->
     <form action="{{ route('purchase-order-databases.index') }}" method="GET" class="mb-4 flex items-center space-x-4">
@@ -146,6 +105,4 @@
         {{ $purchaseOrders->links('pagination::tailwind') }}
     </div>
 </div>
-
-</body>
-</html>
+@endsection

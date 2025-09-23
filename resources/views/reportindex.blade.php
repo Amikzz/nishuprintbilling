@@ -1,35 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reports Page</title>
-    <link rel="icon" href="{{ asset('favicon.ico') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
+@extends('layouts.navbar')
 
-<!-- Navbar -->
-<nav class="bg-black p-3">
-    <div class="flex items-center justify-between container mx-auto">
-        <a href="{{ route('home') }}" class="flex items-center text-white">
-            <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="mr-3" style="height: 80px;">
-        </a>
-        <div class="flex space-x-6 text-white">
-            <a href="{{ route('home') }}" class="hover:text-gray-400">Home</a>
-            <a href="{{ route('purchase-order-databases.index') }}" class="hover:text-gray-400">All Orders</a>
-            <a href="{{ route('invoice-databases.index') }}" class="hover:text-gray-400">Invoice & Delivery</a>
-            <a href="{{route('mastersheet')}}" class="hover:text-gray-400">Master Sheet</a>
-            <a href="{{route('urgentorders')}}" class="hover:text-gray-400">Urgent Orders</a>
-            <a href="{{ route('return.page') }}" class="hover:text-gray-400 ">Returns</a>
-            <a href="{{ route('reports.page') }}" class="hover:text-gray-400 text-pink-500">Reports</a>
-        </div>
-    </div>
-</nav>
-
+@section('content')
 <!-- Flash Messages -->
 <div class="container mx-auto mt-8">
     <!-- Success Message -->
@@ -144,5 +115,4 @@
         $('#dateRangeModal').modal('hide');
     });
 </script>
-</body>
-</html>
+@endsection
