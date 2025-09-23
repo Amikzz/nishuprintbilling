@@ -1,66 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Billing System</title>
-    <link rel="icon" href="{{ asset('favicon.ico') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+@extends('layouts.navbar')
 
-    <style>
-        body {
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            background-color: #f7fafc;
-        }
-        .container-fluid {
-            padding-left: 30px;
-            padding-right: 30px;
-        }
-        .navbar {
-            width: 100%;
-        }
-        .table {
-            width: 100%;
-        }
-        /* Custom widths for specific fields */
-        .qty-input, .color-number-input {
-            width: 90px; /* Reduce the width of Quantity and Color Number */
-        }
-        .upc-input {
-            width: 200px; /* Increase the width of UPC */
-        }
-    </style>
-
-</head>
-<body>
-
-<!-- Navbar -->
-<nav class="bg-gray-800 p-3.5">
-    <div class="flex items-center justify-between container-fluid">
-        <a href="{{ route('home') }}" class="flex items-center text-white">
-            <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="mr-3" style="height: 80px;">
-        </a>
-        <div class="flex space-x-6 text-white">
-            <a href="{{ route('home') }}" class="hover:text-gray-400 text-pink-500">Home</a>
-            <a href="{{ route('purchase-order-databases.index') }}" class="hover:text-gray-400">All Orders</a>
-            <a href="{{ route('invoice-databases.index') }}" class="hover:text-gray-400">Invoice & Delivery</a>
-            <a href="{{route('mastersheet')}}" class="hover:text-gray-400">Master Sheet</a>
-            <a href="{{route('urgentorders')}}" class="hover:text-gray-400">Urgent Orders</a>
-            <a href="{{ route('return.page') }}" class="hover:text-gray-400 ">Returns</a>
-            <a href="{{ route('reports.page') }}" class="hover:text-gray-400">Reports</a>
-        </div>
-    </div>
-</nav>
-
+@section('content')
 <!-- Flash Messages -->
 <div class="container-fluid mx-auto mt-8">
 
-    <h1 class="text-2xl font-semibold mb-4">Purchase Order Entering</h1>
+    <h1 class="text-2xl font-bold text-gray-800">Purchase Order Entering</h1>
 
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -334,5 +278,4 @@
         updateItemNumbers();
     });
 </script>
-</body>
-</html>
+@endsection
