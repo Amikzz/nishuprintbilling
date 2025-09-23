@@ -18,6 +18,7 @@ Route::resource('invoice-databases', InvoiceDatabaseController::class);
 Route::get('invoice/create/{po_number}', [InvoiceCreateController::class, 'createInvoice'])->name('invoice.create');
 Route::get('deliverynote/create/{po_number}', [DeliveryNCreateController::class, 'createDeliveryNote'])->name('deliverynote.create');
 Route::get('deliverynote/download/{po_number}', [DeliveryNCreateController::class, 'downloadDeliveryNote'])->name('deliverynote.download');
+Route::get('invoice/download/{po_number}', [InvoiceCreateController::class, 'downloadInvoice'])->name('invoice.download');
 
 Route::post('purchaseorder/{id}', [InvoiceDatabaseController::class, 'artworkNeed'])->name('purchaseorder.artwork');
 Route::post('purchaseorderdone/{id}', [InvoiceDatabaseController::class, 'artworkProduction'])->name('purchaseorder.artworkdone');

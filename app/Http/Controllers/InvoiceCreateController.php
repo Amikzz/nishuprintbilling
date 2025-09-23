@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class InvoiceCreateController extends Controller
 {
-    public function createInvoice(Request $request, $po_number): JsonResponse|StreamedResponse
+    public function createInvoice(Request $request, $po_number): JsonResponse
     {
         // Validate the request
         $validated = $request->validate([
@@ -163,8 +163,15 @@ class InvoiceCreateController extends Controller
                 'path' => storage_path("app/public/$fileRelative"),
             ]);
 
-            // Return a download response (forces browser download)
-            return Storage::disk('public')->download($fileRelative, "Invoice_$invoice->invoice_no.pdf");
+            //Save the path to the database
+            $invoice->invoice_path = $fileRelative;
+            $invoice->save();
+
+            // Return a success response with the download link
+            return response()->json([
+                'message' => 'Invoice created successfully',
+                'download_link' => Storage::url($fileRelative),
+            ], 201);
 
         } catch (Exception $e) {
             // Log PDF generation failure
@@ -173,6 +180,30 @@ class InvoiceCreateController extends Controller
             // Return an error response
             return response()->json(['error' => 'PDF generation failed. Please try again.'], 500);
         }
+    }
+
+    public function downloadInvoice($po_number): JsonResponse|StreamedResponse
+    {
+        $invoice = InvoiceDatabase::where('po_number', $po_number)->first();
+
+        // If not found
+        if (!$invoice) {
+            return response()->json(['error' => 'Invoice not found'], 404);
+        }
+
+        // If a delivery note path is missing
+        if (!$invoice->invoice_path) {
+            return response()->json(['error' => 'Delivery note not available'], 404);
+        }
+
+        // Ensure file exists in storage
+        $filePath = $invoice->invoice_path;
+        if (!Storage::disk('public')->exists($filePath)) {
+            return response()->json(['error' => 'File not found in storage'], 404);
+        }
+
+        // Return file as download
+        return Storage::disk('public')->download($filePath, basename($filePath));
     }
 
     public function orderDispatch($id): RedirectResponse
