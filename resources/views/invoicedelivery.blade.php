@@ -112,12 +112,31 @@
                         <div class="flex flex-col space-y-4">
                             <!-- Download Actions -->
                             <div class="flex space-x-2">
-                                <button onclick="openModal('invoice-{{ $invoice->po_number }}')" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
-                                    Download Invoice
-                                </button>
-                                <button onclick="openModal('deliverynote-{{ $invoice->po_number }}')" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
-                                    Download Delivery Note
-                                </button>
+                                {{-- Invoice --}}
+                                @if (is_null($invoice->invoice_path))
+                                    <button onclick="openModal('invoice-{{ $invoice->po_number }}')"
+                                            class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                                        Create Invoice
+                                    </button>
+                                @else
+                                    <a href="{{ route('invoice.download', $invoice->po_number) }}"
+                                       class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                                        Download Invoice
+                                    </a>
+                                @endif
+
+                                {{-- Delivery Note --}}
+                                @if (is_null($invoice->delivery_note_path))
+                                    <button onclick="openModal('deliverynote-{{ $invoice->po_number }}')"
+                                            class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+                                        Create Delivery Note
+                                    </button>
+                                @else
+                                    <a href="{{ route('deliverynote.download', $invoice->po_number) }}"
+                                       class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+                                        Download Delivery Note
+                                    </a>
+                                @endif
                             </div>
 
                             <!-- Artwork Actions -->

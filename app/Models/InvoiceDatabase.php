@@ -25,6 +25,8 @@ class InvoiceDatabase extends Model
         'reference_no',
         'delivery_note_no',
         'no_of_items',
-        'status'
+        'status',
+        'delivery_note_path',
+        'invoice_path',
     ];
 }

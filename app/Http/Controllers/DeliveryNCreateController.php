@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DeliveryNCreateController extends Controller
 {
-    public function createDeliveryNote(Request $request, $po_number): JsonResponse|StreamedResponse
+    public function createDeliveryNote(Request $request, $po_number): JsonResponse
     {
         $validated = $request->validate([
             'delivery_note_number' => 'required|string|max:255',
@@ -113,7 +113,36 @@ class DeliveryNCreateController extends Controller
             'path' => storage_path("app/public/$fileRelative"),
         ]);
 
-        // Return a download response (this forces browser download)
-        return Storage::disk('public')->download($fileRelative, "DeliveryNote_$delivery_note_no.pdf");
+        //Store the path in the database
+        $invoice->delivery_note_path = $fileRelative;
+        $invoice->save();
+
+        return new JsonResponse(['message' => 'Delivery Note created successfully', 'delivery_note_path' => $fileRelative], 201);
     }
+
+    public function downloadDeliveryNote($po_number): JsonResponse|StreamedResponse
+    {
+        // Fetch the invoice by po_number
+        $invoice = InvoiceDatabase::where('po_number', $po_number)->first();
+
+        // If not found
+        if (!$invoice) {
+            return response()->json(['error' => 'Invoice not found'], 404);
+        }
+
+        // If a delivery note path is missing
+        if (!$invoice->delivery_note_path) {
+            return response()->json(['error' => 'Delivery note not available'], 404);
+        }
+
+        // Ensure file exists in storage
+        $filePath = $invoice->delivery_note_path;
+        if (!Storage::disk('public')->exists($filePath)) {
+            return response()->json(['error' => 'File not found in storage'], 404);
+        }
+
+        // Return file as download
+        return Storage::disk('public')->download($filePath, basename($filePath));
+    }
+
 }
