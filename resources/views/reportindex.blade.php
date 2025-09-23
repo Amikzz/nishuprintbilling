@@ -21,26 +21,75 @@
 </div>
 
 <!-- Reports Section -->
-<div class="container mt-5">
-    <h2 class="mb-4">Download Reports</h2>
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#dateRangeModal" data-report="Sales Report">Download Sales Report</button>
+<div class="max-w-6xl mx-auto mt-12 px-4">
+    <!-- Section Header -->
+    <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">Download Reports</h2>
+        <p class="text-gray-600 text-sm md:text-base">
+            Select the report you want to download. You can filter by date ranges in the next step to get precise data.
+        </p>
+    </div>
+
+    <!-- Report Buttons Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Sales Report -->
+        <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center hover:shadow-lg transition">
+            <h3 class="text-lg font-semibold mb-2 text-gray-800">Sales Report</h3>
+            <p class="text-gray-500 text-sm mb-4 text-center">Download a detailed sales report filtered by date ranges.</p>
+            <button class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg w-full transition"
+                    data-bs-toggle="modal" data-bs-target="#dateRangeModal" data-report="Sales Report">
+                Download
+            </button>
         </div>
-        <div class="col-md-4 mb-3">
-            <button class="btn btn-info w-100" data-bs-toggle="modal" data-bs-target="#dateRangeModal" data-report="Purchase Orders Report">Download Purchase Orders Report</button>
+
+        <!-- Purchase Orders Report -->
+        <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center hover:shadow-lg transition">
+            <h3 class="text-lg font-semibold mb-2 text-gray-800">Purchase Orders Report</h3>
+            <p class="text-gray-500 text-sm mb-4 text-center">Get all purchase orders within a selected date range.</p>
+            <button class="bg-teal-500 hover:bg-teal-600 text-white px-5 py-2 rounded-lg w-full transition"
+                    data-bs-toggle="modal" data-bs-target="#dateRangeModal" data-report="Purchase Orders Report">
+                Download
+            </button>
         </div>
-        <div class="col-md-4 mb-3">
-            <button class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#dateRangeModal" data-report="Master Sheet Report">Download Master Sheet Report</button>
+
+        <!-- Master Sheet Report -->
+        <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center hover:shadow-lg transition">
+            <h3 class="text-lg font-semibold mb-2 text-gray-800">Master Sheet Report</h3>
+            <p class="text-gray-500 text-sm mb-4 text-center">Download the complete master sheet report for tracking all activities.</p>
+            <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-lg w-full transition"
+                    data-bs-toggle="modal" data-bs-target="#dateRangeModal" data-report="Master Sheet Report">
+                Download
+            </button>
         </div>
-        <div class="col-md-4 mb-3">
-            <button class="btn btn-dark w-100" data-bs-toggle="modal" data-bs-target="#dateRangeModal" data-report="Pending List">Download Pending List</button>
+
+        <!-- Pending List -->
+        <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center hover:shadow-lg transition">
+            <h3 class="text-lg font-semibold mb-2 text-gray-800">Pending List</h3>
+            <p class="text-gray-500 text-sm mb-4 text-center">View all pending orders with relevant details for follow-up.</p>
+            <button class="bg-gray-700 hover:bg-gray-800 text-white px-5 py-2 rounded-lg w-full transition"
+                    data-bs-toggle="modal" data-bs-target="#dateRangeModal" data-report="Pending List">
+                Download
+            </button>
         </div>
-        <div class="col-md-4 mb-3">
-            <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#dateRangeModal" data-report="Completed Orders Report">Download Completed Orders Report</button>
+
+        <!-- Completed Orders Report -->
+        <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center hover:shadow-lg transition">
+            <h3 class="text-lg font-semibold mb-2 text-gray-800">Completed Orders Report</h3>
+            <p class="text-gray-500 text-sm mb-4 text-center">Download all completed orders with date and invoice information.</p>
+            <button class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg w-full transition"
+                    data-bs-toggle="modal" data-bs-target="#dateRangeModal" data-report="Completed Orders Report">
+                Download
+            </button>
         </div>
-        <div class="col-md-4 mb-3">
-            <button class="btn btn-secondary w-100" data-bs-toggle="modal" data-bs-target="#dateRangeModal" data-report="All Orders Report">Download Summary Report</button>
+
+        <!-- Summary Report -->
+        <div class="bg-white rounded-xl shadow-md p-6 flex flex-col items-center hover:shadow-lg transition">
+            <h3 class="text-lg font-semibold mb-2 text-gray-800">Summary Report</h3>
+            <p class="text-gray-500 text-sm mb-4 text-center">Download an overall summary of all orders and activities.</p>
+            <button class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg w-full transition"
+                    data-bs-toggle="modal" data-bs-target="#dateRangeModal" data-report="All Orders Report">
+                Download
+            </button>
         </div>
     </div>
 </div>
