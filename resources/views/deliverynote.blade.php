@@ -174,6 +174,7 @@
             <table class="items-table">
                 <thead>
                 <tr>
+                    <th>#</th>
                     <th>Item Code</th>
                     <th>Color</th>
                     <th>Color No</th>
@@ -190,6 +191,7 @@
                         $totalQuantity += $item->po_qty;
                     @endphp
                     <tr>
+                        <td>{{ $start + $loop->iteration }}</td>
                         <td>{{ $item->item_code }}</td>
                         <td>{{ $item->color ?? '-' }}</td>
                         <td>{{ $item->color_no ?? '-'  }}</td>
@@ -201,15 +203,15 @@
                     </tr>
                 @endforeach
                 <tr class="total-row">
-                    <td colspan="7" style="text-align: right;">Total Number of Items:</td>
+                    <td colspan="8" style="text-align: right;">Total Number of Items:</td>
                     <td>{{ $item_count }}</td>
                 </tr>
                 <tr class="total-row">
-                    <td colspan="7" style="text-align: right;">Page Total Quantity:</td>
+                    <td colspan="8" style="text-align: right;">Page Total Quantity:</td>
                     <td>{{ $totalQuantity }}</td>
                 </tr>
                 <tr class="total-row">
-                    <td colspan="7" style="text-align: right">Total Quantity </td>
+                    <td colspan="8" style="text-align: right">Total Quantity </td>
                     <td>{{ $purchaseOrderItemsDetails->sum('po_qty') }}</td>></tr>
                 </tbody>
             </table>
