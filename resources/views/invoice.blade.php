@@ -12,19 +12,23 @@
             font-size: 18px;
             color: #333;
         }
+
         .container {
             width: 100%;
             margin: 0 auto;
             padding: 5px;
             page-break-after: always;
         }
+
         .header {
             margin-bottom: 20px;
         }
+
         img {
             max-width: 80px;
             margin-right: 10px;
         }
+
         .details {
             width: 40%;
             float: right;
@@ -32,10 +36,12 @@
             font-size: 13px;
             line-height: 1.1;
         }
+
         .image {
             width: 40%;
             float: left;
         }
+
         .title {
             text-align: center;
             font-size: 16px;
@@ -43,47 +49,58 @@
             margin: 5px 0;
             text-transform: uppercase;
         }
+
         .invoice-details {
             margin-bottom: 5px;
         }
+
         .invoice-details table {
             width: 70%;
             border-collapse: collapse;
             font-size: 12px;
         }
+
         .invoice-details th, .invoice-details td {
             padding: 3px;
             text-align: left;
             border: 1px solid black; /* Changed to black */
         }
+
         .invoice-details th {
             background-color: #f4f4f4;
         }
+
         .items-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 10px;
             margin-top: 5px;
         }
+
         .items-table th, .items-table td {
             padding: 3px;
             text-align: left;
             border: 1px solid black; /* Changed to black */
         }
+
         .items-table th {
             background-color: #f4f4f4;
         }
+
         .total-row {
             font-weight: bold;
             background-color: #f9f9f9;
         }
+
         .page-break {
             page-break-after: auto;
         }
+
         .sign-space {
             margin-top: 50px;
             font-size: 10px;
         }
+
         .signatures {
             display: block;
             width: 100%;
@@ -92,17 +109,20 @@
             border-top: 1px solid #ddd;
             padding-top: 10px;
         }
+
         .signature-box-left {
             width: 30%;
             float: left;
             text-align: left;
         }
+
         .signature-box-right {
             width: 25%;
             float: right;
             text-align: left;
         }
-        .totals{
+
+        .totals {
             float: right;
             margin-top: 0px;
             font-size: 10px;
@@ -214,11 +234,11 @@
                 </thead>
                 <tbody>
                 @php
-                    $index = 1;
+                    $start = ($page - 1) * $itemsPerPage;
                 @endphp
                 @foreach ($pageItems as $item)
                     <tr>
-                        <td>{{ $index++ }}</td>
+                        <td>{{ $start + $loop->iteration }}</td>
                         <td>{{ $item->item_code }}</td>
                         <td>{{ $item->item_name }}</td>
                         <td>{{ $item->sticker_size ?? '-' }}</td>
@@ -233,8 +253,10 @@
 
         <!-- Totals -->
         <div class="totals">
-            <p>Page Total Quantity: {{ number_format($pageQtyTotal) }} <b>|</b>  Total: ${{ number_format($formattedPageTotal, 2) }}</p>
-            <p>Grand Total Quantity: {{ number_format($grandQtyTotal) }} <b>|</b>  Grand Total: ${{ number_format($formattedGrandTotal, 2) }} </p>
+            <p>Page Total Quantity: {{ number_format($pageQtyTotal) }} <b>|</b> Total:
+                ${{ number_format($formattedPageTotal, 2) }}</p>
+            <p>Grand Total Quantity: {{ number_format($grandQtyTotal) }} <b>|</b> Grand Total:
+                ${{ number_format($formattedGrandTotal, 2) }} </p>
             <p><b>Converted Grand Total (USD --- LKR): Rs. {{ number_format($convertedTotal, 2) }}</b></p>
         </div>
 
