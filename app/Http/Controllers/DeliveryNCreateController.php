@@ -144,5 +144,4 @@ class DeliveryNCreateController extends Controller
         // Return file as download
         return Storage::disk('public')->download($filePath, basename($filePath));
     }
-
 }

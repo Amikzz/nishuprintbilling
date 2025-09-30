@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class InvoiceCreateController extends Controller
 {
-    public function createInvoice(Request $request, $po_number): JsonResponse
+    public function createInvoice(Request $request, $po_number)
     {
         // Validate the request
         $validated = $request->validate([
@@ -167,16 +167,17 @@ class InvoiceCreateController extends Controller
             $invoice->invoice_path = $fileRelative;
             $invoice->save();
 
-            // Return a success response with the download link
-            return response()->json([
-                'message' => 'Invoice created successfully',
-                'download_link' => Storage::url($fileRelative),
-            ], 201);
+            // Flash success message
+            session()?->flash('success', 'Invoice created successfully!');
+
+            // Redirect back to the same page with query strings intact
+            return redirect()->back()->withInput();
 
         } catch (Exception $e) {
             // Log PDF generation failure
             Log::error('PDF Generation Failed: ' . $e->getMessage());
 
+            session()?->flash('error', 'Invoice not created');
             // Return an error response
             return response()->json(['error' => 'PDF generation failed. Please try again.'], 500);
         }
