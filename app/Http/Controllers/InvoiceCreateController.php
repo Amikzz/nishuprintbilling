@@ -179,7 +179,7 @@ class InvoiceCreateController extends Controller
 
             session()?->flash('error', 'Invoice not created');
             // Return an error response
-            return response()->json(['error' => 'PDF generation failed. Please try again.'], 500);
+            return redirect()->back()->withInput();
         }
     }
 

@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DeliveryNCreateController extends Controller
 {
-    public function createDeliveryNote(Request $request, $po_number): JsonResponse
+    public function createDeliveryNote(Request $request, $po_number)
     {
         $validated = $request->validate([
             'delivery_note_number' => 'required|string|max:255',
@@ -117,7 +117,10 @@ class DeliveryNCreateController extends Controller
         $invoice->delivery_note_path = $fileRelative;
         $invoice->save();
 
-        return new JsonResponse(['message' => 'Delivery Note created successfully', 'delivery_note_path' => $fileRelative], 201);
+        session()?->flash('success', 'Delivery note created successfully!');
+
+        // Redirect back to the same page with query strings intact
+        return redirect()->back()->withInput();
     }
 
     public function downloadDeliveryNote($po_number): JsonResponse|StreamedResponse
