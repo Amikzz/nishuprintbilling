@@ -265,6 +265,7 @@
                 // Converted amounts
                 $convertedTotal = $formattedGrandTotal * $exchangeRate;
                 $vatAmountLkr = $vatAmountUsd * $exchangeRate;
+                $usdWithVat = round($usdWithVat, 2);
                 $totalWithVatLkr = $usdWithVat * $exchangeRate;
             @endphp
 
@@ -279,7 +280,7 @@
             </p>
 
             <p>
-                <b>Total with VAT:</b> ${{ number_format($usdWithVat, 4) }} |
+                <b>Total with VAT:</b> ${{ number_format($usdWithVat, 2) }} |
                 <b>Rs.</b> {{ number_format($totalWithVatLkr, 2) }}
             </p>
         </div>
