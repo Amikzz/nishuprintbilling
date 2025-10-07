@@ -270,16 +270,16 @@
 
             <p>
                 <b>Page Total Qty:</b> {{ number_format($pageQtyTotal) }} |
-                <b>Grand Total:</b> ${{ number_format($formattedGrandTotal, 2) }}
+                <b>Page Total:</b> ${{ number_format($formattedPageTotal, 2) }}
             </p>
 
             <p>
-                <b>Converted:</b> Rs. {{ number_format($convertedTotal, 2) }} |
+                <b>Total Amount:</b> ${{ number_format($formattedGrandTotal, 2) }} |
                 <b>VAT (18%):</b> ${{ number_format($vatAmountUsd, 2) }} / Rs. {{ number_format($vatAmountLkr, 2) }}
             </p>
 
             <p>
-                <b>Total with VAT:</b> ${{ number_format($usdWithVat, 2) }} |
+                <b>Total with VAT:</b> ${{ number_format($usdWithVat, 4) }} |
                 <b>Rs.</b> {{ number_format($totalWithVatLkr, 2) }}
             </p>
         </div>
