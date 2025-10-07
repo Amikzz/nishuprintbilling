@@ -256,8 +256,16 @@
             <p>Page Total Quantity: {{ number_format($pageQtyTotal) }} <b>|</b> Total:
                 ${{ number_format($formattedPageTotal, 2) }}</p>
             <p>Grand Total Quantity: {{ number_format($grandQtyTotal) }} <b>|</b> Grand Total:
-                ${{ number_format($formattedGrandTotal, 2) }} </p>
-            <p><b>Converted Grand Total (USD --- LKR): Rs. {{ number_format($convertedTotal, 2) }}</b></p>
+                ${{ number_format($formattedGrandTotal, 2) }}</p>
+
+            @php
+                $vatAmount = $convertedTotal * 0.18;
+                $totalWithVat = $convertedTotal + $vatAmount;
+            @endphp
+
+            <p><b>Converted Amount (USD ----> LKR): Rs. {{ number_format($convertedTotal, 2) }}</b></p>
+            <p><b>VAT (18%): Rs. {{ number_format($vatAmount, 2) }}</b></p>
+            <p><b>Total Amount with VAT: Rs. {{ number_format($totalWithVat, 2) }}</b></p>
         </div>
 
         <!-- Footer Section -->
