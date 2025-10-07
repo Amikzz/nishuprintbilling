@@ -253,19 +253,35 @@
 
         <!-- Totals -->
         <div class="totals">
-            <p>Page Total Quantity: {{ number_format($pageQtyTotal) }} <b>|</b> Total:
-                ${{ number_format($formattedPageTotal, 2) }}</p>
-            <p>Grand Total Quantity: {{ number_format($grandQtyTotal) }} <b>|</b> Grand Total:
-                ${{ number_format($formattedGrandTotal, 2) }}</p>
-
             @php
-                $vatAmount = $convertedTotal * 0.18;
-                $totalWithVat = $convertedTotal + $vatAmount;
+                $vatRate = 0.18; // 18%
+
+                // VAT in USD
+                $vatAmountUsd = $formattedGrandTotal * $vatRate;
+
+                // USD total with VAT
+                $usdWithVat = $formattedGrandTotal + $vatAmountUsd;
+
+                // Converted amounts
+                $convertedTotal = $formattedGrandTotal * $exchangeRate;
+                $vatAmountLkr = $vatAmountUsd * $exchangeRate;
+                $totalWithVatLkr = $usdWithVat * $exchangeRate;
             @endphp
 
-            <p><b>Converted Amount (USD ----> LKR): Rs. {{ number_format($convertedTotal, 2) }}</b></p>
-            <p><b>VAT (18%): Rs. {{ number_format($vatAmount, 2) }}</b></p>
-            <p><b>Total Amount with VAT: Rs. {{ number_format($totalWithVat, 2) }}</b></p>
+            <p>
+                <b>Page Total Qty:</b> {{ number_format($pageQtyTotal) }} |
+                <b>Grand Total:</b> ${{ number_format($formattedGrandTotal, 2) }}
+            </p>
+
+            <p>
+                <b>Converted:</b> Rs. {{ number_format($convertedTotal, 2) }} |
+                <b>VAT (18%):</b> ${{ number_format($vatAmountUsd, 2) }} / Rs. {{ number_format($vatAmountLkr, 2) }}
+            </p>
+
+            <p>
+                <b>Total with VAT:</b> ${{ number_format($usdWithVat, 2) }} |
+                <b>Rs.</b> {{ number_format($totalWithVatLkr, 2) }}
+            </p>
         </div>
 
         <!-- Footer Section -->
