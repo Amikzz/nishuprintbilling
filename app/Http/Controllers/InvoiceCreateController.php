@@ -60,6 +60,13 @@ class InvoiceCreateController extends Controller
             $masterSheet->invoice_no = $invoiceNo;
             $masterSheet->invoice_date = now();
             $masterSheet->status = 'delivered';
+
+            $mastersheetPOValue = $masterSheet->invoice_value;
+
+            $mastersheetPOValueWithVat = ($mastersheetPOValue * 0.18) + $mastersheetPOValue; //VAT Handling
+
+            $masterSheet->invoice_value = $mastersheetPOValueWithVat;
+
             $masterSheet->save();
         }
 
