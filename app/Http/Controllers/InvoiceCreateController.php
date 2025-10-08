@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class InvoiceCreateController extends Controller
 {
-    public function createInvoice(Request $request, $po_number)
+    public function createInvoice(Request $request, $po_number): JsonResponse|RedirectResponse
     {
         // Validate the request
         $validated = $request->validate([

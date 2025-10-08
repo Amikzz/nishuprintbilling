@@ -9,6 +9,7 @@ use App\Models\MasterSheet;
 use App\Models\PurchaseOrderDatabase;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -16,7 +17,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DeliveryNCreateController extends Controller
 {
-    public function createDeliveryNote(Request $request, $po_number)
+    public function createDeliveryNote(Request $request, $po_number): JsonResponse|RedirectResponse
     {
         $validated = $request->validate([
             'delivery_note_number' => 'required|string|max:255',
