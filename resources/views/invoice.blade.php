@@ -181,7 +181,7 @@
 
         <!-- Invoice Heading -->
         <div class="title">
-            Invoice
+            Tax Invoice
         </div>
 
         <!-- Invoice Details -->
