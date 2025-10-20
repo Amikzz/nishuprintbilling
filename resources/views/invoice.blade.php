@@ -171,6 +171,7 @@
             <div class="details">
                 <h3>Nisu Creations (Pvt) Ltd</h3>
                 <p>Tel: 0114063878</p>
+                <p>VAT No: 102479300-7000</p>
                 <p>493/5, Makola North, Makola</p>
                 <p>Email: nisucreations@gmail.com</p>
             </div>
@@ -206,6 +207,10 @@
                 <tr>
                     <th>Customer</th>
                     <td>{{ $customer->name }}</td>
+                </tr>
+                <tr>
+                    <th>Customer VAT No</th>
+                    <td>104052290-7000</td>
                 </tr>
                 <tr>
                     <th>Customer Address</th>
